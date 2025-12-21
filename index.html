@@ -4,9 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>wadakatu | Backend Developer</title>
+  <meta name="description" content="Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem. Creator of laravel-spectrum & gitlyte.">
+  <meta name="author" content="wadakatu">
+
+  <!-- OGP -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://wadakatu.github.io/">
+  <meta property="og:title" content="wadakatu | Backend Developer">
+  <meta property="og:description" content="Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem.">
+  <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content="wadakatu | Backend Developer">
+  <meta name="twitter:description" content="Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem.">
+  <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="./ogp.webp">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
   <style>
     :root {
       --bg: #0a0a0a;
@@ -33,9 +58,9 @@
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
       color: var(--text);
-      height: 100vh;
+      min-height: 100vh;
       padding: 1rem;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     /* CRT Scanline Effect */
@@ -68,10 +93,9 @@
       z-index: 10;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: 1fr 1fr 1fr;
+      grid-template-rows: auto auto auto;
       gap: 0.75rem;
       max-width: 1400px;
-      height: 100%;
       margin: 0 auto;
     }
 
@@ -270,14 +294,27 @@
     }
 
     .about-text {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       line-height: 1.6;
       color: var(--text-dim);
+      margin-bottom: 0.75rem;
     }
 
     .about-text strong {
       color: var(--text);
-      font-weight: 500;
+      font-weight: 600;
+    }
+
+    .project-link {
+      color: var(--matrix);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .project-link:hover {
+      border-bottom-color: var(--matrix);
     }
 
     .about-stats {
@@ -309,7 +346,7 @@
     }
 
     .about-bottom {
-      margin-top: auto;
+      margin-top: 0.5rem;
     }
 
     .about-tags {
@@ -327,6 +364,17 @@
       border: 1px solid var(--matrix-dark);
       padding: 0.2rem 0.5rem;
       border-radius: 4px;
+    }
+
+    .about-tag-link {
+      text-decoration: none;
+      background: rgba(0, 255, 65, 0.15);
+      transition: all 0.3s ease;
+    }
+
+    .about-tag-link:hover {
+      background: rgba(0, 255, 65, 0.25);
+      transform: translateY(-1px);
     }
 
     /* Tech Stack Card */
@@ -559,50 +607,77 @@
       letter-spacing: 0.1em;
     }
 
-    .matrix-rain-text {
-      display: flex;
-      justify-content: space-around;
-      gap: 0.2rem;
-      padding: 0.5rem 0;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
-    }
-
-    .matrix-col {
+    /* Contact Card */
+    .card-contact {
       display: flex;
       flex-direction: column;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex: 1;
+      margin-top: 0.5rem;
+    }
+
+    .contact-item {
+      display: flex;
       align-items: center;
-      gap: 0.15rem;
-      animation: matrixFade 3s ease-in-out infinite;
+      gap: 0.75rem;
+      padding: 0.6rem;
+      background: rgba(0, 255, 65, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
     }
 
-    .matrix-col:nth-child(1) { animation-delay: 0s; }
-    .matrix-col:nth-child(2) { animation-delay: 0.2s; }
-    .matrix-col:nth-child(3) { animation-delay: 0.4s; }
-    .matrix-col:nth-child(4) { animation-delay: 0.6s; }
-    .matrix-col:nth-child(5) { animation-delay: 0.8s; }
-    .matrix-col:nth-child(6) { animation-delay: 1.0s; }
-    .matrix-col:nth-child(7) { animation-delay: 1.2s; }
-    .matrix-col:nth-child(8) { animation-delay: 0.3s; }
-    .matrix-col:nth-child(9) { animation-delay: 0.5s; }
-    .matrix-col:nth-child(10) { animation-delay: 0.7s; }
-    .matrix-col:nth-child(11) { animation-delay: 0.9s; }
-    .matrix-col:nth-child(12) { animation-delay: 1.1s; }
-
-    .matrix-col span {
-      color: var(--matrix-dark);
-      font-size: 0.55rem;
-      font-family: 'JetBrains Mono', monospace;
+    .contact-item:hover {
+      border-color: var(--matrix-dark);
+      background: rgba(0, 255, 65, 0.08);
+      transform: translateX(4px);
     }
 
-    .matrix-col span:last-child {
+    .contact-icon {
+      width: 20px;
+      height: 20px;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      transition: color 0.3s ease;
+    }
+
+    .contact-item:hover .contact-icon {
       color: var(--matrix);
-      text-shadow: 0 0 5px var(--matrix);
     }
 
-    @keyframes matrixFade {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+    }
+
+    .contact-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .contact-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .contact-item:hover .contact-value {
+      color: var(--matrix);
     }
 
     .footer-line {
@@ -830,7 +905,7 @@
         </span>
         <div class="status-badge">
           <span class="status-dot"></span>
-          Available
+          Coding Everyday
         </div>
       </div>
     </div>
@@ -838,12 +913,7 @@
     <!-- About Card -->
     <div class="card card-about">
       <h2 class="card-label">cat about.txt</h2>
-      <p class="about-text">
-        <strong>Backend Developer @ Studio Inc.</strong> Building <strong>no-code website builders</strong>.
-        Active <strong>OSS contributor</strong> to Laravel ecosystem — translations, documentation & dev tools.
-        Creator of <strong>laravel-spectrum</strong> (API doc generator) & <strong>gitlyte</strong> (AI website builder).
-        <strong>Photographer</strong> & <strong>HHKB</strong> enthusiast.
-      </p>
+      <p class="about-text"><strong>Backend Developer @ Studio Inc.</strong> Building no-code website builders. Active OSS contributor to Laravel ecosystem.</p>
       <div class="about-bottom">
         <div class="about-stats">
           <div class="about-stat">
@@ -864,14 +934,13 @@
           </div>
         </div>
         <div class="about-tags">
+          <a href="https://docs.laravel-spectrum.dev" target="_blank" class="about-tag about-tag-link">laravel-spectrum</a>
+          <a href="https://github.com/wadakatu/gitlyte" target="_blank" class="about-tag about-tag-link">gitlyte</a>
           <span class="about-tag">#laravel</span>
           <span class="about-tag">#php</span>
           <span class="about-tag">#vue</span>
           <span class="about-tag">#typescript</span>
-          <span class="about-tag">#api-design</span>
           <span class="about-tag">#oss</span>
-          <span class="about-tag">#photography</span>
-          <span class="about-tag">#hhkb</span>
         </div>
       </div>
     </div>
@@ -922,7 +991,7 @@
         <h3 class="project-title">Resume</h3>
         <p class="project-desc">Professional career history</p>
         <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </div>
@@ -936,7 +1005,7 @@
         <h3 class="project-title">UI Lab</h3>
         <p class="project-desc">Frontend experiments</p>
         <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </div>
@@ -951,7 +1020,7 @@
         <h3 class="project-title">W3C Hackathon</h3>
         <p class="project-desc">TPAC 2025 Winner</p>
         <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
         </div>
@@ -961,7 +1030,7 @@
     <!-- GitHub -->
     <div class="card card-link card-github">
       <a href="https://github.com/wadakatu" target="_blank">
-        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
         </svg>
         <div>
@@ -974,7 +1043,7 @@
     <!-- Zenn -->
     <div class="card card-link card-zenn">
       <a href="https://zenn.dev/wadakatu" target="_blank">
-        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor">
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.587.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.205-.001.381-.118.586-.353z"/>
         </svg>
         <div>
@@ -984,51 +1053,34 @@
       </a>
     </div>
 
-    <!-- Footer Card -->
-    <div class="card card-footer">
-      <div class="footer-content">
-        <div class="footer-terminal">
-          <div class="footer-line">
-            <span class="prompt">$</span>
-            <span class="cmd">whoami</span>
-            <span class="output">→ wadakatu</span>
+    <!-- Contact Card -->
+    <div class="card card-footer card-contact">
+      <h2 class="card-label">mail -s "Hello"</h2>
+      <div class="contact-links">
+        <a href="mailto:wadakatu.dev@gmail.com" class="contact-item">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M22 6L12 13L2 6"/>
+          </svg>
+          <div class="contact-info">
+            <span class="contact-type">Email</span>
+            <span class="contact-value">wadakatu.dev@gmail.com</span>
           </div>
-          <div class="footer-line">
-            <span class="prompt">$</span>
-            <span class="cmd">echo $YEAR</span>
-            <span class="output">→ 2025</span>
+        </a>
+        <a href="https://x.com/koyolympus" target="_blank" class="contact-item">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          <div class="contact-info">
+            <span class="contact-type">X (Twitter)</span>
+            <span class="contact-value">@koyolympus</span>
           </div>
-          <div class="footer-line">
-            <span class="prompt">$</span>
-            <span class="cmd">cat motto.txt</span>
-            <span class="output">→ "fake it until you make it"</span>
-          </div>
-        </div>
-        <div class="matrix-rain-text">
-          <div class="matrix-col"><span>ア</span><span>0</span><span>カ</span><span>7</span><span>ネ</span></div>
-          <div class="matrix-col"><span>9</span><span>シ</span><span>ト</span><span>ウ</span><span>2</span></div>
-          <div class="matrix-col"><span>キ</span><span>5</span><span>8</span><span>エ</span><span>ニ</span></div>
-          <div class="matrix-col"><span>4</span><span>ク</span><span>6</span><span>タ</span><span>1</span></div>
-          <div class="matrix-col"><span>セ</span><span>0</span><span>ナ</span><span>9</span><span>ヌ</span></div>
-          <div class="matrix-col"><span>3</span><span>サ</span><span>テ</span><span>5</span><span>ノ</span></div>
-          <div class="matrix-col"><span>ス</span><span>チ</span><span>7</span><span>ハ</span><span>4</span></div>
-          <div class="matrix-col"><span>ヒ</span><span>2</span><span>フ</span><span>ヘ</span><span>8</span></div>
-          <div class="matrix-col"><span>6</span><span>ホ</span><span>マ</span><span>1</span><span>ミ</span></div>
-          <div class="matrix-col"><span>ム</span><span>3</span><span>メ</span><span>モ</span><span>0</span></div>
-          <div class="matrix-col"><span>ヤ</span><span>9</span><span>ユ</span><span>4</span><span>ヨ</span></div>
-          <div class="matrix-col"><span>7</span><span>ラ</span><span>リ</span><span>ル</span><span>5</span></div>
-        </div>
+        </a>
       </div>
       <div class="footer-status">
         <div class="uplink">
           <span class="uplink-dot"></span>
           <span>UPLINK ACTIVE</span>
-        </div>
-        <div class="signal-bars">
-          <span class="signal-bar"></span>
-          <span class="signal-bar"></span>
-          <span class="signal-bar"></span>
-          <span class="signal-bar"></span>
         </div>
         <span class="footer-time" id="jst-time">--:--:-- JST</span>
       </div>
@@ -1089,6 +1141,18 @@
     // Card expand transition
     const grid = document.querySelector('.bento-grid');
     const overlay = document.querySelector('.transition-overlay');
+
+    // Reset state when navigating back (bfcache)
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) {
+        overlay.classList.remove('active');
+        grid.classList.remove('transitioning');
+        document.querySelectorAll('.card.expanding').forEach(card => {
+          card.classList.remove('expanding', 'fullscreen');
+          card.style.cssText = '';
+        });
+      }
+    });
 
     function expandAndNavigate(card, href, isExternal) {
       if (isExternal) {
