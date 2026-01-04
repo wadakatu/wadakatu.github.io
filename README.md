@@ -2,15 +2,9 @@
 
 <img src="ogp.webp" width="180" alt="wadakatu logo" />
 
-```
-┌─────────────────────────────────────┐
-│                                     │
-│          W A D A K A T U _          │
-│                                     │
-└─────────────────────────────────────┘
-```
+<h1>wadakatu<sub>_</sub></h1>
 
-**`> Backend Developer @ Osaka, Japan_`**
+**`> Backend Developer @ Osaka, Japan`**
 
 [![Live Site](https://img.shields.io/badge/LIVE-wadakatu.github.io-000000?style=for-the-badge&logo=github&logoColor=00ff41&labelColor=000000&color=004d00)](https://wadakatu.github.io)
 
