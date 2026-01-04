@@ -13,7 +13,7 @@
 
 **`> Backend Developer @ Osaka, Japan_`**
 
-[![Live Site](https://img.shields.io/badge/LIVE-wadakatu.github.io-00ff41?style=for-the-badge&logo=github&logoColor=white)](https://wadakatu.github.io)
+[![Live Site](https://img.shields.io/badge/LIVE-wadakatu.github.io-000000?style=for-the-badge&logo=github&logoColor=00ff41&labelColor=000000&color=004d00)](https://wadakatu.github.io)
 
 </div>
 
@@ -26,7 +26,7 @@ $ cat site_info.txt
 | Key | Value |
 |-----|-------|
 | `URL` | https://wadakatu.github.io |
-| `STATUS` | ![](https://img.shields.io/badge/ONLINE-00ff41?style=flat-square) |
+| `STATUS` | ![](https://img.shields.io/badge/●_ONLINE-004d00?style=flat-square&labelColor=004d00) |
 | `STACK` | HTML / CSS / JavaScript |
 | `HOST` | GitHub Pages |
 
