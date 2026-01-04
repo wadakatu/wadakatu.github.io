@@ -59,7 +59,6 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 1rem;
       overflow-x: hidden;
     }
 
@@ -87,103 +86,32 @@
       opacity: 0.08;
     }
 
-    /* Bento Grid */
-    .bento-grid {
+    /* Main Container */
+    .container {
       position: relative;
       z-index: 10;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: auto auto 1fr;
-      gap: 0.75rem;
-      max-width: 1400px;
-      min-height: calc(100vh - 2rem);
+      max-width: 1000px;
       margin: 0 auto;
-    }
-
-    /* Base Card */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-
-    .card:hover {
-      border-color: var(--matrix-dark);
-      transform: translateY(-2px);
-      box-shadow: var(--glow);
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card a {
-      text-decoration: none;
-      color: inherit;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      height: 100%;
-      position: relative;
-      z-index: 1;
     }
 
-    /* Make entire card clickable */
-    .card-project,
-    .card-link {
-      cursor: pointer;
-    }
-
-    /* Hero Card */
-    .card-hero {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 1rem;
-      background: linear-gradient(135deg, var(--card) 0%, #0d120d 100%);
-      border-color: var(--matrix-dark);
-      padding: 1.5rem;
-    }
-
-    .card-hero:hover {
-      box-shadow: var(--glow-strong);
-    }
-
-    .hero-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .terminal-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--matrix);
-      background: rgba(0, 255, 65, 0.1);
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid var(--matrix-dark);
+    /* ===== HERO SECTION ===== */
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 3rem;
     }
 
     .hero-greeting {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.85rem;
       color: var(--matrix);
-      margin-bottom: 0.75rem;
-      display: flex;
+      margin-bottom: 1rem;
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
     }
@@ -208,7 +136,7 @@
     }
 
     .hero-name {
-      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-size: clamp(2.5rem, 6vw, 4rem);
       font-weight: 700;
       line-height: 1.1;
       margin-bottom: 0.5rem;
@@ -223,15 +151,15 @@
     .hero-role {
       font-size: 1.1rem;
       color: var(--text-dim);
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .hero-bottom {
+    .hero-meta {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
       flex-wrap: wrap;
-      gap: 1rem;
     }
 
     .hero-location {
@@ -243,20 +171,349 @@
       gap: 0.5rem;
     }
 
-    .status-badge {
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .social-link {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-dim);
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    .social-link svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* ===== NAVIGATION HUB ===== */
+    .nav-hub {
+      margin-bottom: 3rem;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--matrix);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--matrix);
-      background: rgba(0, 255, 65, 0.1);
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      border: 1px solid var(--matrix-dark);
     }
 
-    .status-dot {
+    .section-label::before {
+      content: '$';
+      opacity: 0.5;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .nav-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .nav-card:hover {
+      border-color: var(--matrix-dark);
+      transform: translateY(-4px);
+      box-shadow: var(--glow-strong);
+    }
+
+    .nav-card:hover::before {
+      opacity: 1;
+    }
+
+    .nav-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s ease;
+    }
+
+    .nav-card:hover .nav-title {
+      color: var(--matrix);
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .nav-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-arrow {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      color: var(--text-dim);
+    }
+
+    .nav-card:hover .nav-arrow {
+      background: var(--matrix);
+      color: var(--bg);
+      transform: rotate(-45deg);
+      box-shadow: var(--glow);
+    }
+
+    .nav-arrow svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ===== FEATURED SECTION ===== */
+    .featured {
+      margin-bottom: 3rem;
+      flex: 1;
+    }
+
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .featured-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .featured-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .featured-card:hover {
+      border-color: var(--matrix-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--glow);
+    }
+
+    .featured-card:hover::before {
+      opacity: 1;
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.55rem;
+      font-weight: 700;
+      color: var(--matrix);
+      background: transparent;
+      padding: 0.35rem 0.6rem;
+      letter-spacing: 0.1em;
+      border: 1px solid var(--matrix);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: var(--glow), inset 0 0 15px rgba(0, 255, 65, 0.2);
+      animation: badgePulse 2s ease-in-out infinite;
+      text-shadow: 0 0 8px var(--matrix);
+    }
+
+    @keyframes badgePulse {
+      0%, 100% {
+        box-shadow: var(--glow), inset 0 0 15px rgba(0, 255, 65, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(0, 255, 65, 0.6), inset 0 0 20px rgba(0, 255, 65, 0.3);
+      }
+    }
+
+    .featured-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--matrix-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+      transition: color 0.3s ease;
+    }
+
+    .featured-card:hover .featured-title {
+      color: var(--matrix);
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+
+    .featured-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .featured-arrow {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      color: var(--text-dim);
+    }
+
+    .featured-card:hover .featured-arrow {
+      background: var(--matrix);
+      color: var(--bg);
+      transform: rotate(-45deg);
+      box-shadow: var(--glow);
+    }
+
+    .featured-arrow svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      opacity: 0.9;
+    }
+
+    .footer-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .footer-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .footer-credit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-credit:hover {
+      color: var(--matrix);
+    }
+
+    .footer-status {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .uplink {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix-dim);
+      font-size: 0.65rem;
+    }
+
+    .uplink-dot {
       width: 6px;
       height: 6px;
       background: var(--matrix);
@@ -270,660 +527,58 @@
       50% { opacity: 0.7; transform: scale(1.2); }
     }
 
-    /* About Card */
-    .card-about {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--matrix);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-label::before {
-      content: '$';
-      opacity: 0.5;
-    }
-
-    .about-text {
-      font-size: 0.85rem;
-      line-height: 1.6;
-      color: var(--text-dim);
-      margin-bottom: 0.75rem;
-    }
-
-    .about-text strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .project-link {
-      color: var(--matrix);
-      text-decoration: none;
-      font-weight: 600;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.3s ease;
-    }
-
-    .project-link:hover {
-      border-bottom-color: var(--matrix);
-    }
-
-    .about-stats {
-      display: flex;
-      gap: 1.5rem;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .about-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .stat-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.1rem;
-      color: var(--matrix);
-      font-weight: 600;
-    }
-
-    .stat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .about-bottom {
-      margin-top: 0.5rem;
-    }
-
-    .about-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.75rem;
-    }
-
-    .about-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--matrix);
-      background: rgba(0, 255, 65, 0.08);
-      border: 1px solid var(--matrix-dark);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-    }
-
-    .about-tag-link {
-      text-decoration: none;
-      background: rgba(0, 255, 65, 0.15);
-      transition: all 0.3s ease;
-    }
-
-    .about-tag-link:hover {
-      background: rgba(0, 255, 65, 0.25);
-      transform: translateY(-1px);
-    }
-
-    /* Tech Stack Card */
-    .card-stack {
-      grid-column: span 2;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .stack-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: 1fr 1fr;
-      gap: 0.5rem;
-      flex: 1;
-    }
-
-    .stack-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.3rem;
-      padding: 0.5rem;
-      background: rgba(0, 255, 65, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      transition: all 0.3s ease;
-    }
-
-    .stack-item:hover {
-      border-color: var(--matrix-dark);
-      background: rgba(0, 255, 65, 0.08);
-      transform: translateY(-2px);
-    }
-
-    .stack-icon {
-      font-size: 1.5rem;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stack-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
-      stroke: currentColor;
-      stroke-width: 0;
-      color: var(--matrix-dim);
-      transition: color 0.3s ease;
-    }
-
-    .stack-icon svg[viewBox="0 0 24 24"]:has(ellipse) {
-      fill: none;
-      stroke-width: 2;
-    }
-
-    .stack-item:hover .stack-icon svg {
-      color: var(--matrix);
-    }
-
-    .stack-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-    }
-
-    /* Project Cards */
-    .card-project {
-      position: relative;
-    }
-
-    .project-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
-
-    .project-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-      color: var(--text);
-      transition: color 0.3s ease;
-    }
-
-    .card-project:hover .project-title {
-      color: var(--matrix);
-      text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
-    }
-
-    .project-desc {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.4;
-    }
-
-    .project-arrow {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.03);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      color: var(--text-dim);
-    }
-
-    .card-project:hover .project-arrow {
-      background: var(--matrix);
-      color: var(--bg);
-      transform: rotate(-45deg);
-      box-shadow: var(--glow);
-    }
-
-    .project-arrow svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    /* Winner Badge */
-    .badge-winner {
-      position: absolute;
-      bottom: 1rem;
-      right: 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.55rem;
-      font-weight: 700;
-      color: var(--matrix);
-      background: transparent;
-      padding: 0.35rem 0.6rem;
-      letter-spacing: 0.1em;
-      border: 1px solid var(--matrix);
-      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-      box-shadow:
-        var(--glow),
-        inset 0 0 15px rgba(0, 255, 65, 0.2);
-      animation: badgePulse 2s ease-in-out infinite;
-      text-shadow: 0 0 8px var(--matrix);
-    }
-
-    .badge-winner::before {
-      content: '◆ ';
-      font-size: 0.5rem;
-    }
-
-    .badge-winner::after {
-      content: ' ◆';
-      font-size: 0.5rem;
-    }
-
-    @keyframes badgePulse {
-      0%, 100% {
-        box-shadow: var(--glow), inset 0 0 15px rgba(0, 255, 65, 0.2);
-        border-color: var(--matrix);
-      }
-      50% {
-        box-shadow: 0 0 25px rgba(0, 255, 65, 0.6), inset 0 0 20px rgba(0, 255, 65, 0.3);
-        border-color: var(--matrix);
-      }
-    }
-
-    /* Link Cards */
-    .card-link {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 120px;
-    }
-
-    .link-icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 1rem;
-      color: var(--text-dim);
-      transition: color 0.3s ease;
-    }
-
-    .card-link:hover .link-icon {
-      color: var(--matrix);
-    }
-
-    .link-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .link-username {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: var(--text-dim);
-    }
-
-    /* GitHub specific */
-    .card-github {
-      background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
-    }
-
-    .card-github:hover {
-      border-color: #30363d;
-    }
-
-    /* Zenn specific */
-    .card-zenn {
-      background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
-    }
-
-    .card-zenn:hover {
-      border-color: #3ea8ff40;
-    }
-
-    .card-zenn:hover .link-icon {
-      color: #3ea8ff;
-    }
-
-    /* Footer Card */
-    .card-footer {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      background: linear-gradient(135deg, var(--card) 0%, #0a0f0a 100%);
-      border-color: var(--matrix-dark);
-    }
-
-    .footer-terminal {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      flex: 1;
-    }
-
-    .ascii-art {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.55rem;
-      line-height: 1.2;
-      color: var(--matrix-dim);
-      white-space: pre;
-      letter-spacing: 0.1em;
-    }
-
-    /* Card Column (for stacked cards) */
-    .card-column {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .card-half {
-      flex: 1;
-    }
-
-    /* Mini Contact Card */
-    .card-contact-mini {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.3s ease;
-    }
-
-    .card-contact-mini:hover {
-      border-color: var(--matrix-dark);
-      background: rgba(0, 255, 65, 0.05);
-      transform: translateY(-2px);
-      box-shadow: var(--glow);
-    }
-
-    .card-contact-mini .contact-icon {
-      width: 18px;
-      height: 18px;
-      color: var(--text-dim);
-      flex-shrink: 0;
-      transition: color 0.3s ease;
-    }
-
-    .card-contact-mini:hover .contact-icon {
-      color: var(--matrix);
-    }
-
-    .contact-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      transition: color 0.3s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-contact-mini:hover .contact-label {
-      color: var(--matrix);
-    }
-
-    /* Footer Logo */
-    .footer-logo {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-image {
-      max-width: 90%;
-      max-height: 180px;
-      object-fit: contain;
-      border-radius: 8px;
-      opacity: 0.9;
-      transition: opacity 0.3s ease;
-    }
-
-    .card-footer:hover .logo-image {
-      opacity: 1;
-    }
-
-    .logo-credit {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      text-decoration: none;
-      margin-top: 0.5rem;
-      transition: color 0.3s ease;
-    }
-
-    .logo-credit:hover {
-      color: var(--matrix);
-    }
-
-    .footer-line {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--text-dim);
-    }
-
-    .footer-line .prompt {
-      color: var(--matrix);
-    }
-
-    .footer-line .cmd {
-      color: var(--text);
-    }
-
-    .footer-line .output {
-      color: var(--matrix-dim);
-    }
-
-    .footer-status {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 0.5rem;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
-    }
-
-    .signal-bars {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 12px;
-    }
-
-    .signal-bar {
-      width: 3px;
-      background: var(--matrix);
-      border-radius: 1px;
-      animation: signal 1.5s ease-in-out infinite;
-    }
-
-    .signal-bar:nth-child(1) { height: 4px; animation-delay: 0s; }
-    .signal-bar:nth-child(2) { height: 7px; animation-delay: 0.1s; }
-    .signal-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
-    .signal-bar:nth-child(4) { height: 12px; animation-delay: 0.3s; }
-
-    @keyframes signal {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
     .footer-time {
+      font-family: 'JetBrains Mono', monospace;
       color: var(--matrix);
-      font-size: 0.65rem;
+      font-size: 0.7rem;
     }
 
-    .uplink {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--matrix-dim);
-      font-size: 0.6rem;
-    }
-
-    .uplink-dot {
-      width: 5px;
-      height: 5px;
-      background: var(--matrix);
-      border-radius: 50%;
-      box-shadow: var(--glow);
-      animation: pulse 2s infinite;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .card-stack {
-        grid-column: span 2;
-      }
-      .card-footer {
-        grid-column: span 1;
-      }
-    }
-
-    @media (max-width: 640px) {
-      body {
-        padding: 1rem;
-      }
-      .bento-grid {
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-grid {
         grid-template-columns: 1fr;
+      }
+
+      .featured-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-meta {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .footer-status {
+        flex-direction: column;
         gap: 0.75rem;
       }
-      .card-hero,
-      .card-about,
-      .card-stack,
-      .card-footer {
-        grid-column: span 1;
-      }
-      .stack-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .hero-name {
-        font-size: 2rem;
-      }
-      .footer-status {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      .badge-winner {
-        top: 1rem;
-        bottom: auto;
-        right: 1rem;
-      }
     }
 
-    /* Staggered Animation */
-    .card {
+    /* ===== ANIMATIONS ===== */
+    .hero,
+    .nav-hub,
+    .featured,
+    .footer {
       opacity: 0;
       transform: translateY(20px);
       animation: fadeUp 0.6s ease-out forwards;
     }
 
-    .card:nth-child(1) { animation-delay: 0.1s; }
-    .card:nth-child(2) { animation-delay: 0.15s; }
-    .card:nth-child(3) { animation-delay: 0.2s; }
-    .card:nth-child(4) { animation-delay: 0.25s; }
-    .card:nth-child(5) { animation-delay: 0.3s; }
-    .card:nth-child(6) { animation-delay: 0.35s; }
-    .card:nth-child(7) { animation-delay: 0.4s; }
-    .card:nth-child(8) { animation-delay: 0.45s; }
-    .card:nth-child(9) { animation-delay: 0.5s; }
+    .hero { animation-delay: 0.1s; }
+    .nav-hub { animation-delay: 0.2s; }
+    .featured { animation-delay: 0.3s; }
+    .footer { animation-delay: 0.4s; }
 
     @keyframes fadeUp {
       to {
         opacity: 1;
         transform: translateY(0);
       }
-    }
-
-    /* Card expand transition */
-    .card.expanding {
-      position: fixed !important;
-      z-index: 9999 !important;
-      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      pointer-events: none;
-    }
-
-    .card.expanding.fullscreen {
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      border-radius: 0 !important;
-      margin: 0 !important;
-    }
-
-    /* Fade out other cards */
-    .bento-grid.transitioning .card:not(.expanding) {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    /* Loading overlay */
-    .transition-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--card);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .transition-overlay.active {
-      opacity: 1;
-    }
-
-    .transition-overlay .loader {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--matrix);
-      font-size: 1rem;
-    }
-
-    .transition-overlay .loader::after {
-      content: '...';
-      animation: dots 1.5s steps(4, end) infinite;
-    }
-
-    @keyframes dots {
-      0%, 20% { content: ''; }
-      40% { content: '.'; }
-      60% { content: '..'; }
-      80%, 100% { content: '...'; }
     }
 
     /* Reduced Motion */
@@ -936,21 +591,12 @@
         transition-duration: 0.01ms !important;
       }
 
-      .cursor {
-        animation: none;
-        opacity: 1;
-      }
-
-      .status-dot,
+      .cursor,
       .uplink-dot {
         animation: none;
       }
 
-      .signal-bar {
-        animation: none;
-      }
-
-      .badge-winner {
+      .featured-badge {
         animation: none;
       }
 
@@ -968,216 +614,115 @@
   <!-- Matrix Rain Background -->
   <canvas id="matrix-rain"></canvas>
 
-  <!-- Transition Overlay -->
-  <div class="transition-overlay">
-    <div class="loader">Loading</div>
-  </div>
-
-  <div class="bento-grid">
-    <!-- Hero Card -->
-    <div class="card card-hero">
-      <div>
-        <div class="hero-top">
-          <div>
-            <p class="hero-greeting">Hello, World!<span class="cursor"></span></p>
-            <h1 class="hero-name">wadakatu<span class="highlight">_</span></h1>
-            <p class="hero-role">Backend Developer</p>
-          </div>
-          <span class="terminal-badge">v1.0.0</span>
-        </div>
-      </div>
-      <div class="hero-bottom">
+  <div class="container">
+    <!-- Hero Section -->
+    <header class="hero">
+      <p class="hero-greeting">Hello, World!<span class="cursor"></span></p>
+      <h1 class="hero-name">wadakatu<span class="highlight">_</span></h1>
+      <p class="hero-role">Backend Developer @ Studio Inc.</p>
+      <div class="hero-meta">
         <span class="hero-location">
           <span>📍</span> Osaka, Japan
         </span>
-        <div class="status-badge">
-          <span class="status-dot"></span>
-          Coding Everyday
-        </div>
+        <nav class="social-links" aria-label="Social links">
+          <a href="https://github.com/wadakatu" target="_blank" class="social-link" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="https://zenn.dev/wadakatu" target="_blank" class="social-link" aria-label="Zenn">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.587.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.205-.001.381-.118.586-.353z"/>
+            </svg>
+          </a>
+          <a href="https://x.com/koyolympus" target="_blank" class="social-link" aria-label="X (Twitter)">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a href="mailto:wadakatu.dev@gmail.com" class="social-link" aria-label="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M22 6L12 13L2 6"/>
+            </svg>
+          </a>
+        </nav>
       </div>
-    </div>
+    </header>
 
-    <!-- About Card -->
-    <div class="card card-about">
-      <h2 class="card-label">cat about.txt</h2>
-      <p class="about-text"><strong>Backend Developer @ Studio Inc.</strong> Building no-code website builders. Active OSS contributor to Laravel ecosystem.</p>
-      <div class="about-bottom">
-        <div class="about-stats">
-          <div class="about-stat">
-            <span class="stat-value">13</span>
-            <span class="stat-label">Original Repos</span>
+    <!-- Navigation Hub -->
+    <section class="nav-hub">
+      <h2 class="section-label">ls ./</h2>
+      <div class="nav-grid">
+        <a href="/projects" class="nav-card">
+          <span class="nav-icon">🚀</span>
+          <h3 class="nav-title">Projects</h3>
+          <p class="nav-desc">OSS contributions & personal works</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </div>
-          <div class="about-stat">
-            <span class="stat-value">17</span>
-            <span class="stat-label">OSS Forks</span>
+        </a>
+        <a href="/blog" class="nav-card">
+          <span class="nav-icon">📝</span>
+          <h3 class="nav-title">Blog</h3>
+          <p class="nav-desc">Tech articles & learnings</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </div>
-          <div class="about-stat">
-            <span class="stat-value">29</span>
-            <span class="stat-label">Recent PRs</span>
-          </div>
-          <div class="about-stat">
-            <span class="stat-value">2020</span>
-            <span class="stat-label">Since</span>
-          </div>
-        </div>
-        <div class="about-tags">
-          <a href="https://docs.laravel-spectrum.dev" target="_blank" class="about-tag about-tag-link">laravel-spectrum</a>
-          <a href="https://github.com/wadakatu/gitlyte" target="_blank" class="about-tag about-tag-link">gitlyte</a>
-          <span class="about-tag">#laravel</span>
-          <span class="about-tag">#php</span>
-          <span class="about-tag">#vue</span>
-          <span class="about-tag">#typescript</span>
-          <span class="about-tag">#oss</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tech Stack -->
-    <div class="card card-stack">
-      <h2 class="card-label">ls ./skills</h2>
-      <div class="stack-grid">
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 9.51a4.2 4.2 0 0 1-1.91-1.34A5.77 5.77 0 0 0 12 6a5.51 5.51 0 0 0-4.59 2.17A4.2 4.2 0 0 1 5.5 9.51 2.5 2.5 0 0 0 4 12a2.5 2.5 0 0 0 1.5 2.33v1.17A2.5 2.5 0 0 0 8 18h8a2.5 2.5 0 0 0 2.5-2.5v-1.17A2.5 2.5 0 0 0 20 12a2.5 2.5 0 0 0-1.5-2.49M9 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2m6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/></svg>
-          </span>
-          <span class="stack-name">PHP</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.642 5.43a.4.4 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934a.38.38 0 0 1-.188.326L9.93 23.949a.3.3 0 0 1-.066.027l-.024.01a.35.35 0 0 1-.192 0q-.016-.005-.03-.012-.031-.01-.062-.025L.533 18.755a.38.38 0 0 1-.189-.326V2.974q0-.05.014-.098c.003-.012.01-.02.014-.032a.4.4 0 0 1 .023-.058c.004-.013.015-.022.023-.033l.033-.045.037-.027q.02-.018.041-.034L4.89.044a.38.38 0 0 1 .377 0L9.63 2.647q.021.015.04.033.02.013.038.028l.032.045c.01.012.02.02.024.034q.015.027.024.058l.016.032a.3.3 0 0 1 .012.098v9.652l3.76-2.164V5.527q0-.05.013-.098c.003-.011.01-.02.013-.032a.3.3 0 0 1 .025-.058c.007-.013.018-.022.025-.033.01-.016.017-.031.03-.045q.02-.017.04-.028a.3.3 0 0 1 .04-.034l4.36-2.603a.38.38 0 0 1 .377 0l4.36 2.605q.022.014.042.032l.036.028c.016.014.024.03.035.045.008.012.019.02.024.033q.016.029.025.059.01.015.015.032zm-.74 5.032V6.179l-1.578.908-2.182 1.256v4.283zm-4.36 7.483v-4.292l-2.147 1.225-6.574 3.754v4.319zM1.093 3.624v14.588l8.273 4.761v-4.321l-4.322-2.445-.002-.003-.002-.002L5 16.17l-.035-.027-.001-.002q-.018-.018-.031-.04-.016-.016-.028-.036h-.002c-.009-.014-.013-.031-.02-.047q-.012-.018-.019-.038v-.001q-.008-.024-.01-.052-.005-.02-.006-.04V6.18zm3.8-2.836L1.137 2.973l3.755 2.183 3.755-2.183zm1.956 13.641 2.183-1.256V3.624l-1.926.906-2.181 1.257v9.63l1.924-1.109zm13.943-10.23-3.755 2.185 3.755 2.183 3.754-2.183zm-.377 5.017L18.233 7.96l-1.579-.908v4.283l2.182 1.256 1.579.908zm-8.65 9.654 5.514-3.148 2.756-1.572-3.748-2.18-4.323 2.489-3.947 2.27z"/></svg>
-          </span>
-          <span class="stack-name">Laravel</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 1.61h-9.94L12 5.16 9.94 1.61H0l12 20.78zM12 14.08 5.16 2.23h4.43L12 6.41l2.41-4.18h4.43z"/></svg>
-          </span>
-          <span class="stack-name">Vue.js</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75q.918 0 1.627.111a6.4 6.4 0 0 1 1.306.34v2.458a4 4 0 0 0-.643-.361 5 5 0 0 0-.717-.26 5.5 5.5 0 0 0-1.426-.2q-.45 0-.819.086a2.1 2.1 0 0 0-.623.242q-.254.156-.393.374a.9.9 0 0 0-.14.49q0 .294.156.529.156.234.443.444c.287.21.423.276.696.395q.409.18.909.352.684.254 1.242.541.558.285.954.665a2.6 2.6 0 0 1 .605.874q.208.495.208 1.15 0 .865-.34 1.469a2.9 2.9 0 0 1-.906 1.008q-.57.378-1.297.559a7 7 0 0 1-1.529.173q-.916 0-1.833-.17a9.3 9.3 0 0 1-1.639-.504v-2.594a6 6 0 0 0 .832.466q.455.217.89.352.435.136.852.19t.756.054a3.7 3.7 0 0 0 .84-.082q.346-.082.56-.218a.86.86 0 0 0 .312-.322.85.85 0 0 0 .099-.399.87.87 0 0 0-.18-.536 1.9 1.9 0 0 0-.512-.444 5 5 0 0 0-.781-.399 26 26 0 0 0-.988-.362 8 8 0 0 1-1.209-.535 4 4 0 0 1-.926-.69 2.9 2.9 0 0 1-.594-.897 3.1 3.1 0 0 1-.209-1.18q0-.829.357-1.427.357-.597.951-.99a4.4 4.4 0 0 1 1.37-.598 6.6 6.6 0 0 1 1.59-.19zm-9.426.121h3.007v10.385H9.062v-3.998H5.993v3.998H2.986V9.871h3.007v4.265h3.069z"/></svg>
-          </span>
-          <span class="stack-name">TypeScript</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 5v14c0 1.66-4.03 3-9 3s-9-1.34-9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
-          </span>
-          <span class="stack-name">MySQL</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.185.185 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51q-.508.001-1.01.087c-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.75.75 0 0 0-.75.748 11.4 11.4 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137a15.7 15.7 0 0 0 2.93-.266 12.3 12.3 0 0 0 3.823-1.389 10.5 10.5 0 0 0 2.61-2.136c1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg>
-          </span>
-          <span class="stack-name">Docker</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.19 2.38a9.344 9.344 0 0 0-9.234 6.893c.053-.02-.055.013 0 0-3.875 2.551-3.922 8.11-.247 10.941l.006-.007-.007.03a6.7 6.7 0 0 0 4.077 1.356h5.173l.03.03h5.192c6.687.053 9.376-8.605 3.835-12.35A9.365 9.365 0 0 0 12.19 2.38M8.073 19.39a5.37 5.37 0 0 1-4.453-2.871 5.15 5.15 0 0 1 .676-5.849c.267 1.79 1.323 3.36 2.78 4.085 1.807.973 4.377.903 5.618-.79.093 1.75-.482 3.33-1.676 4.38a5.2 5.2 0 0 1-2.945 1.045m7.612-1.175c-1.27 1.203-3.097 1.636-4.67.878l-.005-.002h-.022c-1.08-.507-1.908-1.548-2.167-2.772l-.002-.013a4.44 4.44 0 0 1 .296-2.903h-.002a3.42 3.42 0 0 1 1.703-1.483l.014-.004a3.27 3.27 0 0 1 2.92.395c1.177.718 1.978 2.158 1.631 3.555a6 6 0 0 0-.536 1.15 3.8 3.8 0 0 0-.191 1.658l.013.13a4.5 4.5 0 0 0 1.018 1.41zm4.308-4.084c-1.058.22-2.013.755-2.681 1.51a4.2 4.2 0 0 1-2.766 1.44q-.301.018-.595-.054h-.003l.002-.004a4 4 0 0 1-.57-.228c-2.294-1.177-2.336-4.38-.052-5.62l.006-.002v-.007c1.953-.925 4.476-.322 5.542 1.364.562.934.72 2.091.442 3.165q-.066.255-.178.493l-.148-.057z"/></svg>
-          </span>
-          <span class="stack-name">GCP</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.546 10.93 13.067.452a1.55 1.55 0 0 0-2.188 0L8.708 2.627l2.76 2.76a1.838 1.838 0 0 1 2.327 2.341l2.658 2.66a1.838 1.838 0 0 1 1.9 3.039 1.837 1.837 0 0 1-2.6 0 1.85 1.85 0 0 1-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348a1.85 1.85 0 0 1 0 2.6 1.844 1.844 0 0 1-2.609 0 1.834 1.834 0 0 1 0-2.598c.182-.18.387-.316.605-.406V8.835a1.834 1.834 0 0 1-.996-2.41L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477a1.545 1.545 0 0 0 2.186 0l10.43-10.43a1.544 1.544 0 0 0 0-2.187"/></svg>
-          </span>
-          <span class="stack-name">Git</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project: Resume -->
-    <div class="card card-project">
-      <a href="/resume">
-        <span class="project-icon">📄</span>
-        <h3 class="project-title">Resume</h3>
-        <p class="project-desc">Professional career history</p>
-        <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </a>
-    </div>
-
-    <!-- Project: UI Lab -->
-    <div class="card card-project">
-      <a href="/ui_lab">
-        <span class="project-icon">🧪</span>
-        <h3 class="project-title">UI Lab</h3>
-        <p class="project-desc">Frontend experiments</p>
-        <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </a>
-    </div>
-
-    <!-- Project: W3C Hackathon -->
-    <div class="card card-project">
-      <a href="/w3c-hackathon">
-        <span class="badge-winner">WINNER</span>
-        <span class="project-icon">🏆</span>
-        <h3 class="project-title">W3C Hackathon</h3>
-        <p class="project-desc">TPAC 2025 Winner</p>
-        <div class="project-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </div>
-      </a>
-    </div>
-
-    <!-- GitHub + Email Column -->
-    <div class="card-column">
-      <div class="card card-link card-github card-half">
-        <a href="https://github.com/wadakatu" target="_blank">
-          <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-          </svg>
-          <div>
-            <h3 class="link-title">GitHub</h3>
-            <p class="link-username">@wadakatu</p>
+        </a>
+        <a href="/about" class="nav-card">
+          <span class="nav-icon">👤</span>
+          <h3 class="nav-title">About</h3>
+          <p class="nav-desc">Career & skills</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </div>
         </a>
       </div>
-      <a href="mailto:wadakatu.dev@gmail.com" class="card card-contact-mini">
-        <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <rect x="2" y="4" width="20" height="16" rx="2"/>
-          <path d="M22 6L12 13L2 6"/>
-        </svg>
-        <span class="contact-label">wadakatu.dev@gmail.com</span>
-      </a>
-    </div>
+    </section>
 
-    <!-- Zenn + X Column -->
-    <div class="card-column">
-      <div class="card card-link card-zenn card-half">
-        <a href="https://zenn.dev/wadakatu" target="_blank">
-          <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.587.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.205-.001.381-.118.586-.353z"/>
-          </svg>
-          <div>
-            <h3 class="link-title">Zenn</h3>
-            <p class="link-username">Tech articles</p>
+    <!-- Featured Section -->
+    <section class="featured">
+      <h2 class="section-label">cat featured.txt</h2>
+      <div class="featured-grid">
+        <a href="/w3c-hackathon" class="featured-card">
+          <span class="featured-badge">WINNER</span>
+          <span class="featured-type">Project</span>
+          <h3 class="featured-title">W3C Hackathon - TPAC 2025</h3>
+          <p class="featured-desc">Award-winning accessibility project at W3C TPAC hackathon.</p>
+          <div class="featured-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        <a href="https://docs.laravel-spectrum.dev" target="_blank" class="featured-card">
+          <span class="featured-type">OSS</span>
+          <h3 class="featured-title">Laravel Spectrum</h3>
+          <p class="featured-desc">A powerful testing utility for Laravel applications.</p>
+          <div class="featured-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
           </div>
         </a>
       </div>
-      <a href="https://x.com/koyolympus" target="_blank" class="card card-contact-mini">
-        <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-        <span class="contact-label">@koyolympus</span>
-      </a>
-    </div>
+    </section>
 
-    <!-- Footer Card with Logo -->
-    <div class="card card-footer">
-      <div class="footer-logo">
-        <img src="./ogp.webp" alt="wadakatu logo" class="logo-image">
-        <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="logo-credit">Logo by Chisato Satoh</a>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="./ogp.webp" alt="wadakatu logo" class="footer-logo">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
       </div>
       <div class="footer-status">
         <div class="uplink">
@@ -1186,11 +731,11 @@
         </div>
         <span class="footer-time" id="jst-time">--:--:-- JST</span>
       </div>
-    </div>
+    </footer>
   </div>
 
   <script>
-    // Matrix Rain Effect (subtle)
+    // Matrix Rain Effect
     const canvas = document.getElementById('matrix-rain');
     const ctx = canvas.getContext('2d');
 
@@ -1239,90 +784,6 @@
     }
     updateJSTTime();
     setInterval(updateJSTTime, 1000);
-
-    // Card expand transition
-    const grid = document.querySelector('.bento-grid');
-    const overlay = document.querySelector('.transition-overlay');
-
-    // Reset state when navigating back (bfcache)
-    window.addEventListener('pageshow', function(event) {
-      if (event.persisted) {
-        overlay.classList.remove('active');
-        grid.classList.remove('transitioning');
-        document.querySelectorAll('.card.expanding').forEach(card => {
-          card.classList.remove('expanding', 'fullscreen');
-          card.style.cssText = '';
-        });
-      }
-    });
-
-    function expandAndNavigate(card, href, isExternal) {
-      if (isExternal) {
-        window.open(href, '_blank');
-        return;
-      }
-
-      // Get card position
-      const rect = card.getBoundingClientRect();
-
-      // Set initial position as fixed
-      card.style.top = rect.top + 'px';
-      card.style.left = rect.left + 'px';
-      card.style.width = rect.width + 'px';
-      card.style.height = rect.height + 'px';
-
-      // Add classes for animation
-      grid.classList.add('transitioning');
-      card.classList.add('expanding');
-
-      // Trigger fullscreen expansion
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          card.classList.add('fullscreen');
-        });
-      });
-
-      // Show overlay and navigate after animation
-      setTimeout(() => {
-        overlay.classList.add('active');
-      }, 300);
-
-      setTimeout(() => {
-        window.location.href = href;
-      }, 600);
-    }
-
-    // Make entire card clickable
-    const clickableCards = document.querySelectorAll('.card-project, .card-link');
-
-    clickableCards.forEach(card => {
-      card.addEventListener('click', function(e) {
-        const link = this.querySelector('a');
-        if (!link) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-
-        const href = link.getAttribute('href');
-        const isExternal = link.getAttribute('target') === '_blank';
-
-        expandAndNavigate(this, href, isExternal);
-      });
-
-      // Prevent double trigger from link click
-      const link = card.querySelector('a');
-      if (link) {
-        link.addEventListener('click', function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-
-          const href = this.getAttribute('href');
-          const isExternal = this.getAttribute('target') === '_blank';
-
-          expandAndNavigate(card, href, isExternal);
-        });
-      }
-    });
   </script>
 </body>
 </html>
