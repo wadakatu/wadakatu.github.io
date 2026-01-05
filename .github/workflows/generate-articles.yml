@@ -1,4 +1,4 @@
-name: Generate Articles JSON
+name: Generate Articles and Sitemap
 
 on:
   push:
@@ -26,16 +26,19 @@ jobs:
       - name: Generate articles.json
         run: node scripts/generate-articles.js
 
+      - name: Generate sitemap.xml
+        run: node scripts/generate-sitemap.js
+
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet data/articles.json || echo "changed=true" >> $GITHUB_OUTPUT
+          git diff --quiet data/articles.json sitemap.xml || echo "changed=true" >> $GITHUB_OUTPUT
 
       - name: Commit and push changes
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/articles.json
-          git commit -m "chore: auto-generate articles.json"
+          git add data/articles.json sitemap.xml
+          git commit -m "chore: auto-generate articles.json and sitemap.xml"
           git push
