@@ -7,13 +7,24 @@
   <meta name="description" content="Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
-  <!-- OGP (dynamically updated) -->
+  <!-- OGP (dynamically updated by JavaScript) -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://wadakatu.github.io/blog/article.html">
-  <meta property="og:title" content="Article | wadakatu">
-  <meta property="og:description" content="Tech article by wadakatu">
+  <meta property="og:url" id="og-url" content="https://wadakatu.github.io/blog/article.html">
+  <meta property="og:title" id="og-title" content="Article | wadakatu">
+  <meta property="og:description" id="og-description" content="Tech article by wadakatu">
   <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
   <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:title" id="twitter-title" content="Article | wadakatu">
+  <meta name="twitter:description" id="twitter-description" content="Tech article by wadakatu">
+  <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" id="canonical-url" href="https://wadakatu.github.io/blog/article.html">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
@@ -637,14 +648,35 @@
       return stripped;
     }
 
+    function updateMetaTags(metadata) {
+      const articleUrl = `https://wadakatu.github.io/blog/article.html?slug=${metadata.slug}`;
+      const description = `${metadata.title} - Tech article by wadakatu`;
+
+      // Update page meta tags
+      document.querySelector('meta[name="description"]').setAttribute('content', description);
+
+      // Update OGP tags
+      document.getElementById('og-url').setAttribute('content', articleUrl);
+      document.getElementById('og-title').setAttribute('content', `${metadata.title} | wadakatu`);
+      document.getElementById('og-description').setAttribute('content', description);
+
+      // Update Twitter Card tags
+      document.getElementById('twitter-title').setAttribute('content', `${metadata.title} | wadakatu`);
+      document.getElementById('twitter-description').setAttribute('content', description);
+
+      // Update canonical URL
+      document.getElementById('canonical-url').setAttribute('href', articleUrl);
+    }
+
     function renderArticle(metadata, content) {
       const main = document.getElementById('article-main');
       const category = getCategory(metadata);
       const date = formatDate(metadata.published_at);
       const zennUrl = `https://zenn.dev/wadakatu/articles/${metadata.slug}`;
 
-      // Update page title
+      // Update page title and meta tags
       document.title = `${metadata.title} | wadakatu`;
+      updateMetaTags(metadata);
 
       // Configure marked
       marked.setOptions({

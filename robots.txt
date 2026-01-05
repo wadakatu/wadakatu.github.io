@@ -1,0 +1,7 @@
+# robots.txt for wadakatu.github.io
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://wadakatu.github.io/sitemap.xml
