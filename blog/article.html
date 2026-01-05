@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading... | wadakatu</title>
+  <meta name="description" content="Tech article by wadakatu">
+  <meta name="author" content="wadakatu">
+
+  <!-- OGP (dynamically updated) -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://wadakatu.github.io/blog/article.html">
+  <meta property="og:title" content="Article | wadakatu">
+  <meta property="og:description" content="Tech article by wadakatu">
+  <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:site_name" content="wadakatu">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="../ogp.webp">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+  <link rel="stylesheet" href="../styles/common.css">
+  <style>
+    /* ===== ARTICLE PAGE STYLES ===== */
+
+    body {
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+    }
+
+    .article-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== ARTICLE HEADER ===== */
+    .article-header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .article-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--matrix), transparent);
+      box-shadow: var(--glow);
+    }
+
+    .article-emoji {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      display: block;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.3));
+    }
+
+    .article-title {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--bg);
+      background: var(--matrix);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .article-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-topics {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .topic-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--matrix-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .topic-tag:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+    }
+
+    /* ===== ZENN LINK BAR ===== */
+    .zenn-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(0, 255, 65, 0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .zenn-bar-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .zenn-bar-text .terminal-prefix {
+      color: var(--matrix);
+      margin-right: 0.5rem;
+    }
+
+    .zenn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--matrix-dark);
+      border: 1px solid var(--matrix-dim);
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .zenn-link:hover {
+      background: var(--matrix);
+      color: var(--bg);
+      box-shadow: var(--glow-strong);
+      transform: translateY(-2px);
+    }
+
+    .zenn-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== ARTICLE CONTENT ===== */
+    .article-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Markdown Body Styles */
+    .markdown-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    /* Headings */
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2::before {
+      content: '## ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.25rem;
+    }
+
+    .markdown-body h3::before {
+      content: '### ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.5;
+      font-size: 0.85em;
+    }
+
+    .markdown-body h4 {
+      font-size: 1.1rem;
+    }
+
+    /* Paragraphs */
+    .markdown-body p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    .markdown-body a {
+      color: var(--matrix);
+      text-decoration: none;
+      border-bottom: 1px solid var(--matrix-dark);
+      transition: all 0.2s ease;
+    }
+
+    .markdown-body a:hover {
+      color: #4dff7c;
+      border-bottom-color: var(--matrix);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+
+    /* Lists */
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-body ul li::marker {
+      color: var(--matrix);
+    }
+
+    .markdown-body ol li::marker {
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Code - Inline */
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      color: var(--matrix);
+    }
+
+    /* Code - Block */
+    .markdown-body pre {
+      margin: 1.5rem 0 2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .markdown-body pre::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--matrix), var(--matrix-dim), var(--matrix));
+      opacity: 0.6;
+    }
+
+    .markdown-body pre code {
+      display: block;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      background: #1a1b26;
+      border: none;
+      overflow-x: auto;
+      color: #c0caf5;
+    }
+
+    /* Code block filename */
+    .code-block-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: #15161e;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Blockquote */
+    .markdown-body blockquote {
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      border-left: 3px solid var(--matrix);
+      background: linear-gradient(90deg, rgba(0, 255, 65, 0.05), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-body blockquote p {
+      margin-bottom: 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* Images */
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+
+    /* Horizontal Rule */
+    .markdown-body hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--matrix-dark), var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* Tables */
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: var(--card);
+      font-weight: 600;
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .markdown-body tr:hover td {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    /* Strong & Emphasis */
+    .markdown-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .markdown-body em {
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ===== ARTICLE FOOTER ===== */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      box-shadow: var(--glow);
+    }
+
+    .nav-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== LOADING STATE ===== */
+    .loading-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--matrix);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    /* ===== ERROR STATE ===== */
+    .error-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .error-icon {
+      font-size: 4rem;
+    }
+
+    .error-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      color: #ff4444;
+    }
+
+    .error-message {
+      font-size: 1rem;
+      color: var(--text-dim);
+      max-width: 400px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 1.5rem 0 2rem;
+      }
+
+      .article-emoji {
+        font-size: 3rem;
+      }
+
+      .article-title {
+        font-size: 1.35rem;
+      }
+
+      .zenn-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .markdown-body {
+        font-size: 1rem;
+      }
+
+      .markdown-body pre code {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+
+      .article-footer-nav {
+        flex-direction: column;
+      }
+
+      .nav-button {
+        justify-content: center;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .article-header,
+    .zenn-bar,
+    .article-content,
+    .article-footer {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease-out forwards;
+    }
+
+    .article-header { animation-delay: 0.1s; }
+    .zenn-bar { animation-delay: 0.2s; }
+    .article-content { animation-delay: 0.3s; }
+    .article-footer { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <canvas id="matrix-rain"></canvas>
+
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="article-main">
+      <!-- Loading State -->
+      <div class="loading-state" id="loading-state">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading article<span class="cursor"></span></p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="../ogp.webp" alt="wadakatu logo" class="footer-logo">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Marked.js for Markdown parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+  <!-- Highlight.js for syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <script src="../scripts/common.js"></script>
+  <script>
+    // ===== ARTICLE PAGE LOGIC =====
+
+    const categoryMap = {
+      tech: 'Tech',
+      idea: 'Life'
+    };
+
+    function getCategory(article) {
+      if (article.category) return article.category;
+      return categoryMap[article.type] || 'Other';
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    function getSlugFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('slug');
+    }
+
+    async function loadArticleMetadata(slug) {
+      const response = await fetch('/data/articles.json');
+      if (!response.ok) throw new Error('Failed to load articles');
+      const articles = await response.json();
+      return articles.find(a => a.slug === slug);
+    }
+
+    async function loadArticleContent(slug) {
+      const response = await fetch(`/articles/${slug}.md`);
+      if (!response.ok) throw new Error('Article not found');
+      const content = await response.text();
+
+      // Remove frontmatter
+      const stripped = content.replace(/^---[\s\S]*?---\n*/, '');
+      return stripped;
+    }
+
+    function renderArticle(metadata, content) {
+      const main = document.getElementById('article-main');
+      const category = getCategory(metadata);
+      const date = formatDate(metadata.published_at);
+      const zennUrl = `https://zenn.dev/wadakatu/articles/${metadata.slug}`;
+
+      // Update page title
+      document.title = `${metadata.title} | wadakatu`;
+
+      // Configure marked
+      marked.setOptions({
+        highlight: function(code, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+          }
+          return hljs.highlightAuto(code).value;
+        },
+        breaks: true,
+        gfm: true
+      });
+
+      // Parse markdown
+      const htmlContent = marked.parse(content);
+
+      main.innerHTML = `
+        <header class="article-header">
+          <span class="article-emoji">${metadata.emoji}</span>
+          <h1 class="article-title">${metadata.title}</h1>
+          <div class="article-meta">
+            <span class="article-category">${category}</span>
+            <span class="article-date">${date}</span>
+          </div>
+          <div class="article-topics">
+            ${metadata.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
+          </div>
+        </header>
+
+        <div class="zenn-bar">
+          <span class="zenn-bar-text">
+            <span class="terminal-prefix">$</span>
+            This article is also available on Zenn
+          </span>
+          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+            </svg>
+            Read on Zenn
+          </a>
+        </div>
+
+        <article class="article-content">
+          <div class="markdown-body">
+            ${htmlContent}
+          </div>
+        </article>
+
+        <footer class="article-footer">
+          <nav class="article-footer-nav">
+            <a href="/blog" class="nav-button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              Back to Blog
+            </a>
+            <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              Open in Zenn
+            </a>
+          </nav>
+        </footer>
+      `;
+
+      // Re-apply syntax highlighting to any code blocks
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    }
+
+    function showError(message) {
+      const main = document.getElementById('article-main');
+      main.innerHTML = `
+        <div class="error-state">
+          <span class="error-icon">💀</span>
+          <h2 class="error-title">Error 404</h2>
+          <p class="error-message">${message}</p>
+          <a href="/blog" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+        </div>
+      `;
+    }
+
+    async function initArticle() {
+      const slug = getSlugFromURL();
+
+      if (!slug) {
+        showError('No article specified. Please select an article from the blog.');
+        return;
+      }
+
+      try {
+        const [metadata, content] = await Promise.all([
+          loadArticleMetadata(slug),
+          loadArticleContent(slug)
+        ]);
+
+        if (!metadata) {
+          showError(`Article "${slug}" not found.`);
+          return;
+        }
+
+        renderArticle(metadata, content);
+      } catch (error) {
+        console.error('Error loading article:', error);
+        showError('Failed to load article. Please try again later.');
+      }
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initArticle);
+  </script>
+</body>
+</html>
