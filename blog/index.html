@@ -18,6 +18,9 @@
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
 
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
@@ -386,5 +389,12 @@
 
   <script src="../scripts/common.js"></script>
   <script src="../scripts/blog.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+  </script>
 </body>
 </html>
