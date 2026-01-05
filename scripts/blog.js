@@ -45,10 +45,10 @@ function createArticleCard(article) {
   const category = getCategory(article);
   const date = formatDate(article.published_at);
   const topics = article.topics.slice(0, 3).map(t => `#${t}`).join(' ');
-  const zennUrl = `https://zenn.dev/wadakatu/articles/${article.slug}`;
+  const articleUrl = `/blog/article.html?slug=${article.slug}`;
 
   return `
-    <a href="${zennUrl}" target="_blank" class="article-card">
+    <a href="${articleUrl}" class="article-card">
       <span class="article-emoji">${article.emoji}</span>
       <div class="article-content">
         <h3 class="article-title">${article.title}</h3>
