@@ -509,12 +509,8 @@
       }
     })();
 
-    // Check connection and auto-reload
-    if (navigator.onLine) {
-      // If we're back online, try to go to the originally requested page
-      location.reload();
-    }
-
+    // Auto-reload only when connection is restored (not on page load)
+    // This prevents infinite reload loops when the page is served from cache
     window.addEventListener('online', () => {
       location.reload();
     });
