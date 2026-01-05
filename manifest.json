@@ -1,0 +1,20 @@
+{
+  "name": "wadakatu Portfolio",
+  "short_name": "wadakatu",
+  "description": "Backend Developer portfolio - Laravel, TypeScript, and web development",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0a0a0a",
+  "background_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/ogp.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["portfolio", "developer", "technology"],
+  "lang": "en"
+}

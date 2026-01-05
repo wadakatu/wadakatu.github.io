@@ -29,6 +29,9 @@
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
 
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
   <!-- Preconnect to external resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -799,6 +802,19 @@
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initArticle);
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
+    }
   </script>
 </body>
 </html>
