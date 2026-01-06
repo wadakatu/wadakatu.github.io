@@ -27,6 +27,82 @@
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="./ogp.webp">
 
+  <!-- Structured Data (JSON-LD) for AI & Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "@id": "https://wadakatu.github.io/#person",
+      "name": "wadakatu",
+      "alternateName": "koyolympus",
+      "jobTitle": "Backend Developer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Studio Inc."
+      },
+      "description": "Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem. Creator of laravel-spectrum & gitlyte.",
+      "url": "https://wadakatu.github.io/",
+      "image": "https://wadakatu.github.io/ogp.webp",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Osaka",
+        "addressCountry": "JP"
+      },
+      "sameAs": [
+        "https://github.com/wadakatu",
+        "https://zenn.dev/wadakatu",
+        "https://x.com/koyolympus"
+      ],
+      "knowsAbout": [
+        "PHP",
+        "Laravel",
+        "Backend Development",
+        "Open Source Software"
+      ]
+    },
+    "dateCreated": "2024-01-01",
+    "dateModified": "2025-01-06"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured Projects",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "SoftwareSourceCode",
+          "name": "W3C Hackathon - TPAC 2025",
+          "description": "Dashboard built with vibe-coding, guided by web-standards. Winner project.",
+          "url": "https://github.com/wadakatu/w3c-hackathon",
+          "author": {
+            "@id": "https://wadakatu.github.io/#person"
+          }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "SoftwareSourceCode",
+          "name": "Laravel Spectrum",
+          "description": "Zero-annotation API documentation generator for Laravel.",
+          "url": "https://docs.laravel-spectrum.dev",
+          "author": {
+            "@id": "https://wadakatu.github.io/#person"
+          },
+          "programmingLanguage": "PHP"
+        }
+      }
+    ]
+  }
+  </script>
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
 
@@ -55,6 +131,54 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+
+    /* Focus Indicators - WCAG 2.2 Focus Appearance */
+    :focus {
+      outline: none;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--matrix);
+      outline-offset: 3px;
+      box-shadow: var(--glow);
+    }
+
+    /* Screen Reader Only - Visually hidden but accessible */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     body {
@@ -198,6 +322,14 @@
       transform: translateY(-2px);
     }
 
+    .social-link:focus-visible {
+      border-color: var(--matrix);
+      color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      box-shadow: var(--glow);
+    }
+
     .social-link svg {
       width: 18px;
       height: 18px;
@@ -263,7 +395,15 @@
       box-shadow: var(--glow-strong);
     }
 
-    .nav-card:hover::before {
+    .nav-card:focus-visible {
+      border-color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 3px;
+      box-shadow: var(--glow-strong);
+    }
+
+    .nav-card:hover::before,
+    .nav-card:focus-visible::before {
       opacity: 1;
     }
 
@@ -361,7 +501,15 @@
       box-shadow: var(--glow);
     }
 
-    .featured-card:hover::before {
+    .featured-card:focus-visible {
+      border-color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 3px;
+      box-shadow: var(--glow);
+    }
+
+    .featured-card:hover::before,
+    .featured-card:focus-visible::before {
       opacity: 1;
     }
 
@@ -614,10 +762,13 @@
   </style>
 </head>
 <body>
+  <!-- Skip Link for Keyboard Navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- Matrix Rain Background -->
   <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-  <div class="container">
+  <main id="main-content" class="container">
     <!-- Hero Section -->
     <header class="hero">
       <p class="hero-greeting">Hello, World!<span class="cursor"></span></p>
@@ -628,17 +779,17 @@
           <span>📍</span> Osaka, Japan
         </span>
         <nav class="social-links" aria-label="Social links">
-          <a href="https://github.com/wadakatu" target="_blank" class="social-link" aria-label="GitHub">
+          <a href="https://github.com/wadakatu" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
             </svg>
           </a>
-          <a href="https://zenn.dev/wadakatu" target="_blank" class="social-link" aria-label="Zenn">
+          <a href="https://zenn.dev/wadakatu" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Zenn">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.587.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.205-.001.381-.118.586-.353z"/>
             </svg>
           </a>
-          <a href="https://x.com/koyolympus" target="_blank" class="social-link" aria-label="X (Twitter)">
+          <a href="https://x.com/koyolympus" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X (Twitter)">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
             </svg>
@@ -654,9 +805,9 @@
     </header>
 
     <!-- Navigation Hub -->
-    <section class="nav-hub">
-      <h2 class="section-label">ls ./</h2>
-      <div class="nav-grid">
+    <section class="nav-hub" aria-labelledby="nav-heading">
+      <h2 id="nav-heading" class="section-label"><span aria-hidden="true">$ </span>ls ./<span class="sr-only"> - Site Navigation</span></h2>
+      <nav class="nav-grid" aria-label="Main navigation">
         <a href="/projects" class="nav-card">
           <span class="nav-icon">🚀</span>
           <h3 class="nav-title">Projects</h3>
@@ -687,14 +838,14 @@
             </svg>
           </div>
         </a>
-      </div>
+      </nav>
     </section>
 
     <!-- Featured Section -->
-    <section class="featured">
-      <h2 class="section-label">cat featured.txt</h2>
+    <section class="featured" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="section-label"><span aria-hidden="true">$ </span>cat featured.txt<span class="sr-only"> - Featured Projects</span></h2>
       <div class="featured-grid">
-        <a href="https://github.com/wadakatu/w3c-hackathon" target="_blank" class="featured-card">
+        <a href="https://github.com/wadakatu/w3c-hackathon" target="_blank" rel="noopener noreferrer" class="featured-card">
           <span class="featured-badge">WINNER</span>
           <span class="featured-type">Project</span>
           <h3 class="featured-title">W3C Hackathon - TPAC 2025</h3>
@@ -705,7 +856,7 @@
             </svg>
           </div>
         </a>
-        <a href="https://docs.laravel-spectrum.dev" target="_blank" class="featured-card">
+        <a href="https://docs.laravel-spectrum.dev" target="_blank" rel="noopener noreferrer" class="featured-card">
           <span class="featured-type">OSS</span>
           <h3 class="featured-title">Laravel Spectrum</h3>
           <p class="featured-desc">Zero-annotation API documentation generator for Laravel.</p>
@@ -724,7 +875,7 @@
         <img src="./ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
         <div class="footer-info">
           <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" rel="noopener noreferrer" class="footer-credit">Logo by Chisato Satoh</a>
         </div>
       </div>
       <div class="footer-status">
@@ -735,7 +886,7 @@
         <span class="footer-time" id="jst-time">--:--:-- JST</span>
       </div>
     </footer>
-  </div>
+  </main>
 
   <script>
     // Matrix Rain Effect
