@@ -2,122 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://wadakatu.github.io/</loc>
-    <lastmod>2026-01-05</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2025-01-06</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://wadakatu.github.io/about/</loc>
-    <lastmod>2026-01-05</lastmod>
+    <loc>https://wadakatu.github.io/projects</loc>
+    <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wadakatu.github.io/projects/</loc>
-    <lastmod>2026-01-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://wadakatu.github.io/blog</loc>
+    <lastmod>2025-01-06</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://wadakatu.github.io/blog/</loc>
-    <lastmod>2026-01-05</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=da5be52d57e9a1</loc>
-    <lastmod>2025-12-10</lastmod>
+    <loc>https://wadakatu.github.io/about</loc>
+    <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=c438613853e766</loc>
-    <lastmod>2025-08-12</lastmod>
+    <loc>https://wadakatu.github.io/llms.txt</loc>
+    <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=431afa748fbed1</loc>
-    <lastmod>2025-07-31</lastmod>
+    <loc>https://wadakatu.github.io/llms-full.txt</loc>
+    <lastmod>2025-01-06</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=2b6012f10b777d</loc>
-    <lastmod>2025-04-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=ce0260ada646f4</loc>
-    <lastmod>2025-02-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=ad3ddb6ff13abe</loc>
-    <lastmod>2024-12-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=f3948e577a3b65</loc>
-    <lastmod>2024-04-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=01a6f8c9376ff1</loc>
-    <lastmod>2024-04-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=46d7b3e367d930</loc>
-    <lastmod>2024-01-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=e78c7f39dab62f</loc>
-    <lastmod>2023-08-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=d261ae9bcb4d6b</loc>
-    <lastmod>2023-07-31</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=33b761aeb80772</loc>
-    <lastmod>2023-07-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=0b4b923b3c1edc</loc>
-    <lastmod>2023-03-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=afc2c86306ca88</loc>
-    <lastmod>2023-01-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=8b5deda18d7967</loc>
-    <lastmod>2023-01-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://wadakatu.github.io/blog/article.html?slug=3828103014143e</loc>
-    <lastmod>2023-01-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.5</priority>
   </url>
 </urlset>

@@ -3,5 +3,9 @@
 User-agent: *
 Allow: /
 
-# Sitemap
+# Sitemap location
 Sitemap: https://wadakatu.github.io/sitemap.xml
+
+# AI crawlers - welcome to use llms.txt
+# See: https://wadakatu.github.io/llms.txt
+# Full content: https://wadakatu.github.io/llms-full.txt
