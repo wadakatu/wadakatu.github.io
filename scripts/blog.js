@@ -82,14 +82,21 @@ function renderArticles(articles, container) {
 }
 
 // Update active tab
-function updateActiveTab(tabs, activeCategory) {
+function updateActiveTab(tabs, activeCategory, panel) {
+  let activeTab = null;
   tabs.forEach(tab => {
-    if (tab.dataset.category === activeCategory) {
-      tab.classList.add('active');
-    } else {
-      tab.classList.remove('active');
+    const isActive = tab.dataset.category === activeCategory;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    tab.tabIndex = isActive ? 0 : -1;
+    if (isActive) {
+      activeTab = tab;
     }
   });
+
+  if (panel && activeTab) {
+    panel.setAttribute('aria-labelledby', activeTab.id);
+  }
 }
 
 // Update article count
@@ -102,8 +109,9 @@ function updateArticleCount(count) {
 
 // Initialize blog functionality
 async function initBlog() {
-  const container = document.getElementById('articles-container');
+  const container = document.getElementById('articles-panel');
   const tabs = document.querySelectorAll('.category-tab');
+  const tabList = Array.from(tabs);
 
   if (!container) return;
 
@@ -114,15 +122,48 @@ async function initBlog() {
   // Initial render
   renderArticles(articles, container);
   updateArticleCount(articles.length);
+  updateActiveTab(tabs, currentCategory, container);
 
   // Setup tab click handlers
+  function activateTab(tab) {
+    if (!tab) return;
+    currentCategory = tab.dataset.category;
+    const filtered = filterByCategory(articles, currentCategory);
+    renderArticles(filtered, container);
+    updateActiveTab(tabs, currentCategory, container);
+    updateArticleCount(filtered.length);
+  }
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      currentCategory = tab.dataset.category;
-      const filtered = filterByCategory(articles, currentCategory);
-      renderArticles(filtered, container);
-      updateActiveTab(tabs, currentCategory);
-      updateArticleCount(filtered.length);
+      activateTab(tab);
+    });
+
+    tab.addEventListener('keydown', (event) => {
+      const { key } = event;
+      const currentIndex = tabList.indexOf(tab);
+      let nextIndex = currentIndex;
+
+      if (key === 'ArrowRight') {
+        nextIndex = (currentIndex + 1) % tabList.length;
+      } else if (key === 'ArrowLeft') {
+        nextIndex = (currentIndex - 1 + tabList.length) % tabList.length;
+      } else if (key === 'Home') {
+        nextIndex = 0;
+      } else if (key === 'End') {
+        nextIndex = tabList.length - 1;
+      } else if (key === 'Enter' || key === ' ') {
+        event.preventDefault();
+        activateTab(tab);
+        return;
+      } else {
+        return;
+      }
+
+      event.preventDefault();
+      const nextTab = tabList[nextIndex];
+      nextTab.focus();
+      activateTab(nextTab);
     });
   });
 }

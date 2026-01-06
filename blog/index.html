@@ -339,7 +339,7 @@
       <!-- Stats Header -->
       <div class="blog-stats">
         <div class="stats-info">
-          <span class="stats-count" id="article-count">-- articles</span>
+          <span class="stats-count" id="article-count" role="status" aria-live="polite" aria-atomic="true">-- articles</span>
           <span class="stats-label">Published on Zenn</span>
         </div>
         <a href="https://zenn.dev/wadakatu" target="_blank" class="zenn-badge">
@@ -356,15 +356,15 @@
           <h2 class="section-title">ls ./categories</h2>
           <div class="section-line"></div>
         </div>
-        <div class="category-tabs">
-          <button class="category-tab active" data-category="All">All</button>
-          <button class="category-tab" data-category="Tech">Tech</button>
-          <button class="category-tab" data-category="Life">Life</button>
+        <div class="category-tabs" role="tablist" aria-label="Article categories" aria-orientation="horizontal">
+          <button class="category-tab active" id="tab-all" role="tab" data-category="All" aria-selected="true" aria-controls="articles-panel" tabindex="0">All</button>
+          <button class="category-tab" id="tab-tech" role="tab" data-category="Tech" aria-selected="false" aria-controls="articles-panel" tabindex="-1">Tech</button>
+          <button class="category-tab" id="tab-life" role="tab" data-category="Life" aria-selected="false" aria-controls="articles-panel" tabindex="-1">Life</button>
         </div>
       </section>
 
       <!-- Articles List -->
-      <section class="articles-list" id="articles-container">
+      <section class="articles-list" id="articles-panel" role="tabpanel" aria-labelledby="tab-all">
         <div class="loading">Loading articles</div>
       </section>
     </main>

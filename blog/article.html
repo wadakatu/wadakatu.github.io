@@ -203,6 +203,64 @@
       padding: 2rem 0;
     }
 
+    /* ===== TABLE OF CONTENTS ===== */
+    .toc {
+      max-width: 720px;
+      margin: 0 auto 2rem;
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .toc-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--matrix);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toc-title::before {
+      content: '$';
+      opacity: 0.6;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toc-item {
+      font-size: 0.9rem;
+    }
+
+    .toc-item.toc-level-h3 {
+      padding-left: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .toc-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .toc-link:hover {
+      color: var(--matrix);
+      border-bottom-color: var(--matrix-dark);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+    }
+
     /* Markdown Body Styles */
     .markdown-body {
       font-size: 1.05rem;
@@ -252,6 +310,12 @@
 
     .markdown-body h4 {
       font-size: 1.1rem;
+    }
+
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      scroll-margin-top: 120px;
     }
 
     /* Paragraphs */
@@ -531,6 +595,10 @@
         text-align: center;
       }
 
+      .toc {
+        padding: 1.25rem;
+      }
+
       .markdown-body {
         font-size: 1rem;
       }
@@ -674,6 +742,45 @@
       document.getElementById('canonical-url').setAttribute('href', articleUrl);
     }
 
+    function slugifyHeading(text) {
+      return text
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+    }
+
+    function buildToc(container) {
+      const headings = container.querySelectorAll('h2, h3');
+      const items = [];
+      const slugCounts = {};
+
+      headings.forEach((heading, index) => {
+        const text = heading.textContent.trim();
+        let slug = slugifyHeading(text);
+        if (!slug) {
+          slug = `section-${index + 1}`;
+        }
+
+        if (slugCounts[slug]) {
+          slugCounts[slug] += 1;
+          slug = `${slug}-${slugCounts[slug]}`;
+        } else {
+          slugCounts[slug] = 1;
+        }
+
+        heading.id = slug;
+        items.push({
+          id: slug,
+          text,
+          level: heading.tagName.toLowerCase()
+        });
+      });
+
+      return items;
+    }
+
     function renderArticle(metadata, content) {
       const main = document.getElementById('article-main');
       const category = getCategory(metadata);
@@ -696,11 +803,15 @@
         gfm: true
       });
 
-      // Parse markdown
-      const htmlContent = marked.parse(content);
+      // Parse markdown and build TOC
+      const parsedContent = marked.parse(content);
+      const temp = document.createElement('div');
+      temp.innerHTML = parsedContent;
+      const tocItems = buildToc(temp);
+      const htmlContent = temp.innerHTML;
 
       main.innerHTML = `
-        <header class="article-header">
+        <header class="article-header" id="article-top">
           <span class="article-emoji">${metadata.emoji}</span>
           <h1 class="article-title">${metadata.title}</h1>
           <div class="article-meta">
@@ -725,6 +836,19 @@
           </a>
         </div>
 
+        ${tocItems.length ? `
+        <nav class="toc" aria-labelledby="toc-title">
+          <div class="toc-title" id="toc-title">Contents</div>
+          <ol class="toc-list">
+            ${tocItems.map(item => `
+            <li class="toc-item toc-level-${item.level}">
+              <a href="#${item.id}" class="toc-link">${item.text}</a>
+            </li>
+            `).join('')}
+          </ol>
+        </nav>
+        ` : ''}
+
         <article class="article-content">
           <div class="markdown-body">
             ${htmlContent}
@@ -738,6 +862,13 @@
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
               Back to Blog
+            </a>
+            <a href="#article-top" class="nav-button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 19V5"/>
+                <path d="M5 12l7-7 7 7"/>
+              </svg>
+              Back to Top
             </a>
             <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
