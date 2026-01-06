@@ -1,0 +1,50 @@
+# wadakatu - Backend Developer Portfolio
+
+> Personal portfolio website for wadakatu, a backend developer based in Osaka, Japan. Currently working at Studio Inc. building no-code website builders. Active open source contributor to the Laravel ecosystem.
+
+This is a static portfolio site showcasing my work, projects, and professional background as a backend developer specializing in PHP and Laravel.
+
+## About Me
+
+I am a backend developer with expertise in:
+- PHP and Laravel framework
+- API development and documentation
+- Open source software contribution
+- No-code/low-code platform development
+
+Currently employed at Studio Inc. where I build no-code website builder tools.
+
+Location: Osaka, Japan
+
+## Featured Projects
+
+- [Laravel Spectrum](https://docs.laravel-spectrum.dev): Zero-annotation API documentation generator for Laravel. Automatically generates OpenAPI documentation from your Laravel application without requiring annotations.
+- [W3C Hackathon TPAC 2025](https://github.com/wadakatu/w3c-hackathon): Award-winning dashboard project built with vibe-coding methodology, guided by web standards. Winner at W3C TPAC 2025 hackathon.
+
+## Social Links
+
+- [GitHub](https://github.com/wadakatu): Open source contributions and personal projects
+- [Zenn](https://zenn.dev/wadakatu): Technical articles and blog posts (Japanese)
+- [X/Twitter](https://x.com/koyolympus): Professional updates and tech discussions
+
+## Site Structure
+
+- [Homepage](https://wadakatu.github.io/): Main portfolio page with navigation hub
+- [Projects](https://wadakatu.github.io/projects): OSS contributions and personal works
+- [Blog](https://wadakatu.github.io/blog): Technical articles and learnings
+- [About](https://wadakatu.github.io/about): Career history and skills
+
+## Technical Stack
+
+This portfolio site is built with:
+- Pure HTML, CSS, and JavaScript (no frameworks)
+- Matrix-inspired dark theme design
+- Responsive bento grid layout
+- Full accessibility support (WCAG 2.2 compliant)
+- Structured data (JSON-LD) for SEO and AI readability
+
+## Contact
+
+- Email: wadakatu.dev@gmail.com
+- GitHub: @wadakatu
+- X/Twitter: @koyolympus
