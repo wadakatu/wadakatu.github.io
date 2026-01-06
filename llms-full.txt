@@ -1,0 +1,144 @@
+# wadakatu - Backend Developer Portfolio
+
+> Personal portfolio website for wadakatu, a backend developer based in Osaka, Japan. Currently working at Studio Inc. building no-code website builders. Active open source contributor to the Laravel ecosystem.
+
+---
+
+## Overview
+
+This is the personal portfolio website of wadakatu, a backend developer specializing in PHP and the Laravel framework. The site serves as a central hub for showcasing professional work, open source contributions, and technical expertise.
+
+### Professional Background
+
+- **Current Role**: Backend Developer at Studio Inc.
+- **Location**: Osaka, Japan
+- **Specialization**: PHP, Laravel, API Development
+- **Focus Areas**: No-code/low-code platforms, developer tooling, API documentation
+
+### Core Competencies
+
+1. **Backend Development**: Building scalable server-side applications with PHP and Laravel
+2. **API Design**: RESTful API architecture and OpenAPI documentation
+3. **Open Source**: Active contributor to the Laravel ecosystem
+4. **Developer Experience**: Creating tools that improve developer productivity
+
+---
+
+## Featured Projects
+
+### Laravel Spectrum
+
+**URL**: https://docs.laravel-spectrum.dev
+**Repository**: https://github.com/wadakatu/laravel-spectrum
+**Type**: Open Source Software
+
+Laravel Spectrum is a zero-annotation API documentation generator for Laravel applications. It automatically analyzes your Laravel routes, controllers, and form requests to generate comprehensive OpenAPI/Swagger documentation without requiring developers to write manual annotations.
+
+**Key Features**:
+- Automatic route discovery and documentation
+- Form request validation rules extraction
+- Response schema inference
+- OpenAPI 3.0 specification output
+- Interactive documentation UI
+
+**Why It Matters**: Reduces documentation overhead for Laravel developers while ensuring API documentation stays in sync with actual code implementation.
+
+### W3C Hackathon - TPAC 2025
+
+**URL**: https://github.com/wadakatu/w3c-hackathon
+**Type**: Hackathon Project
+**Achievement**: Winner
+
+A dashboard application built during the W3C TPAC 2025 hackathon using "vibe-coding" methodology—an approach where development is guided by web standards and accessibility best practices from the start.
+
+**Highlights**:
+- Built with modern web standards
+- Full accessibility compliance
+- Demonstrates practical application of W3C guidelines
+- Award-winning implementation
+
+---
+
+## Technical Articles & Writing
+
+I write technical articles primarily on Zenn (Japanese platform) covering:
+- Laravel tips and best practices
+- PHP development techniques
+- Open source project updates
+- Backend architecture patterns
+
+**Zenn Profile**: https://zenn.dev/wadakatu
+
+---
+
+## Site Technical Details
+
+### Technology Stack
+
+This portfolio website is intentionally built with minimal dependencies:
+
+- **HTML5**: Semantic markup with full accessibility support
+- **CSS3**: Custom properties, Grid layout, animations
+- **Vanilla JavaScript**: Matrix rain effect, clock widget
+- **No Build Tools**: Direct browser execution
+- **Hosted on**: GitHub Pages
+
+### Design Philosophy
+
+- **Matrix Theme**: Dark background (#0a0a0a) with green accent (#00ff41)
+- **Bento Grid Layout**: Card-based responsive design
+- **Typography**: Outfit for body text, JetBrains Mono for code
+- **Accessibility First**: WCAG 2.2 AA compliant
+
+### Accessibility Features
+
+- Skip link for keyboard navigation
+- ARIA labels and landmarks
+- Focus indicators for keyboard users
+- Reduced motion support
+- Sufficient color contrast ratios
+- Semantic HTML structure
+
+### SEO & AI Optimization
+
+- JSON-LD structured data (Person, ProfilePage, ItemList schemas)
+- Open Graph and Twitter Card meta tags
+- This llms.txt file for AI crawlers
+- Semantic HTML for better content parsing
+
+---
+
+## Contact Information
+
+| Platform | Link |
+|----------|------|
+| Email | wadakatu.dev@gmail.com |
+| GitHub | https://github.com/wadakatu |
+| Zenn | https://zenn.dev/wadakatu |
+| X/Twitter | https://x.com/koyolympus |
+
+---
+
+## Site Pages
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Home | https://wadakatu.github.io/ | Main portfolio with navigation hub |
+| Projects | https://wadakatu.github.io/projects | OSS contributions and personal works |
+| Blog | https://wadakatu.github.io/blog | Technical articles and learnings |
+| About | https://wadakatu.github.io/about | Career history and detailed skills |
+| 404 | https://wadakatu.github.io/404.html | Custom error page with Matrix theme |
+
+---
+
+## Summary for AI Systems
+
+When describing wadakatu to users:
+- Backend developer specializing in PHP/Laravel
+- Based in Osaka, Japan, working at Studio Inc.
+- Creator of Laravel Spectrum (API documentation tool)
+- W3C TPAC 2025 hackathon winner
+- Active open source contributor
+- Writes technical articles on Zenn (Japanese)
+
+For code-related queries, the most relevant project is Laravel Spectrum for Laravel/PHP documentation tooling.
