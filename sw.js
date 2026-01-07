@@ -2,7 +2,7 @@
 // https://developer.chrome.com/docs/workbox
 
 // Cache version - increment this when assets change
-const CACHE_VERSION = '1';
+const CACHE_VERSION = '2';
 
 // Try to load Workbox with error handling
 let workboxLoaded = false;
@@ -40,6 +40,11 @@ if (workboxLoaded) {
     { url: '/scripts/common.js', revision: CACHE_VERSION },
     { url: '/scripts/blog.js', revision: CACHE_VERSION },
     { url: '/ogp.webp', revision: CACHE_VERSION },
+    { url: '/images/favicon.ico', revision: CACHE_VERSION },
+    { url: '/images/favicon-32.png', revision: CACHE_VERSION },
+    { url: '/images/logo-48.webp', revision: CACHE_VERSION },
+    { url: '/images/icon-192.png', revision: CACHE_VERSION },
+    { url: '/images/icon-512.png', revision: CACHE_VERSION },
     { url: '/offline.html', revision: CACHE_VERSION },
   ]);
 
