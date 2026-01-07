@@ -13,6 +13,7 @@
   <meta property="og:title" id="og-title" content="Article | wadakatu">
   <meta property="og:description" id="og-description" content="Tech article by wadakatu">
   <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
   <meta property="og:locale" content="ja_JP">
 
@@ -22,6 +23,7 @@
   <meta name="twitter:title" id="twitter-title" content="Article | wadakatu">
   <meta name="twitter:description" id="twitter-description" content="Tech article by wadakatu">
   <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
   <link rel="canonical" id="canonical-url" href="https://wadakatu.github.io/blog/article.html">
@@ -692,9 +694,34 @@
     .zenn-bar { animation-delay: 0.2s; }
     .article-content { animation-delay: 0.3s; }
     .article-footer { animation-delay: 0.4s; }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
   <div class="container">
@@ -707,7 +734,7 @@
       </a>
     </header>
 
-    <main class="article-container" id="article-main">
+    <main class="article-container" id="main-content">
       <!-- Loading State -->
       <div class="loading-state" id="loading-state">
         <div class="loading-spinner"></div>
@@ -1027,5 +1054,24 @@
         });
     }
   </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+      #loading-state { display: none; }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required to load this article.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
 </body>
 </html>
