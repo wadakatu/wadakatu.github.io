@@ -341,6 +341,14 @@
       box-shadow: var(--glow);
     }
 
+    .cached-link:focus-visible {
+      border-color: var(--matrix);
+      color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      box-shadow: var(--glow);
+    }
+
     .cached-link:hover::before {
       transform: translateX(100%);
     }
@@ -503,7 +511,7 @@
     <!-- Cached Pages -->
     <section class="cached-section">
       <h2 class="cached-title">available cached pages</h2>
-      <nav class="cached-links">
+      <nav class="cached-links" aria-label="Cached pages">
         <a href="/" class="cached-link">~/home</a>
         <a href="/about/" class="cached-link">~/about</a>
         <a href="/projects/" class="cached-link">~/projects</a>

@@ -195,6 +195,14 @@
       color: var(--text);
     }
 
+    .category-tab:focus-visible {
+      border-color: var(--matrix);
+      color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      box-shadow: var(--glow);
+    }
+
     .category-tab.active {
       border-color: var(--matrix);
       color: var(--matrix);
@@ -238,6 +246,14 @@
 
     .article-card:hover {
       border-color: var(--matrix-dark);
+      transform: translateX(4px);
+    }
+
+    .article-card:focus-visible {
+      border-color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 3px;
+      box-shadow: var(--glow);
       transform: translateX(4px);
     }
 
