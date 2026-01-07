@@ -10,6 +10,7 @@ topics:
   - "sendgridnodejs"
 published: true
 published_at: "2023-07-31 23:55"
+updated_at: "2023-07-31 23:55"
 ---
 
 # 早速ですが、問題です。

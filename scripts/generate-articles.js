@@ -130,6 +130,13 @@ function parsePublishedAt(dateStr) {
 }
 
 /**
+ * Parse updated_at string to ISO format (same as published_at)
+ */
+function parseUpdatedAt(dateStr) {
+  return parsePublishedAt(dateStr);
+}
+
+/**
  * Get category name from article type
  */
 function getCategory(type) {
@@ -167,6 +174,61 @@ function escapeHtml(text) {
 }
 
 /**
+ * Generate BlogPosting JSON-LD for an article
+ */
+function generateBlogPostingJsonLd(article, articleUrl) {
+  const category = getCategory(article.type);
+  const keywords = article.topics.join(', ');
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${articleUrl}#article`,
+    "headline": article.title,
+    "description": `${article.title} - Tech article by wadakatu`,
+    "datePublished": article.published_at,
+    "dateModified": article.updated_at,
+    "author": { "@id": "https://www.wadakatu.dev/#person" },
+    "publisher": { "@id": "https://www.wadakatu.dev/#person" },
+    "image": `${BASE_URL}/ogp.webp`,
+    "url": articleUrl,
+    "mainEntityOfPage": { "@id": articleUrl },
+    "inLanguage": "ja",
+    "keywords": keywords,
+    "articleSection": category
+  };
+}
+
+/**
+ * Generate BreadcrumbList JSON-LD for an article
+ */
+function generateBreadcrumbListJsonLd(articleTitle, articleUrl) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": `${BASE_URL}/`
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": `${BASE_URL}/blog/`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": articleTitle
+      }
+    ]
+  };
+}
+
+/**
  * Configure marked with syntax highlighting
  */
 function configureMarked() {
@@ -199,6 +261,10 @@ function generateArticleHTML(article, markdownContent) {
   const description = escapeHtml(`${article.title} - Tech article by wadakatu`);
   const title = escapeHtml(article.title);
 
+  // Generate JSON-LD structured data
+  const blogPostingJsonLd = generateBlogPostingJsonLd(article, articleUrl);
+  const breadcrumbJsonLd = generateBreadcrumbListJsonLd(article.title, articleUrl);
+
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -228,6 +294,14 @@ function generateArticleHTML(article, markdownContent) {
 
   <!-- Canonical URL -->
   <link rel="canonical" href="${articleUrl}">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+${JSON.stringify(blogPostingJsonLd, null, 2)}
+  </script>
+  <script type="application/ld+json">
+${JSON.stringify(breadcrumbJsonLd, null, 2)}
+  </script>
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/ogp.webp">
@@ -1034,6 +1108,7 @@ function main() {
       type: frontmatter.type || 'tech',
       topics: frontmatter.topics || [],
       published_at: parsePublishedAt(frontmatter.published_at) || '',
+      updated_at: parseUpdatedAt(frontmatter.updated_at) || parsePublishedAt(frontmatter.published_at) || '',
       reading_time: readingTime
     };
 
