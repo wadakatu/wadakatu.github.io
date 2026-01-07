@@ -654,19 +654,7 @@
   </div>
 
   <script src="../scripts/common.js"></script>
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('SW registration failed:', error);
-        });
-    }
-  </script>
+  <script src="/scripts/sw-register.js"></script>
 
   <noscript>
     <style>
