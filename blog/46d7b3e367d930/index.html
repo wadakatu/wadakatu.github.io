@@ -1,219 +1,18 @@
-#!/usr/bin/env node
-
-/**
- * Generate articles.json and static HTML pages from markdown
- *
- * Usage: node scripts/generate-articles.js
- */
-
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const hljs = require('highlight.js');
-
-const ARTICLES_DIR = path.join(__dirname, '..', 'articles');
-const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'articles.json');
-const BLOG_DIR = path.join(__dirname, '..', 'blog');
-const BASE_URL = 'https://www.wadakatu.dev';
-
-/**
- * Parse YAML frontmatter from markdown content
- */
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const yaml = match[1];
-  const data = {};
-
-  // Parse simple YAML (key: value and arrays)
-  let currentKey = null;
-  let inArray = false;
-  const arrayValues = [];
-
-  for (const line of yaml.split('\n')) {
-    // Array item
-    if (line.match(/^\s+-\s+/)) {
-      const value = line.replace(/^\s+-\s+/, '').replace(/^["']|["']$/g, '');
-      arrayValues.push(value);
-      continue;
-    }
-
-    // Save previous array if exists
-    if (inArray && currentKey) {
-      data[currentKey] = [...arrayValues];
-      arrayValues.length = 0;
-      inArray = false;
-    }
-
-    // Key: value pair
-    const kvMatch = line.match(/^(\w+):\s*(.*)$/);
-    if (kvMatch) {
-      const [, key, value] = kvMatch;
-      currentKey = key;
-
-      if (value === '') {
-        // Start of array
-        inArray = true;
-      } else {
-        // Parse value
-        let parsed = value.replace(/^["']|["']$/g, '');
-
-        // Handle escaped characters in title
-        if (key === 'title') {
-          parsed = parsed.replace(/\\(.)/g, '$1');
-        }
-
-        // Boolean
-        if (parsed === 'true') parsed = true;
-        else if (parsed === 'false') parsed = false;
-
-        data[key] = parsed;
-      }
-    }
-  }
-
-  // Save last array if exists
-  if (inArray && currentKey) {
-    data[currentKey] = [...arrayValues];
-  }
-
-  return data;
-}
-
-/**
- * Calculate reading time from markdown content
- * Japanese: ~500 characters/minute
- */
-function calculateReadingTime(content) {
-  // Remove frontmatter
-  const body = content.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Remove code blocks (they're usually skimmed, not read word-by-word)
-  const withoutCode = body.replace(/```[\s\S]*?```/g, '');
-
-  // Remove inline code
-  const withoutInlineCode = withoutCode.replace(/`[^`]+`/g, '');
-
-  // Remove URLs
-  const withoutUrls = withoutInlineCode.replace(/https?:\/\/[^\s)]+/g, '');
-
-  // Remove markdown syntax
-  const plainText = withoutUrls
-    .replace(/[#*_\[\]()!]/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
-
-  // Count characters (Japanese text)
-  const charCount = plainText.length;
-
-  // Calculate reading time (500 chars/min for Japanese)
-  const minutes = Math.ceil(charCount / 500);
-
-  // Minimum 1 minute
-  return Math.max(1, minutes);
-}
-
-/**
- * Parse published_at string to ISO format
- */
-function parsePublishedAt(dateStr) {
-  if (!dateStr) return null;
-
-  // Handle "2025-08-12 09:47" format
-  const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})$/);
-  if (match) {
-    return `${match[1]}T${match[2]}:00`;
-  }
-
-  return dateStr;
-}
-
-/**
- * Get category name from article type
- */
-function getCategory(type) {
-  const categoryMap = {
-    tech: 'Tech',
-    idea: 'Life'
-  };
-  return categoryMap[type] || 'Other';
-}
-
-/**
- * Format date for display
- */
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-/**
- * Escape HTML special characters
- */
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-/**
- * Configure marked with syntax highlighting
- */
-function configureMarked() {
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return hljs.highlightAuto(code).value;
-    },
-    breaks: true,
-    gfm: true
-  });
-}
-
-/**
- * Generate static HTML for an article
- */
-function generateArticleHTML(article, markdownContent) {
-  // Remove frontmatter
-  const content = markdownContent.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Parse markdown to HTML
-  const htmlContent = marked.parse(content);
-
-  const category = getCategory(article.type);
-  const date = formatDate(article.published_at);
-  const zennUrl = `https://zenn.dev/wadakatu/articles/${article.slug}`;
-  const articleUrl = `${BASE_URL}/blog/${article.slug}/`;
-  const description = escapeHtml(`${article.title} - Tech article by wadakatu`);
-  const title = escapeHtml(article.title);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} | wadakatu</title>
-  <meta name="description" content="${description}">
+  <title>[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 | wadakatu</title>
+  <meta name="description" content="[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 - Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
   <!-- OGP -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="${articleUrl}">
-  <meta property="og:title" content="${title} | wadakatu">
-  <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${BASE_URL}/ogp.webp">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/46d7b3e367d930/">
+  <meta property="og:title" content="[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 | wadakatu">
+  <meta property="og:description" content="[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
   <meta property="og:locale" content="ja_JP">
@@ -221,13 +20,13 @@ function generateArticleHTML(article, markdownContent) {
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
-  <meta name="twitter:title" content="${title} | wadakatu">
-  <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${BASE_URL}/ogp.webp">
+  <meta name="twitter:title" content="[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 | wadakatu">
+  <meta name="twitter:description" content="[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法 - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="${articleUrl}">
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/46d7b3e367d930/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/ogp.webp">
@@ -246,141 +45,7 @@ function generateArticleHTML(article, markdownContent) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
-  ${getArticleStyles()}
-</head>
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="page-header">
-      <a href="/blog/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        cd ../blog
-      </a>
-    </header>
-
-    <main class="article-container" id="main-content">
-      <header class="article-header">
-        <span class="article-emoji">${article.emoji}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <div class="article-meta">
-          <span class="article-category">${category}</span>
-          <span class="article-date">${date}</span>
-          <span class="article-reading-time">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            ${article.reading_time} min read
-          </span>
-        </div>
-        <div class="article-topics">
-          ${article.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
-        </div>
-      </header>
-
-      <div class="zenn-bar">
-        <span class="zenn-bar-text">
-          <span class="terminal-prefix">$</span>
-          This article is also available on Zenn
-        </span>
-        <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-          </svg>
-          Read on Zenn
-        </a>
-      </div>
-
-      <article class="article-content">
-        <div class="markdown-body">
-          ${htmlContent}
-        </div>
-      </article>
-
-      <footer class="article-footer">
-        <nav class="article-footer-nav">
-          <a href="/blog/" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Blog
-          </a>
-          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            Open in Zenn
-          </a>
-        </nav>
-      </footer>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-brand">
-        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
-        <div class="footer-info">
-          <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
-        </div>
-      </div>
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
-  </div>
-
-  <script src="/scripts/common.js"></script>
-  ${getCodeCopyScript()}
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('SW registration failed:', error);
-        });
-    }
-  </script>
-
-  <noscript>
     <style>
-      #matrix-rain { display: none; }
-      body::before { display: none; }
-      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
-        opacity: 1;
-        transform: none;
-      }
-    </style>
-    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
-      <p>JavaScript is required for interactive features.</p>
-      <p style="margin-top: 1rem;">
-        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
-        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
-      </p>
-    </div>
-  </noscript>
-</body>
-</html>`;
-}
-
-/**
- * Get article page styles (extracted from article.html)
- */
-function getArticleStyles() {
-  return `  <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
     body {
@@ -985,14 +650,181 @@ function getArticleStyles() {
       outline: 2px solid var(--text);
       outline-offset: 2px;
     }
-  </style>`;
-}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-/**
- * Get code copy button script
- */
-function getCodeCopyScript() {
-  return `  <script>
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">🤕</span>
+        <h1 class="article-title">[Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2024年1月14日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            2 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#framer</span><span class="topic-tag">#react</span><span class="topic-tag">#framermotion</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/46d7b3e367d930" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>バージョン</h2>
+<pre><code>react: 18.2.0
+framer-motion: 10.18.0
+</code></pre>
+<h2>問題発生までの道のり</h2>
+<p><a href="https://www.framer.com/motion/">Framer motion</a>を使って、アニメーションありのヘッダーを作成していました。<br>スクロール量やスクロールの向きに応じて、表示・非表示が切り替わるようにしています。</p>
+<p>参考Youtube<br><a href="https://www.youtube.com/watch?v=qc2kQcicNNc">https://www.youtube.com/watch?v=qc2kQcicNNc</a></p>
+<p>::::details Header実装例</p>
+<pre><code class="language-js:">&#39;use client&#39;;
+import {motion, useMotionValueEvent, useScroll} from &#39;framer-motion&#39;
+import Navbar from &#39;@/ui/Navbar&#39;;
+
+export default funciton Header(){
+  const {scrollY} = useScroll();
+  const [hidden, setHidden] = useState(false);
+  
+  useMotionValueEvent(scrollY, &#39;change&#39;, (latest) =&gt; {
+    const previous = scrollY.getPrevious();
+    if(latest &gt; previous &amp;&amp; latest &gt; 120){
+      setHidden(true);
+    }else{
+      setHidden(false);
+    }
+  });
+  
+ return (
+   &lt;motion.header
+     className=&quot;fixed right-0 top-0 z-20 bg-white&quot;
+     variants={{
+       visible: {
+         y:0,
+       },
+       hidden: {y: &#39;-100%&#39;}
+     }}
+     animate={hidden ? &#39;hidden&#39; : &#39;visible&#39;}
+     transition={{duration: 0.35, ease: &#39;easeInOut&#39;}}
+   &gt;
+    &lt;Link href={&#39;/&#39;}&gt;
+      &lt;Image src=&quot;/img/icon.svg&quot;&gt;
+    &lt;/Link&gt;
+    &lt;Navbar /&gt;
+   &lt;/motion.header&gt;
+ );
+};
+</code></pre>
+<p>::::</p>
+<hr>
+<p>ヘッダーがSPサイズの場合はハンバーガーメニューを表示させていました。<br>ハンバーガーメニューをクリックすると<code>position:fixed</code>が指定されたナビゲーションメニューが画面全体に表示される仕様です。</p>
+<p>::::details Navbar実装例<br>参考: <a href="https://github.com/shaunchander/building-animated-navbars/blob/master/src/Navbar.jsx">https://github.com/shaunchander/building-animated-navbars/blob/master/src/Navbar.jsx</a><br>::::  </p>
+<p>ページに遷移して、何もスクロールしないでハンバーガーメニューをクリックすると綺麗にナビゲーションメニューが画面いっぱいに表示されます。<br>いい感じです。</p>
+<p>![](<a href="https://storage.googleapis.com/zenn-user-upload/e9ce54dfc097-20240114.png">https://storage.googleapis.com/zenn-user-upload/e9ce54dfc097-20240114.png</a> =200x)</p>
+<hr>
+<p>しかし、問題はヘッダーのアニメーションを動作させた後に起こりました。<br>アニメーション起動後に、ハンバーガーメニューをクリックすると何故か画面全体にナビゲーションメニューが表示されません。<br>その親要素であるヘッダーの要素全体に対して、<code>position:fixed</code>が効いてしまうようになりました。</p>
+<p>![](<a href="https://storage.googleapis.com/zenn-user-upload/35f7addc659a-20240114.png">https://storage.googleapis.com/zenn-user-upload/35f7addc659a-20240114.png</a> =200x)</p>
+<h2>原因</h2>
+<p>ナビゲーションメニューの親要素であるヘッダーのstyleタグに<code>transform</code>が存在していることです。</p>
+<p>:::message alert<br>アニメーションが動作すると、動的にtransformの値が<code>transform: translateY(0%)</code>　や <code>transform: translateZ(0%)</code>のように変わります。<br>この状態になると、問題の挙動が発生します。<br>:::</p>
+<p>:::message<br><code>transform:none</code>の場合は<strong>今回の問題を引き起こしません。</strong><br>:::</p>
+<h3>問題無しパターン</h3>
+<p><code>style=&quot;transform: none&quot;</code><br><code>position: fixed</code>が<strong>画面全体に対して適用される</strong></p>
+<p><img src="https://storage.googleapis.com/zenn-user-upload/755680aebc28-20240114.png" alt=""></p>
+<h3>問題発生パターン</h3>
+<p><code>style=&quot;transform: translateY(0%) translateZ(0%)&quot;</code><br><code>position: fixed</code>が<strong>親要素全体に対して適用される</strong></p>
+<p><img src="https://storage.googleapis.com/zenn-user-upload/219cf4ab3b96-20240114.png" alt=""></p>
+<h2>解決策</h2>
+<p><code>transitionEnd</code>を利用して、transformの値を上書きしてやりましょう。<br>今回問題になっているのは<code>motion.header</code>部分なのでそのvariants内に<code>transitionEnd</code>を追加しましょう。</p>
+<pre><code class="language-diff"> &lt;motion.header
+   variants={{
+     visible: {
+       y:0,
++      transitionEnd: {x:0, y:0} 
+     }
+   }}
+ &gt;
+ &lt;/motion.header&gt;
+</code></pre>
+<p>この記述をすることで、transformの値をアニメーション終了後に<code>transform: none</code>に上書きしています。<br>これで、framer motionのアニメーションが動いた後でも、画面全体に対して<code>position: fixed</code>を適用させることができました。</p>
+<p>この挙動については、Chrome側のバグらしいのでFramer motionは何も悪くないらしいです。<br>Chrome側で早めに修正されることを祈ります🙏</p>
+<h2>参考Issue</h2>
+<p><a href="https://github.com/framer/motion/issues/823#issuecomment-1276670313">https://github.com/framer/motion/issues/823#issuecomment-1276670313</a></p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/46d7b3e367d930" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
     // Initialize code copy buttons
     function initCodeCopyButtons() {
       const codeBlocks = document.querySelectorAll('.markdown-body pre');
@@ -1004,7 +836,7 @@ function getCodeCopyScript() {
         button.className = 'code-copy-btn';
         button.setAttribute('aria-label', 'Copy code to clipboard');
         button.setAttribute('title', 'Copy code');
-        button.innerHTML = \`
+        button.innerHTML = `
           <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1013,7 +845,7 @@ function getCodeCopyScript() {
             <polyline points="20 6 9 17 4 12"/>
           </svg>
           <span class="btn-label">Copy</span>
-        \`;
+        `;
 
         button.addEventListener('click', async () => {
           const code = pre.querySelector('code');
@@ -1062,91 +894,37 @@ function getCodeCopyScript() {
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
-  </script>`;
-}
+  </script>
 
-/**
- * Write static article page
- */
-function writeArticlePage(slug, html) {
-  const articleDir = path.join(BLOG_DIR, slug);
-  if (!fs.existsSync(articleDir)) {
-    fs.mkdirSync(articleDir, { recursive: true });
-  }
-  const outputPath = path.join(articleDir, 'index.html');
-  fs.writeFileSync(outputPath, html);
-  console.log(`  Generated: /blog/${slug}/index.html`);
-}
-
-/**
- * Main function
- */
-function main() {
-  console.log('Generating articles.json and static HTML pages...\n');
-
-  // Configure marked
-  configureMarked();
-
-  // Read all markdown files
-  const files = fs.readdirSync(ARTICLES_DIR)
-    .filter(f => f.endsWith('.md'));
-
-  const articles = [];
-
-  for (const file of files) {
-    const filePath = path.join(ARTICLES_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const frontmatter = parseFrontmatter(content);
-
-    if (!frontmatter) {
-      console.warn(`Warning: No frontmatter found in ${file}`);
-      continue;
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
     }
+  </script>
 
-    // Skip unpublished articles
-    if (frontmatter.published !== true) {
-      console.log(`Skipping unpublished: ${file}`);
-      continue;
-    }
-
-    const slug = file.replace('.md', '');
-    const readingTime = calculateReadingTime(content);
-
-    const article = {
-      slug,
-      title: frontmatter.title || '',
-      emoji: frontmatter.emoji || '',
-      type: frontmatter.type || 'tech',
-      topics: frontmatter.topics || [],
-      published_at: parsePublishedAt(frontmatter.published_at) || '',
-      reading_time: readingTime
-    };
-
-    articles.push(article);
-
-    // Generate static HTML for this article
-    const html = generateArticleHTML(article, content);
-    writeArticlePage(slug, html);
-  }
-
-  // Sort by published_at (newest first)
-  articles.sort((a, b) => {
-    if (!a.published_at) return 1;
-    if (!b.published_at) return -1;
-    return b.published_at.localeCompare(a.published_at);
-  });
-
-  // Ensure data directory exists
-  const dataDir = path.dirname(OUTPUT_FILE);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  // Write JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(articles, null, 2) + '\n');
-
-  console.log(`\n✓ Generated ${OUTPUT_FILE} with ${articles.length} articles`);
-  console.log(`✓ Generated ${articles.length} static HTML pages`);
-}
-
-main();
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

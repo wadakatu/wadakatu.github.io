@@ -1,219 +1,18 @@
-#!/usr/bin/env node
-
-/**
- * Generate articles.json and static HTML pages from markdown
- *
- * Usage: node scripts/generate-articles.js
- */
-
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const hljs = require('highlight.js');
-
-const ARTICLES_DIR = path.join(__dirname, '..', 'articles');
-const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'articles.json');
-const BLOG_DIR = path.join(__dirname, '..', 'blog');
-const BASE_URL = 'https://www.wadakatu.dev';
-
-/**
- * Parse YAML frontmatter from markdown content
- */
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const yaml = match[1];
-  const data = {};
-
-  // Parse simple YAML (key: value and arrays)
-  let currentKey = null;
-  let inArray = false;
-  const arrayValues = [];
-
-  for (const line of yaml.split('\n')) {
-    // Array item
-    if (line.match(/^\s+-\s+/)) {
-      const value = line.replace(/^\s+-\s+/, '').replace(/^["']|["']$/g, '');
-      arrayValues.push(value);
-      continue;
-    }
-
-    // Save previous array if exists
-    if (inArray && currentKey) {
-      data[currentKey] = [...arrayValues];
-      arrayValues.length = 0;
-      inArray = false;
-    }
-
-    // Key: value pair
-    const kvMatch = line.match(/^(\w+):\s*(.*)$/);
-    if (kvMatch) {
-      const [, key, value] = kvMatch;
-      currentKey = key;
-
-      if (value === '') {
-        // Start of array
-        inArray = true;
-      } else {
-        // Parse value
-        let parsed = value.replace(/^["']|["']$/g, '');
-
-        // Handle escaped characters in title
-        if (key === 'title') {
-          parsed = parsed.replace(/\\(.)/g, '$1');
-        }
-
-        // Boolean
-        if (parsed === 'true') parsed = true;
-        else if (parsed === 'false') parsed = false;
-
-        data[key] = parsed;
-      }
-    }
-  }
-
-  // Save last array if exists
-  if (inArray && currentKey) {
-    data[currentKey] = [...arrayValues];
-  }
-
-  return data;
-}
-
-/**
- * Calculate reading time from markdown content
- * Japanese: ~500 characters/minute
- */
-function calculateReadingTime(content) {
-  // Remove frontmatter
-  const body = content.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Remove code blocks (they're usually skimmed, not read word-by-word)
-  const withoutCode = body.replace(/```[\s\S]*?```/g, '');
-
-  // Remove inline code
-  const withoutInlineCode = withoutCode.replace(/`[^`]+`/g, '');
-
-  // Remove URLs
-  const withoutUrls = withoutInlineCode.replace(/https?:\/\/[^\s)]+/g, '');
-
-  // Remove markdown syntax
-  const plainText = withoutUrls
-    .replace(/[#*_\[\]()!]/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
-
-  // Count characters (Japanese text)
-  const charCount = plainText.length;
-
-  // Calculate reading time (500 chars/min for Japanese)
-  const minutes = Math.ceil(charCount / 500);
-
-  // Minimum 1 minute
-  return Math.max(1, minutes);
-}
-
-/**
- * Parse published_at string to ISO format
- */
-function parsePublishedAt(dateStr) {
-  if (!dateStr) return null;
-
-  // Handle "2025-08-12 09:47" format
-  const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})$/);
-  if (match) {
-    return `${match[1]}T${match[2]}:00`;
-  }
-
-  return dateStr;
-}
-
-/**
- * Get category name from article type
- */
-function getCategory(type) {
-  const categoryMap = {
-    tech: 'Tech',
-    idea: 'Life'
-  };
-  return categoryMap[type] || 'Other';
-}
-
-/**
- * Format date for display
- */
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-/**
- * Escape HTML special characters
- */
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-/**
- * Configure marked with syntax highlighting
- */
-function configureMarked() {
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return hljs.highlightAuto(code).value;
-    },
-    breaks: true,
-    gfm: true
-  });
-}
-
-/**
- * Generate static HTML for an article
- */
-function generateArticleHTML(article, markdownContent) {
-  // Remove frontmatter
-  const content = markdownContent.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Parse markdown to HTML
-  const htmlContent = marked.parse(content);
-
-  const category = getCategory(article.type);
-  const date = formatDate(article.published_at);
-  const zennUrl = `https://zenn.dev/wadakatu/articles/${article.slug}`;
-  const articleUrl = `${BASE_URL}/blog/${article.slug}/`;
-  const description = escapeHtml(`${article.title} - Tech article by wadakatu`);
-  const title = escapeHtml(article.title);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} | wadakatu</title>
-  <meta name="description" content="${description}">
+  <title>🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu</title>
+  <meta name="description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
   <!-- OGP -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="${articleUrl}">
-  <meta property="og:title" content="${title} | wadakatu">
-  <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${BASE_URL}/ogp.webp">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/431afa748fbed1/">
+  <meta property="og:title" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu">
+  <meta property="og:description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
   <meta property="og:locale" content="ja_JP">
@@ -221,13 +20,13 @@ function generateArticleHTML(article, markdownContent) {
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
-  <meta name="twitter:title" content="${title} | wadakatu">
-  <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${BASE_URL}/ogp.webp">
+  <meta name="twitter:title" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu">
+  <meta name="twitter:description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="${articleUrl}">
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/431afa748fbed1/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/ogp.webp">
@@ -246,141 +45,7 @@ function generateArticleHTML(article, markdownContent) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
-  ${getArticleStyles()}
-</head>
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="page-header">
-      <a href="/blog/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        cd ../blog
-      </a>
-    </header>
-
-    <main class="article-container" id="main-content">
-      <header class="article-header">
-        <span class="article-emoji">${article.emoji}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <div class="article-meta">
-          <span class="article-category">${category}</span>
-          <span class="article-date">${date}</span>
-          <span class="article-reading-time">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            ${article.reading_time} min read
-          </span>
-        </div>
-        <div class="article-topics">
-          ${article.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
-        </div>
-      </header>
-
-      <div class="zenn-bar">
-        <span class="zenn-bar-text">
-          <span class="terminal-prefix">$</span>
-          This article is also available on Zenn
-        </span>
-        <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-          </svg>
-          Read on Zenn
-        </a>
-      </div>
-
-      <article class="article-content">
-        <div class="markdown-body">
-          ${htmlContent}
-        </div>
-      </article>
-
-      <footer class="article-footer">
-        <nav class="article-footer-nav">
-          <a href="/blog/" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Blog
-          </a>
-          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            Open in Zenn
-          </a>
-        </nav>
-      </footer>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-brand">
-        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
-        <div class="footer-info">
-          <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
-        </div>
-      </div>
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
-  </div>
-
-  <script src="/scripts/common.js"></script>
-  ${getCodeCopyScript()}
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('SW registration failed:', error);
-        });
-    }
-  </script>
-
-  <noscript>
     <style>
-      #matrix-rain { display: none; }
-      body::before { display: none; }
-      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
-        opacity: 1;
-        transform: none;
-      }
-    </style>
-    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
-      <p>JavaScript is required for interactive features.</p>
-      <p style="margin-top: 1rem;">
-        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
-        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
-      </p>
-    </div>
-  </noscript>
-</body>
-</html>`;
-}
-
-/**
- * Get article page styles (extracted from article.html)
- */
-function getArticleStyles() {
-  return `  <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
     body {
@@ -985,14 +650,229 @@ function getArticleStyles() {
       outline: 2px solid var(--text);
       outline-offset: 2px;
     }
-  </style>`;
-}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-/**
- * Get code copy button script
- */
-function getCodeCopyScript() {
-  return `  <script>
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">👩‍💻</span>
+        <h1 class="article-title">🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...?</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2025年7月31日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            5 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#ai</span><span class="topic-tag">#mcp</span><span class="topic-tag">#claude</span><span class="topic-tag">#vibecoding</span><span class="topic-tag">#serena</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/431afa748fbed1" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>📖 はじめに - Claude Codeのパフォーマンス低下問題</h2>
+<p>最近、X(Twitter)でClaude Codeのパフォーマンスに関する以下のような投稿を多く見かけます。</p>
+<ul>
+<li>Claude Codeの応答精度が低下している</li>
+<li>Claude Codeの出力品質に不満がある</li>
+<li>最近のClaude Codeの動作が期待に沿わない</li>
+</ul>
+<p>GitHubでも以下のようなissueが立てられて、Claude Codeのバージョンダウンしようみたいな風潮があります。</p>
+<p><a href="https://github.com/anthropics/claude-code/issues/4487">https://github.com/anthropics/claude-code/issues/4487</a></p>
+<p>実際に使用していると、CLAUDE.mdに記載された指示の見落としや、プロジェクト構造の把握精度の低下を感じることがあります。<br>しかし、バージョンダウンすると最新機能の<code>/agents</code>や<code>plan mode</code>が使用できなくなるため、最新版を使いながらパフォーマンスを向上させる方法を模索していました。</p>
+<p><strong>そこで見つけたのが「Serena MCP」です。</strong></p>
+<h2>🎯 Serena MCPとは？</h2>
+<p>Semantic Retrieval &amp; Editing noetic agentの略で「Serena」です。<br>日本語訳すると「セマンティック検索・編集型の知的エージェント」みたいな感じです。<br>ライブラリの名前ってオシャレなの多いですよね〜</p>
+<p>Serenaは、プロジェクトのコンテキストを効率的に管理し、Claude Codeの理解力を向上させるMCP（Model Context Protocol）サーバーです。<br>プロジェクト構造をセマンティックに分析し、必要な情報を適切にClaude Codeに提供することで、より正確な出力を実現するそうです。</p>
+<p>Serena自体の詳しい説明についてはGitHubリポジトリのREADMEを参照してください</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md">https://github.com/oraios/serena/blob/main/README.md</a></p>
+<h2>🛠 Mac環境での環境構築</h2>
+<p>Serenaには複数のインストール方法があります。あなたの環境に合わせて選択してください。</p>
+<h3>📋 前提条件</h3>
+<ul>
+<li>macOS（Intel/Apple Silicon対応）</li>
+<li>Claude Code がインストール済み</li>
+<li>Homebrew がインストール済み</li>
+</ul>
+<h3>方法1: uvxを使った直接実行（推奨）</h3>
+<p>最も簡単な方法です。事前のインストールが不要で、常に最新版を使用できます。<br>自分もこの方法を使っています。手頃で良い感じです。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#using-uvx">https://github.com/oraios/serena/blob/main/README.md#using-uvx</a></p>
+<h4>Step 1: uvのインストール</h4>
+<pre><code class="language-bash"># Homebrewでuvをインストール
+brew install uv
+</code></pre>
+<h4>Step 2: Claude Codeへの登録</h4>
+<p>プロジェクトディレクトリで以下を実行：</p>
+<pre><code class="language-bash">claude mcp add serena -- uvx --from git+https://github.com/oraios/serena serena-mcp-server --context ide-assistant --project $(pwd)
+</code></pre>
+<h3>方法2: ローカルインストール</h3>
+<p>より細かい制御が必要な場合や、オフライン環境で使用する場合に適しています。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#local-installation">https://github.com/oraios/serena/blob/main/README.md#local-installation</a></p>
+<h4>Step 1: Serenaのクローンとインストール</h4>
+<pre><code class="language-bash"># 作業ディレクトリを作成
+mkdir -p ~/Developer/mcp &amp;&amp; cd ~/Developer/mcp
+
+# Serenaをクローン
+git clone https://github.com/oraios/serena
+cd serena
+
+# mcpサーバー起動
+uv run serena-mcp-server
+</code></pre>
+<h4>Step 2: Claude Codeへの登録</h4>
+<pre><code class="language-bash"># プロジェクトディレクトリで実行
+claude mcp add serena -- uv run --directory ~/Developer/mcp/serena serena-mcp-server --project $(pwd)
+</code></pre>
+<h3>方法3: Docker(⚠️)</h3>
+<p>隔離された環境で実行したい場合はDockerを使いましょう<br><strong>注意</strong>: Docker版はまだ本番Readyではなく、いくつかの制限があるそうです。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#using-docker-experimental">https://github.com/oraios/serena/blob/main/README.md#using-docker-experimental</a></p>
+<pre><code class="language-bash"># Dockerイメージを使用
+docker run --rm -i --network host \
+  -v ~/Projects:/workspaces/projects \
+  ghcr.io/oraios/serena:latest \
+  serena-mcp-server --transport stdio
+</code></pre>
+<h3>方法4: SSEモード（トラブルシューティング用）</h3>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#sse-mode">https://github.com/oraios/serena/blob/main/README.md#sse-mode</a></p>
+<p>標準のstdio通信で問題が発生する場合：</p>
+<pre><code class="language-bash"># SSEモードでサーバーを起動
+uv run --directory ~/Developer/mcp/serena serena-mcp-server --transport sse --port 9121
+
+# Claude Codeの設定でSSE接続を設定
+# http://localhost:9121/sse を指定
+```動
+uv run --directory ~/Developer/mcp/serena serena-mcp-server --transport sse --port 9121
+</code></pre>
+<h3>✅ 動作確認</h3>
+<pre><code class="language-bash"># MCPサーバーの状態確認
+claude mcp list
+
+# 出力例：
+# Available MCP servers:
+# - serena (connected) ✅
+</code></pre>
+<p>Serena MCPが起動すると、ブラウザで <code>http://localhost:24282/dashboard/index.html</code> が自動で開くはずです。</p>
+<h2>🎮 実際の使い方</h2>
+<h3>1️⃣ プロジェクトの初期化</h3>
+<p>新しいプロジェクトでSerenaを使い始める際：</p>
+<pre><code class="language-bash"># プロジェクトディレクトリで
+cd /path/to/your/project
+
+# Claude Codeを起動
+claude
+</code></pre>
+<hr>
+<p>Claude Code上で、<code>/mcp</code>を入力して、Serena MCPの起動状況を確認</p>
+<p>以下のような表示なればOK<br><img src="https://storage.googleapis.com/zenn-user-upload/e37bdeb4188d-20250731.png" alt=""></p>
+<hr>
+<p>Claude Codeのチャットで以下のコマンドを実行：</p>
+<pre><code>/mcp__serena__initial_instructions
+</code></pre>
+<p>または自然言語で：</p>
+<pre><code>read Serena&#39;s initial instructions
+</code></pre>
+<hr>
+<p>これにより、Serenaがプロジェクトをスキャンし、コードの構造を理解します。<br>このスキャンは１回走ると、.serenaディレクトリを新規作成します<br>そのディレクトリの中に、project構造などのmemoryをmd形式で複数作成してくれます。（CLAUDE.mdみたいな感じかなと思ってます）</p>
+<h2>🔧 設定のカスタマイズ</h2>
+<h3>グローバル設定</h3>
+<p><code>~/.serena/serena_config.yml</code> でグローバルな設定が可能：</p>
+<p><a href="https://github.com/oraios/serena/blob/main/src/serena/resources/serena_config.template.yml">https://github.com/oraios/serena/blob/main/src/serena/resources/serena_config.template.yml</a></p>
+<h3>プロジェクト固有の設定</h3>
+<p>プロジェクトディレクトリに <code>.serena/project.yml</code> を作成：</p>
+<p><a href="https://github.com/oraios/serena/blob/main/.serena/project.yml">https://github.com/oraios/serena/blob/main/.serena/project.yml</a></p>
+<h2>🚀 さらなる活用</h2>
+<h3>他のツールとの連携</h3>
+<p>SerenaはClaude Code以外にも様々なMCPクライアントと連携できるので、Claude Code以外に恩恵を得られるはずです。</p>
+<ul>
+<li><strong>IDE統合</strong>: VSCode, Cursor, IntelliJ</li>
+<li><strong>CLI ツール</strong>: Cline, Roo Code, Goose</li>
+<li><strong>その他</strong>: Windsurf, Agno</li>
+</ul>
+<h3>コミュニティとサポート</h3>
+<ul>
+<li><a href="https://github.com/oraios/serena">GitHub Repository</a></li>
+<li><a href="https://github.com/oraios/serena/blob/main/CHANGELOG.md">Changelog</a></li>
+<li><a href="https://github.com/oraios/serena/blob/main/ROADMAP.md">Roadmap</a></li>
+</ul>
+<h2>🎯 まとめ</h2>
+<p>Serenaを使ってまだ3日くらいですが、かなりClaude Codeの出力精度が上がっている気がして、実装中の不満が格段に減りました。（個人の感想です。）<br>AI系のツールって最初の数回使って期待値を下回ったらすぐ使わなくなって、次のツールに移るみたいなことが多いんですが、Serenaは期待値を上回る結果でこれからも使い続ける予定です！</p>
+<p>現状のClaude Codeに満足していない方、Serenaを導入してみませんか？<br>他にも良いツールあれば教えてください！</p>
+<p>Serenaに興味が出てきた方は、次はこの記事を読んでみるのおすすめです！<br>より実践的にSerenaを使う方法が書いてあり、勉強になりました！<br><a href="https://zenn.dev/sc30gsw/articles/ff81891959aaef">https://zenn.dev/sc30gsw/articles/ff81891959aaef</a></p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/431afa748fbed1" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
     // Initialize code copy buttons
     function initCodeCopyButtons() {
       const codeBlocks = document.querySelectorAll('.markdown-body pre');
@@ -1004,7 +884,7 @@ function getCodeCopyScript() {
         button.className = 'code-copy-btn';
         button.setAttribute('aria-label', 'Copy code to clipboard');
         button.setAttribute('title', 'Copy code');
-        button.innerHTML = \`
+        button.innerHTML = `
           <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1013,7 +893,7 @@ function getCodeCopyScript() {
             <polyline points="20 6 9 17 4 12"/>
           </svg>
           <span class="btn-label">Copy</span>
-        \`;
+        `;
 
         button.addEventListener('click', async () => {
           const code = pre.querySelector('code');
@@ -1062,91 +942,37 @@ function getCodeCopyScript() {
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
-  </script>`;
-}
+  </script>
 
-/**
- * Write static article page
- */
-function writeArticlePage(slug, html) {
-  const articleDir = path.join(BLOG_DIR, slug);
-  if (!fs.existsSync(articleDir)) {
-    fs.mkdirSync(articleDir, { recursive: true });
-  }
-  const outputPath = path.join(articleDir, 'index.html');
-  fs.writeFileSync(outputPath, html);
-  console.log(`  Generated: /blog/${slug}/index.html`);
-}
-
-/**
- * Main function
- */
-function main() {
-  console.log('Generating articles.json and static HTML pages...\n');
-
-  // Configure marked
-  configureMarked();
-
-  // Read all markdown files
-  const files = fs.readdirSync(ARTICLES_DIR)
-    .filter(f => f.endsWith('.md'));
-
-  const articles = [];
-
-  for (const file of files) {
-    const filePath = path.join(ARTICLES_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const frontmatter = parseFrontmatter(content);
-
-    if (!frontmatter) {
-      console.warn(`Warning: No frontmatter found in ${file}`);
-      continue;
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
     }
+  </script>
 
-    // Skip unpublished articles
-    if (frontmatter.published !== true) {
-      console.log(`Skipping unpublished: ${file}`);
-      continue;
-    }
-
-    const slug = file.replace('.md', '');
-    const readingTime = calculateReadingTime(content);
-
-    const article = {
-      slug,
-      title: frontmatter.title || '',
-      emoji: frontmatter.emoji || '',
-      type: frontmatter.type || 'tech',
-      topics: frontmatter.topics || [],
-      published_at: parsePublishedAt(frontmatter.published_at) || '',
-      reading_time: readingTime
-    };
-
-    articles.push(article);
-
-    // Generate static HTML for this article
-    const html = generateArticleHTML(article, content);
-    writeArticlePage(slug, html);
-  }
-
-  // Sort by published_at (newest first)
-  articles.sort((a, b) => {
-    if (!a.published_at) return 1;
-    if (!b.published_at) return -1;
-    return b.published_at.localeCompare(a.published_at);
-  });
-
-  // Ensure data directory exists
-  const dataDir = path.dirname(OUTPUT_FILE);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  // Write JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(articles, null, 2) + '\n');
-
-  console.log(`\n✓ Generated ${OUTPUT_FILE} with ${articles.length} articles`);
-  console.log(`✓ Generated ${articles.length} static HTML pages`);
-}
-
-main();
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

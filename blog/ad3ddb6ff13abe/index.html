@@ -1,219 +1,18 @@
-#!/usr/bin/env node
-
-/**
- * Generate articles.json and static HTML pages from markdown
- *
- * Usage: node scripts/generate-articles.js
- */
-
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const hljs = require('highlight.js');
-
-const ARTICLES_DIR = path.join(__dirname, '..', 'articles');
-const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'articles.json');
-const BLOG_DIR = path.join(__dirname, '..', 'blog');
-const BASE_URL = 'https://www.wadakatu.dev';
-
-/**
- * Parse YAML frontmatter from markdown content
- */
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const yaml = match[1];
-  const data = {};
-
-  // Parse simple YAML (key: value and arrays)
-  let currentKey = null;
-  let inArray = false;
-  const arrayValues = [];
-
-  for (const line of yaml.split('\n')) {
-    // Array item
-    if (line.match(/^\s+-\s+/)) {
-      const value = line.replace(/^\s+-\s+/, '').replace(/^["']|["']$/g, '');
-      arrayValues.push(value);
-      continue;
-    }
-
-    // Save previous array if exists
-    if (inArray && currentKey) {
-      data[currentKey] = [...arrayValues];
-      arrayValues.length = 0;
-      inArray = false;
-    }
-
-    // Key: value pair
-    const kvMatch = line.match(/^(\w+):\s*(.*)$/);
-    if (kvMatch) {
-      const [, key, value] = kvMatch;
-      currentKey = key;
-
-      if (value === '') {
-        // Start of array
-        inArray = true;
-      } else {
-        // Parse value
-        let parsed = value.replace(/^["']|["']$/g, '');
-
-        // Handle escaped characters in title
-        if (key === 'title') {
-          parsed = parsed.replace(/\\(.)/g, '$1');
-        }
-
-        // Boolean
-        if (parsed === 'true') parsed = true;
-        else if (parsed === 'false') parsed = false;
-
-        data[key] = parsed;
-      }
-    }
-  }
-
-  // Save last array if exists
-  if (inArray && currentKey) {
-    data[currentKey] = [...arrayValues];
-  }
-
-  return data;
-}
-
-/**
- * Calculate reading time from markdown content
- * Japanese: ~500 characters/minute
- */
-function calculateReadingTime(content) {
-  // Remove frontmatter
-  const body = content.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Remove code blocks (they're usually skimmed, not read word-by-word)
-  const withoutCode = body.replace(/```[\s\S]*?```/g, '');
-
-  // Remove inline code
-  const withoutInlineCode = withoutCode.replace(/`[^`]+`/g, '');
-
-  // Remove URLs
-  const withoutUrls = withoutInlineCode.replace(/https?:\/\/[^\s)]+/g, '');
-
-  // Remove markdown syntax
-  const plainText = withoutUrls
-    .replace(/[#*_\[\]()!]/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
-
-  // Count characters (Japanese text)
-  const charCount = plainText.length;
-
-  // Calculate reading time (500 chars/min for Japanese)
-  const minutes = Math.ceil(charCount / 500);
-
-  // Minimum 1 minute
-  return Math.max(1, minutes);
-}
-
-/**
- * Parse published_at string to ISO format
- */
-function parsePublishedAt(dateStr) {
-  if (!dateStr) return null;
-
-  // Handle "2025-08-12 09:47" format
-  const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})$/);
-  if (match) {
-    return `${match[1]}T${match[2]}:00`;
-  }
-
-  return dateStr;
-}
-
-/**
- * Get category name from article type
- */
-function getCategory(type) {
-  const categoryMap = {
-    tech: 'Tech',
-    idea: 'Life'
-  };
-  return categoryMap[type] || 'Other';
-}
-
-/**
- * Format date for display
- */
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-/**
- * Escape HTML special characters
- */
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-/**
- * Configure marked with syntax highlighting
- */
-function configureMarked() {
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return hljs.highlightAuto(code).value;
-    },
-    breaks: true,
-    gfm: true
-  });
-}
-
-/**
- * Generate static HTML for an article
- */
-function generateArticleHTML(article, markdownContent) {
-  // Remove frontmatter
-  const content = markdownContent.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Parse markdown to HTML
-  const htmlContent = marked.parse(content);
-
-  const category = getCategory(article.type);
-  const date = formatDate(article.published_at);
-  const zennUrl = `https://zenn.dev/wadakatu/articles/${article.slug}`;
-  const articleUrl = `${BASE_URL}/blog/${article.slug}/`;
-  const description = escapeHtml(`${article.title} - Tech article by wadakatu`);
-  const title = escapeHtml(article.title);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} | wadakatu</title>
-  <meta name="description" content="${description}">
+  <title>pecl install grpcで大量のwarningメッセージ出た時の対処法 | wadakatu</title>
+  <meta name="description" content="pecl install grpcで大量のwarningメッセージ出た時の対処法 - Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
   <!-- OGP -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="${articleUrl}">
-  <meta property="og:title" content="${title} | wadakatu">
-  <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${BASE_URL}/ogp.webp">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/ad3ddb6ff13abe/">
+  <meta property="og:title" content="pecl install grpcで大量のwarningメッセージ出た時の対処法 | wadakatu">
+  <meta property="og:description" content="pecl install grpcで大量のwarningメッセージ出た時の対処法 - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
   <meta property="og:locale" content="ja_JP">
@@ -221,13 +20,13 @@ function generateArticleHTML(article, markdownContent) {
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
-  <meta name="twitter:title" content="${title} | wadakatu">
-  <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${BASE_URL}/ogp.webp">
+  <meta name="twitter:title" content="pecl install grpcで大量のwarningメッセージ出た時の対処法 | wadakatu">
+  <meta name="twitter:description" content="pecl install grpcで大量のwarningメッセージ出た時の対処法 - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="${articleUrl}">
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/ad3ddb6ff13abe/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/ogp.webp">
@@ -246,141 +45,7 @@ function generateArticleHTML(article, markdownContent) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
-  ${getArticleStyles()}
-</head>
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="page-header">
-      <a href="/blog/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        cd ../blog
-      </a>
-    </header>
-
-    <main class="article-container" id="main-content">
-      <header class="article-header">
-        <span class="article-emoji">${article.emoji}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <div class="article-meta">
-          <span class="article-category">${category}</span>
-          <span class="article-date">${date}</span>
-          <span class="article-reading-time">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            ${article.reading_time} min read
-          </span>
-        </div>
-        <div class="article-topics">
-          ${article.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
-        </div>
-      </header>
-
-      <div class="zenn-bar">
-        <span class="zenn-bar-text">
-          <span class="terminal-prefix">$</span>
-          This article is also available on Zenn
-        </span>
-        <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-          </svg>
-          Read on Zenn
-        </a>
-      </div>
-
-      <article class="article-content">
-        <div class="markdown-body">
-          ${htmlContent}
-        </div>
-      </article>
-
-      <footer class="article-footer">
-        <nav class="article-footer-nav">
-          <a href="/blog/" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Blog
-          </a>
-          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            Open in Zenn
-          </a>
-        </nav>
-      </footer>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-brand">
-        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
-        <div class="footer-info">
-          <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
-        </div>
-      </div>
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
-  </div>
-
-  <script src="/scripts/common.js"></script>
-  ${getCodeCopyScript()}
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('SW registration failed:', error);
-        });
-    }
-  </script>
-
-  <noscript>
     <style>
-      #matrix-rain { display: none; }
-      body::before { display: none; }
-      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
-        opacity: 1;
-        transform: none;
-      }
-    </style>
-    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
-      <p>JavaScript is required for interactive features.</p>
-      <p style="margin-top: 1rem;">
-        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
-        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
-      </p>
-    </div>
-  </noscript>
-</body>
-</html>`;
-}
-
-/**
- * Get article page styles (extracted from article.html)
- */
-function getArticleStyles() {
-  return `  <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
     body {
@@ -985,14 +650,147 @@ function getArticleStyles() {
       outline: 2px solid var(--text);
       outline-offset: 2px;
     }
-  </style>`;
-}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-/**
- * Get code copy button script
- */
-function getCodeCopyScript() {
-  return `  <script>
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">🤫</span>
+        <h1 class="article-title">pecl install grpcで大量のwarningメッセージ出た時の対処法</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2024年12月4日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            3 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#php</span><span class="topic-tag">#grpc</span><span class="topic-tag">#dockerfile</span><span class="topic-tag">#gnu</span><span class="topic-tag">#pecl</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/ad3ddb6ff13abe" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>English version</h2>
+<p><a href="https://dev.to/wadakatu/how-to-handle-excessive-warning-messages-when-running-pecl-install-grpc-44jb">https://dev.to/wadakatu/how-to-handle-excessive-warning-messages-when-running-pecl-install-grpc-44jb</a></p>
+<h2>多すぎるwarningメッセージは非常に厄介</h2>
+<p><code>pecl install grpc</code>をすると大量のWarningメッセージが出ます。</p>
+<pre><code>#7 67.72 /tmp/pear/temp/grpc/src/core/lib/promise/detail/promise_factory.h:174:5: warning: &#39;always_inline&#39; function might not be inlinable [-Wattributes]
+
+#7 352.5 /tmp/pear/temp/grpc/src/core/lib/event_engine/forkable.h:61:34: warning: &#39;unused&#39; attribute ignored [-Wattributes]
+</code></pre>
+<p>上記のようなメッセージが軽く数百件以上出てきます。<br>その影響で、Deploy時にCI/CDのログ上限を天元突破して、エラー吐いて落ちるという現象に悩まされていました。</p>
+<h2>原因</h2>
+<p>warningメッセージの内容で検索をかけると「<a href="https://gcc.gnu.org/">GCC, the GNU Compiler Collection</a>」がヒットします。</p>
+<p>どうやら、これらのWarningはgRPCのソースコードをコンパイルしているコンパイラから発生していそうです。なので、grpc利用者側が直接ソースコードを修正して、warning自体を根本から抑制することは難しい（はず）です。</p>
+<h2>修正方針</h2>
+<p>GNUコンパイラには、warningメッセージ発生を抑制するためのオプションが複数あるので、それを渡してやれば良さそう。</p>
+<p><a href="https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html">https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html</a></p>
+<p>しかし、<code>pecl install grpc</code>には直接渡せそうにないので、別の方法で渡す必要があります。<br>（もし<code>pecl install</code>で渡せる方法あれば教えてください。泣いて喜びます🥹）</p>
+<p>どうしよう....</p>
+<p>以下のStackOverflowから天啓を得ました。<br><code>pecl install</code>が実行してくれている部分を分割して、コンパイルが走る箇所にオプションを渡してやれば良さそうです。</p>
+<p><a href="https://stackoverflow.com/a/47120441">https://stackoverflow.com/a/47120441</a></p>
+<p>また、gRPCは<code>c++</code>で書かれているので、<code>CFLAGS</code>や<code>CXXFLAGS</code>の環境変数にwarning抑制オプションを渡して、コンパイル時に指定してやれば抑制できそうです。</p>
+<p><a href="https://wiki.gentoo.org/wiki/GCC_optimization/ja">https://wiki.gentoo.org/wiki/GCC_optimization/ja</a></p>
+<h2>修正内容</h2>
+<p>Dockerfile内でgRPCをインストールするものと仮定します。</p>
+<h3>before</h3>
+<pre><code class="language-Dockerfile">RUN pecl install grpc
+</code></pre>
+<h3>after</h3>
+<pre><code class="language-Dockerfile">RUN pecl download grpc \
+  &amp;&amp; tar xzf $(ls grpc-*.tgz | head -n 1) \
+  &amp;&amp; cd $(ls -d grpc-*/ | head -n 1) \
+  &amp;&amp; phpize \
+  &amp;&amp; ./configure --with-php-config=/usr/local/bin/php-config \
+  &amp;&amp; make -e CFLAGS=&quot;-Wno-attributes -Wno-unused-parameter -Wno-deprecated-declarations -Wno-return-type&quot; CXXFLAGS=&quot;-Wno-attributes -Wno-unused-parameter -Wno-deprecated-declarations -Wno-return-type&quot; \
+  &amp;&amp; make install
+</code></pre>
+<p>afterのコマンドは、ほとんど<code>pecl install</code>が内部的に実行している処理と同じです。<br>中身を分割してみると、<code>pecl install</code>は色々やってくれてたんだなと感動しました。</p>
+<p>コンパイル時のwarningメッセージが出ていたのは、<code>make</code>の部分だったのでここに環境変数（<code>CFLAGS</code>, <code>CXXFLAGS</code>）を渡しました。</p>
+<pre><code class="language-bash">make -e CFLAGS=&quot;-Wno-attributes -Wno-unused-parameter -Wno-deprecated-declarations -Wno-return-type&quot; CXXFLAGS=&quot;-Wno-attributes -Wno-unused-parameter -Wno-deprecated-declarations -Wno-return-type&quot;
+</code></pre>
+<hr>
+<p>ちなみに、<code>CFLAGS</code>と <code>CXXFLAGS</code>に渡す抑制オプションはどこを見ればわかるかというと、warningメッセージの最後 を見ればOKです。<br><code>[-Wattributes]</code>や<code>[-Wunused-parameter]</code>という表記があると思います。<br>これらの<code>-W</code>の後に<code>no</code>をつけて<code>[-Wno-attributes]</code>や<code>[-Wno-unused-parameter]</code>としてやればOKです。</p>
+<p>その他オプションについては以下の記事をご覧ください。</p>
+<p><a href="https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html">https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html</a></p>
+<h2>最後に</h2>
+<p>この対応のおかげで、Warningメッセージ沼からは無事逃げ出すことができました。<br>しかし、まだCI/CDのログ上限問題は完全に解決という訳にはいきませんでした。<br>また後日完全解決した方法を別記事にて投稿できればと思います。</p>
+<p>この記事を読むことで、一人でも多くの方をgRPCのwarningメッセージ沼から救い出すことができれば嬉しいです🙌</p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/ad3ddb6ff13abe" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
     // Initialize code copy buttons
     function initCodeCopyButtons() {
       const codeBlocks = document.querySelectorAll('.markdown-body pre');
@@ -1004,7 +802,7 @@ function getCodeCopyScript() {
         button.className = 'code-copy-btn';
         button.setAttribute('aria-label', 'Copy code to clipboard');
         button.setAttribute('title', 'Copy code');
-        button.innerHTML = \`
+        button.innerHTML = `
           <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1013,7 +811,7 @@ function getCodeCopyScript() {
             <polyline points="20 6 9 17 4 12"/>
           </svg>
           <span class="btn-label">Copy</span>
-        \`;
+        `;
 
         button.addEventListener('click', async () => {
           const code = pre.querySelector('code');
@@ -1062,91 +860,37 @@ function getCodeCopyScript() {
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
-  </script>`;
-}
+  </script>
 
-/**
- * Write static article page
- */
-function writeArticlePage(slug, html) {
-  const articleDir = path.join(BLOG_DIR, slug);
-  if (!fs.existsSync(articleDir)) {
-    fs.mkdirSync(articleDir, { recursive: true });
-  }
-  const outputPath = path.join(articleDir, 'index.html');
-  fs.writeFileSync(outputPath, html);
-  console.log(`  Generated: /blog/${slug}/index.html`);
-}
-
-/**
- * Main function
- */
-function main() {
-  console.log('Generating articles.json and static HTML pages...\n');
-
-  // Configure marked
-  configureMarked();
-
-  // Read all markdown files
-  const files = fs.readdirSync(ARTICLES_DIR)
-    .filter(f => f.endsWith('.md'));
-
-  const articles = [];
-
-  for (const file of files) {
-    const filePath = path.join(ARTICLES_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const frontmatter = parseFrontmatter(content);
-
-    if (!frontmatter) {
-      console.warn(`Warning: No frontmatter found in ${file}`);
-      continue;
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
     }
+  </script>
 
-    // Skip unpublished articles
-    if (frontmatter.published !== true) {
-      console.log(`Skipping unpublished: ${file}`);
-      continue;
-    }
-
-    const slug = file.replace('.md', '');
-    const readingTime = calculateReadingTime(content);
-
-    const article = {
-      slug,
-      title: frontmatter.title || '',
-      emoji: frontmatter.emoji || '',
-      type: frontmatter.type || 'tech',
-      topics: frontmatter.topics || [],
-      published_at: parsePublishedAt(frontmatter.published_at) || '',
-      reading_time: readingTime
-    };
-
-    articles.push(article);
-
-    // Generate static HTML for this article
-    const html = generateArticleHTML(article, content);
-    writeArticlePage(slug, html);
-  }
-
-  // Sort by published_at (newest first)
-  articles.sort((a, b) => {
-    if (!a.published_at) return 1;
-    if (!b.published_at) return -1;
-    return b.published_at.localeCompare(a.published_at);
-  });
-
-  // Ensure data directory exists
-  const dataDir = path.dirname(OUTPUT_FILE);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  // Write JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(articles, null, 2) + '\n');
-
-  console.log(`\n✓ Generated ${OUTPUT_FILE} with ${articles.length} articles`);
-  console.log(`✓ Generated ${articles.length} static HTML pages`);
-}
-
-main();
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

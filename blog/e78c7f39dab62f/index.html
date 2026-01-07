@@ -1,219 +1,18 @@
-#!/usr/bin/env node
-
-/**
- * Generate articles.json and static HTML pages from markdown
- *
- * Usage: node scripts/generate-articles.js
- */
-
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
-const hljs = require('highlight.js');
-
-const ARTICLES_DIR = path.join(__dirname, '..', 'articles');
-const OUTPUT_FILE = path.join(__dirname, '..', 'data', 'articles.json');
-const BLOG_DIR = path.join(__dirname, '..', 'blog');
-const BASE_URL = 'https://www.wadakatu.dev';
-
-/**
- * Parse YAML frontmatter from markdown content
- */
-function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const yaml = match[1];
-  const data = {};
-
-  // Parse simple YAML (key: value and arrays)
-  let currentKey = null;
-  let inArray = false;
-  const arrayValues = [];
-
-  for (const line of yaml.split('\n')) {
-    // Array item
-    if (line.match(/^\s+-\s+/)) {
-      const value = line.replace(/^\s+-\s+/, '').replace(/^["']|["']$/g, '');
-      arrayValues.push(value);
-      continue;
-    }
-
-    // Save previous array if exists
-    if (inArray && currentKey) {
-      data[currentKey] = [...arrayValues];
-      arrayValues.length = 0;
-      inArray = false;
-    }
-
-    // Key: value pair
-    const kvMatch = line.match(/^(\w+):\s*(.*)$/);
-    if (kvMatch) {
-      const [, key, value] = kvMatch;
-      currentKey = key;
-
-      if (value === '') {
-        // Start of array
-        inArray = true;
-      } else {
-        // Parse value
-        let parsed = value.replace(/^["']|["']$/g, '');
-
-        // Handle escaped characters in title
-        if (key === 'title') {
-          parsed = parsed.replace(/\\(.)/g, '$1');
-        }
-
-        // Boolean
-        if (parsed === 'true') parsed = true;
-        else if (parsed === 'false') parsed = false;
-
-        data[key] = parsed;
-      }
-    }
-  }
-
-  // Save last array if exists
-  if (inArray && currentKey) {
-    data[currentKey] = [...arrayValues];
-  }
-
-  return data;
-}
-
-/**
- * Calculate reading time from markdown content
- * Japanese: ~500 characters/minute
- */
-function calculateReadingTime(content) {
-  // Remove frontmatter
-  const body = content.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Remove code blocks (they're usually skimmed, not read word-by-word)
-  const withoutCode = body.replace(/```[\s\S]*?```/g, '');
-
-  // Remove inline code
-  const withoutInlineCode = withoutCode.replace(/`[^`]+`/g, '');
-
-  // Remove URLs
-  const withoutUrls = withoutInlineCode.replace(/https?:\/\/[^\s)]+/g, '');
-
-  // Remove markdown syntax
-  const plainText = withoutUrls
-    .replace(/[#*_\[\]()!]/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
-
-  // Count characters (Japanese text)
-  const charCount = plainText.length;
-
-  // Calculate reading time (500 chars/min for Japanese)
-  const minutes = Math.ceil(charCount / 500);
-
-  // Minimum 1 minute
-  return Math.max(1, minutes);
-}
-
-/**
- * Parse published_at string to ISO format
- */
-function parsePublishedAt(dateStr) {
-  if (!dateStr) return null;
-
-  // Handle "2025-08-12 09:47" format
-  const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})$/);
-  if (match) {
-    return `${match[1]}T${match[2]}:00`;
-  }
-
-  return dateStr;
-}
-
-/**
- * Get category name from article type
- */
-function getCategory(type) {
-  const categoryMap = {
-    tech: 'Tech',
-    idea: 'Life'
-  };
-  return categoryMap[type] || 'Other';
-}
-
-/**
- * Format date for display
- */
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
-
-/**
- * Escape HTML special characters
- */
-function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
-
-/**
- * Configure marked with syntax highlighting
- */
-function configureMarked() {
-  marked.setOptions({
-    highlight: function(code, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value;
-      }
-      return hljs.highlightAuto(code).value;
-    },
-    breaks: true,
-    gfm: true
-  });
-}
-
-/**
- * Generate static HTML for an article
- */
-function generateArticleHTML(article, markdownContent) {
-  // Remove frontmatter
-  const content = markdownContent.replace(/^---[\s\S]*?---\n*/, '');
-
-  // Parse markdown to HTML
-  const htmlContent = marked.parse(content);
-
-  const category = getCategory(article.type);
-  const date = formatDate(article.published_at);
-  const zennUrl = `https://zenn.dev/wadakatu/articles/${article.slug}`;
-  const articleUrl = `${BASE_URL}/blog/${article.slug}/`;
-  const description = escapeHtml(`${article.title} - Tech article by wadakatu`);
-  const title = escapeHtml(article.title);
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} | wadakatu</title>
-  <meta name="description" content="${description}">
+  <title>Next.js初心者がLogを出すまでに苦労した話 | wadakatu</title>
+  <meta name="description" content="Next.js初心者がLogを出すまでに苦労した話 - Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
   <!-- OGP -->
   <meta property="og:type" content="article">
-  <meta property="og:url" content="${articleUrl}">
-  <meta property="og:title" content="${title} | wadakatu">
-  <meta property="og:description" content="${description}">
-  <meta property="og:image" content="${BASE_URL}/ogp.webp">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/e78c7f39dab62f/">
+  <meta property="og:title" content="Next.js初心者がLogを出すまでに苦労した話 | wadakatu">
+  <meta property="og:description" content="Next.js初心者がLogを出すまでに苦労した話 - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
   <meta property="og:locale" content="ja_JP">
@@ -221,13 +20,13 @@ function generateArticleHTML(article, markdownContent) {
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
-  <meta name="twitter:title" content="${title} | wadakatu">
-  <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${BASE_URL}/ogp.webp">
+  <meta name="twitter:title" content="Next.js初心者がLogを出すまでに苦労した話 | wadakatu">
+  <meta name="twitter:description" content="Next.js初心者がLogを出すまでに苦労した話 - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
-  <link rel="canonical" href="${articleUrl}">
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/e78c7f39dab62f/">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="/ogp.webp">
@@ -246,141 +45,7 @@ function generateArticleHTML(article, markdownContent) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
-  ${getArticleStyles()}
-</head>
-<body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
-
-  <div class="container">
-    <header class="page-header">
-      <a href="/blog/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        cd ../blog
-      </a>
-    </header>
-
-    <main class="article-container" id="main-content">
-      <header class="article-header">
-        <span class="article-emoji">${article.emoji}</span>
-        <h1 class="article-title">${article.title}</h1>
-        <div class="article-meta">
-          <span class="article-category">${category}</span>
-          <span class="article-date">${date}</span>
-          <span class="article-reading-time">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-            ${article.reading_time} min read
-          </span>
-        </div>
-        <div class="article-topics">
-          ${article.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
-        </div>
-      </header>
-
-      <div class="zenn-bar">
-        <span class="zenn-bar-text">
-          <span class="terminal-prefix">$</span>
-          This article is also available on Zenn
-        </span>
-        <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-          </svg>
-          Read on Zenn
-        </a>
-      </div>
-
-      <article class="article-content">
-        <div class="markdown-body">
-          ${htmlContent}
-        </div>
-      </article>
-
-      <footer class="article-footer">
-        <nav class="article-footer-nav">
-          <a href="/blog/" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Blog
-          </a>
-          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-              <polyline points="15 3 21 3 21 9"/>
-              <line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            Open in Zenn
-          </a>
-        </nav>
-      </footer>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-brand">
-        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
-        <div class="footer-info">
-          <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
-        </div>
-      </div>
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
-  </div>
-
-  <script src="/scripts/common.js"></script>
-  ${getCodeCopyScript()}
-
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-          console.log('SW registered:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('SW registration failed:', error);
-        });
-    }
-  </script>
-
-  <noscript>
     <style>
-      #matrix-rain { display: none; }
-      body::before { display: none; }
-      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
-        opacity: 1;
-        transform: none;
-      }
-    </style>
-    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
-      <p>JavaScript is required for interactive features.</p>
-      <p style="margin-top: 1rem;">
-        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
-        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
-      </p>
-    </div>
-  </noscript>
-</body>
-</html>`;
-}
-
-/**
- * Get article page styles (extracted from article.html)
- */
-function getArticleStyles() {
-  return `  <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
     body {
@@ -985,14 +650,187 @@ function getArticleStyles() {
       outline: 2px solid var(--text);
       outline-offset: 2px;
     }
-  </style>`;
-}
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-/**
- * Get code copy button script
- */
-function getCodeCopyScript() {
-  return `  <script>
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">🙇‍♂️</span>
+        <h1 class="article-title">Next.js初心者がLogを出すまでに苦労した話</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2023年8月18日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            3 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#next</span><span class="topic-tag">#typescript</span><span class="topic-tag">#ecs</span><span class="topic-tag">#logger</span><span class="topic-tag">#pino</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/e78c7f39dab62f" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h1>何がしたかったのか</h1>
+<p><a href="https://github.com/pinojs/pino">pinojs/pino</a>を使って、Next.jsのAPIを叩いた時に表示されるログを、CloudWatch Logsで確認したい。</p>
+<h1>前提条件</h1>
+<ul>
+<li>筆者は、Next.js初心者（間違っていることは指摘お願いします！）</li>
+<li>pinoは <code>yarn add pino</code>でインストール済<ul>
+<li>ローカル環境では、問題なくログは出ている</li>
+</ul>
+</li>
+<li>アプリケーションは、AWS ECS Fargateにデプロイされている<ul>
+<li>ECSのタスク定義にて<a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html">awslogs</a>の設定は実施済み</li>
+<li>CloudWatch Logsのロググループも作成済</li>
+</ul>
+</li>
+</ul>
+<h2>実装</h2>
+<h3>ロガーインスタンス</h3>
+<pre><code class="language-js:/lib/logger.ts">import { pino } from &#39;pino&#39;;
+
+export const logger = pino({
+  level: process.env.NODE_ENV !== &#39;production&#39; ? &#39;debug&#39; : &#39;info&#39;,
+});
+</code></pre>
+<h3>API　(url: /api/health-check)</h3>
+<pre><code class="language-js:/src/app/api/health-check/route.ts">import { NextResponse } from &#39;next/server&#39;;
+import { logger } from &#39;@/lib/logger&#39;;
+
+export function GET() {
+  logger.info(&#39;info&#39;);
+  logger.warn(&#39;warn&#39;);
+  logger.error(&#39;error&#39;);
+  logger.fatal(&#39;fatal&#39;);
+  return NextResponse.json({ message: &#39;ok&#39; });
+}
+</code></pre>
+<p>しかし、上記のAPIをいくら叩いてもログが出てこない....</p>
+<h1>原因</h1>
+<p>ログを仕込んだAPIが、<code>next build</code>を実行した時に静的なHTMLとしてレンダリングされていた。</p>
+<pre><code class="language-bash">Route (app)                                Size     First Load JS
+┌ ○ /                                      82.5 kB         161 kB
+└  ○ /api/health-check                      0 B                0 B
+Route (pages)                              Size     First Load JS
+─ ○ /404                                   182 B          76.5 kB
++ First Load JS shared by all              76.3 kB
+  ├ chunks/framework-3d1e9be70c3da.js   45.1 kB
+  ├ chunks/main-f4d50592e90a51.js        29.4 kB
+  ├ chunks/pages/_app-529524f99094ab.js  195 B
+  └ chunks/webpack-9eacbfc3ea00.js     1.67 kB
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+</code></pre>
+<hr>
+<p><strong>この部分に注目してください。</strong></p>
+<pre><code class="language-bash">└  ○ /api/health-check                      0 B                0 B
+
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+</code></pre>
+<p><code>/api/health-check</code>の左に「⚪︎」が記載されています。<br>これは、このAPIがビルド時に自動的に静的HTMLとしてレンダリングされたことを示しています。</p>
+<hr>
+<p>Next.jsでは、ビルド時に各ファイルに <code>getServerSideProps</code>　or <code>getInitialProps</code>が含まれているかどうかを確認します。</p>
+<ul>
+<li>含まれている場合<ul>
+<li>サーバーサイドにてアクセスされる度にHTMLをレンダリングする（Server-side Rendering)</li>
+<li>JSファイルのままなので、<code>logger.info()</code>が実行されてログが表示される</li>
+</ul>
+</li>
+<li>含まれていない場合<ul>
+<li>事前に静的HTMLファイルを作成して、アクセスされる度にそのHTMLを返します</li>
+<li>HTMLファイルではJSは動かないので、<code>logger.info()</code>は実行されず、ログも出ない</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://nextjs.org/docs/pages/building-your-application/rendering/automatic-static-optimization">https://nextjs.org/docs/pages/building-your-application/rendering/automatic-static-optimization</a></p>
+<p><a href="https://zenn.dev/unreact/articles/nextjs-advanced-automatic-static-optimization-jp">https://zenn.dev/unreact/articles/nextjs-advanced-automatic-static-optimization-jp</a></p>
+<h1>解決策</h1>
+<p>解決策は非常にシンプルです。<br>Server-side RenderingのAPIにログを仕込めばOKでした。</p>
+<p>今回は、検証のため<code>api/health-check</code>に<code>getServerSideProps</code>を仕込んで、無理やりServer-side Renderingさせるようにしました。</p>
+<pre><code class="language-bash">├ λ /api/health-check  
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+</code></pre>
+<p>上記の状態で、APIを叩いてみると、無事CloudWatch Logsにログが表示されました🙌🎉</p>
+<h1>あとがき</h1>
+<p>今回は、<code>next build</code>時の挙動をちゃんと理解できていなかったのが最大の敗因です。<br>そのせいで、<code>実はpinoのライブラリのバグなんじゃない？</code> とか <code>AWS ECSのタスク定義ちゃんとできないんじゃないの？</code>などなど、 色々な方、ものに濡れ衣を着せまくってました。。<br>しかし、悪いのは<strong>私でした。。</strong><br>こういう動作するべきものが動作しない時は、今までの経験上９８％自分が悪いので、これからもそれを意識しながら開発続けていきます。</p>
+<p>マジで、CloudWatchにログが出た時は、嬉しすぎて結構大きい声出ました。。。（リモートワークでよかった）</p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/e78c7f39dab62f" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
     // Initialize code copy buttons
     function initCodeCopyButtons() {
       const codeBlocks = document.querySelectorAll('.markdown-body pre');
@@ -1004,7 +842,7 @@ function getCodeCopyScript() {
         button.className = 'code-copy-btn';
         button.setAttribute('aria-label', 'Copy code to clipboard');
         button.setAttribute('title', 'Copy code');
-        button.innerHTML = \`
+        button.innerHTML = `
           <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1013,7 +851,7 @@ function getCodeCopyScript() {
             <polyline points="20 6 9 17 4 12"/>
           </svg>
           <span class="btn-label">Copy</span>
-        \`;
+        `;
 
         button.addEventListener('click', async () => {
           const code = pre.querySelector('code');
@@ -1062,91 +900,37 @@ function getCodeCopyScript() {
 
     // Initialize on DOM ready
     document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
-  </script>`;
-}
+  </script>
 
-/**
- * Write static article page
- */
-function writeArticlePage(slug, html) {
-  const articleDir = path.join(BLOG_DIR, slug);
-  if (!fs.existsSync(articleDir)) {
-    fs.mkdirSync(articleDir, { recursive: true });
-  }
-  const outputPath = path.join(articleDir, 'index.html');
-  fs.writeFileSync(outputPath, html);
-  console.log(`  Generated: /blog/${slug}/index.html`);
-}
-
-/**
- * Main function
- */
-function main() {
-  console.log('Generating articles.json and static HTML pages...\n');
-
-  // Configure marked
-  configureMarked();
-
-  // Read all markdown files
-  const files = fs.readdirSync(ARTICLES_DIR)
-    .filter(f => f.endsWith('.md'));
-
-  const articles = [];
-
-  for (const file of files) {
-    const filePath = path.join(ARTICLES_DIR, file);
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const frontmatter = parseFrontmatter(content);
-
-    if (!frontmatter) {
-      console.warn(`Warning: No frontmatter found in ${file}`);
-      continue;
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
     }
+  </script>
 
-    // Skip unpublished articles
-    if (frontmatter.published !== true) {
-      console.log(`Skipping unpublished: ${file}`);
-      continue;
-    }
-
-    const slug = file.replace('.md', '');
-    const readingTime = calculateReadingTime(content);
-
-    const article = {
-      slug,
-      title: frontmatter.title || '',
-      emoji: frontmatter.emoji || '',
-      type: frontmatter.type || 'tech',
-      topics: frontmatter.topics || [],
-      published_at: parsePublishedAt(frontmatter.published_at) || '',
-      reading_time: readingTime
-    };
-
-    articles.push(article);
-
-    // Generate static HTML for this article
-    const html = generateArticleHTML(article, content);
-    writeArticlePage(slug, html);
-  }
-
-  // Sort by published_at (newest first)
-  articles.sort((a, b) => {
-    if (!a.published_at) return 1;
-    if (!b.published_at) return -1;
-    return b.published_at.localeCompare(a.published_at);
-  });
-
-  // Ensure data directory exists
-  const dataDir = path.dirname(OUTPUT_FILE);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  // Write JSON
-  fs.writeFileSync(OUTPUT_FILE, JSON.stringify(articles, null, 2) + '\n');
-
-  console.log(`\n✓ Generated ${OUTPUT_FILE} with ${articles.length} articles`);
-  console.log(`✓ Generated ${articles.length} static HTML pages`);
-}
-
-main();
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

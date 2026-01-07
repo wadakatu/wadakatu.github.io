@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） | wadakatu</title>
+  <meta name="description" content="W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） - Tech article by wadakatu">
+  <meta name="author" content="wadakatu">
+
+  <!-- OGP -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/da5be52d57e9a1/">
+  <meta property="og:title" content="W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） | wadakatu">
+  <meta property="og:description" content="W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:title" content="W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） | wadakatu">
+  <meta name="twitter:description" content="W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？） - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/da5be52d57e9a1/">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/ogp.webp">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+  <link rel="stylesheet" href="/styles/common.css">
+    <style>
+    /* ===== ARTICLE PAGE STYLES ===== */
+
+    body {
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+    }
+
+    .article-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== ARTICLE HEADER ===== */
+    .article-header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .article-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--matrix), transparent);
+      box-shadow: var(--glow);
+    }
+
+    .article-emoji {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      display: block;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.3));
+    }
+
+    .article-title {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--bg);
+      background: var(--matrix);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .article-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time svg {
+      width: 14px;
+      height: 14px;
+      color: var(--matrix);
+      opacity: 0.7;
+    }
+
+    .article-topics {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .topic-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--matrix-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .topic-tag:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+    }
+
+    /* ===== ZENN LINK BAR ===== */
+    .zenn-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(0, 255, 65, 0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .zenn-bar-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .zenn-bar-text .terminal-prefix {
+      color: var(--matrix);
+      margin-right: 0.5rem;
+    }
+
+    .zenn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--matrix-dark);
+      border: 1px solid var(--matrix-dim);
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .zenn-link:hover {
+      background: var(--matrix);
+      color: var(--bg);
+      box-shadow: var(--glow-strong);
+      transform: translateY(-2px);
+    }
+
+    .zenn-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== ARTICLE CONTENT ===== */
+    .article-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Markdown Body Styles */
+    .markdown-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    /* Headings */
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2::before {
+      content: '## ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.25rem;
+    }
+
+    .markdown-body h3::before {
+      content: '### ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.5;
+      font-size: 0.85em;
+    }
+
+    .markdown-body h4 {
+      font-size: 1.1rem;
+    }
+
+    /* Paragraphs */
+    .markdown-body p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    .markdown-body a {
+      color: var(--matrix);
+      text-decoration: none;
+      border-bottom: 1px solid var(--matrix-dark);
+      transition: all 0.2s ease;
+    }
+
+    .markdown-body a:hover {
+      color: #4dff7c;
+      border-bottom-color: var(--matrix);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+
+    /* Lists */
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-body ul li::marker {
+      color: var(--matrix);
+    }
+
+    .markdown-body ol li::marker {
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Code - Inline */
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      color: var(--matrix);
+    }
+
+    /* Code - Block */
+    .markdown-body pre {
+      margin: 1.5rem 0 2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .markdown-body pre::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--matrix), var(--matrix-dim), var(--matrix));
+      opacity: 0.6;
+    }
+
+    .markdown-body pre code {
+      display: block;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      background: #1a1b26;
+      border: none;
+      overflow-x: auto;
+      color: #c0caf5;
+    }
+
+    /* ===== CODE COPY BUTTON ===== */
+    .code-copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.25s ease;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .markdown-body pre:hover .code-copy-btn,
+    .code-copy-btn:focus {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      background: rgba(0, 255, 65, 0.08);
+      box-shadow:
+        0 0 20px rgba(0, 255, 65, 0.15),
+        inset 0 0 20px rgba(0, 255, 65, 0.05);
+    }
+
+    .code-copy-btn .copy-icon,
+    .code-copy-btn .check-icon {
+      width: 14px;
+      height: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .code-copy-btn .check-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied {
+      color: var(--matrix);
+      border-color: var(--matrix-dim);
+      background: rgba(0, 255, 65, 0.12);
+      box-shadow:
+        0 0 25px rgba(0, 255, 65, 0.25),
+        inset 0 0 15px rgba(0, 255, 65, 0.1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn.copied .copy-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied .check-icon {
+      display: block;
+      animation: checkPop 0.3s ease;
+    }
+
+    .code-copy-btn .btn-label {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 20px rgba(0, 255, 65, 0.2),
+          inset 0 0 15px rgba(0, 255, 65, 0.1);
+      }
+      50% {
+        box-shadow:
+          0 0 30px rgba(0, 255, 65, 0.35),
+          inset 0 0 20px rgba(0, 255, 65, 0.15);
+      }
+    }
+
+    .code-copy-btn.copied {
+      animation: glowPulse 0.6s ease;
+    }
+
+    .code-copy-btn:focus-visible {
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .code-copy-btn {
+        opacity: 1;
+        transform: translateY(0);
+        padding: 8px 12px;
+      }
+    }
+
+    /* Blockquote */
+    .markdown-body blockquote {
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      border-left: 3px solid var(--matrix);
+      background: linear-gradient(90deg, rgba(0, 255, 65, 0.05), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-body blockquote p {
+      margin-bottom: 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* Images */
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+
+    /* Horizontal Rule */
+    .markdown-body hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--matrix-dark), var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* Tables */
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: var(--card);
+      font-weight: 600;
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .markdown-body tr:hover td {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    /* Strong & Emphasis */
+    .markdown-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .markdown-body em {
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ===== ARTICLE FOOTER ===== */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      box-shadow: var(--glow);
+    }
+
+    .nav-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 1.5rem 0 2rem;
+      }
+
+      .article-emoji {
+        font-size: 3rem;
+      }
+
+      .article-title {
+        font-size: 1.35rem;
+      }
+
+      .zenn-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .markdown-body {
+        font-size: 1rem;
+      }
+
+      .markdown-body pre code {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+
+      .article-footer-nav {
+        flex-direction: column;
+      }
+
+      .nav-button {
+        justify-content: center;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .article-header,
+    .zenn-bar,
+    .article-content,
+    .article-footer {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease-out forwards;
+    }
+
+    .article-header { animation-delay: 0.1s; }
+    .zenn-bar { animation-delay: 0.2s; }
+    .article-content { animation-delay: 0.3s; }
+    .article-footer { animation-delay: 0.4s; }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">🧑‍💻</span>
+        <h1 class="article-title">W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？）</h1>
+        <div class="article-meta">
+          <span class="article-category">Life</span>
+          <span class="article-date">2025年12月10日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            8 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#w3c</span><span class="topic-tag">#report</span><span class="topic-tag">#tpac</span><span class="topic-tag">#kobe</span><span class="topic-tag">#worldwideweb</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/da5be52d57e9a1" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>はじめに</h2>
+<p>こんにちは、バックエンドエンジニアのwadakatuです。<br>生まれて初めて、W3Cの<code>TPAC</code>というイベントに参加してきました。</p>
+<p><a href="https://www.w3.org/2025/11/TPAC/">https://www.w3.org/2025/11/TPAC/</a></p>
+<p>TPACはグローバルなイベントなので、毎年開催地が変わります。<br>今年は運良く日本だったので、ラッキーでした。</p>
+<p>W3C は会員制なので、TPAC も会員企業所属などでないと参加できないイベントです。<br>Studio株式会社は今年からW3Cに参加させていただいているので、今年のTPAC参加が可能になりました。（弊社、本当にありがとう〜〜〜！）</p>
+<h2>TPACとは</h2>
+<p>TPACは、<code>Technical Plenary and Advisory Committee</code>の略です。<br>Web標準のこれからについてみんなで議論し合うオフラインイベントです。<br>期間は11/10~11/14の１週間でした。</p>
+<p>日程は以下からご覧ください<br>私が最初見た時は、設定されている会議の数が多く軽い眩暈がしました...</p>
+<p><a href="https://www.w3.org/2025/11/TPAC/schedule.html">https://www.w3.org/2025/11/TPAC/schedule.html</a></p>
+<p>参考までに、11/10（月）の1日だけで、膨大な会議があります。</p>
+<p>![](<a href="https://storage.googleapis.com/zenn-user-upload/e2a99182db0d-20251127.png">https://storage.googleapis.com/zenn-user-upload/e2a99182db0d-20251127.png</a> =750x)</p>
+<h2>参加した感想</h2>
+<p>弊社からは、CTOのmoroさん、suzukiさん、そして私の3名が参加しました。<br>私は、業務などの都合で<code>月曜日と火曜日の2日間</code>参加させていただきました。</p>
+<p>まず、参加してみての全体の感想は、、、</p>
+<p>有名企業の方がとにかく多かったです。TPAC会期中はみんな名札をぶら下げているのですが、その名札を見るたびに戦々恐々としていました。<br>（すごい所に来てしまった...という感じでした）</p>
+<p>名札はこんな感じです。<br>![](<a href="https://storage.googleapis.com/zenn-user-upload/f1ad4fffef76-20251128.jpg">https://storage.googleapis.com/zenn-user-upload/f1ad4fffef76-20251128.jpg</a> =250x)</p>
+<hr>
+<p>加えて、Web標準の決め方にも驚きました。<br>最初は某エヴァ○ゲリオンのゼーレみたいな感じでスーパーエンジニアが標準仕様をどんどん策定しているのかと想像していました。</p>
+<p>しかし、実際にはもっと愚直で馴染みのある決め方でした。<br>みんなで会議室に集まって、未来のWeb、ユーザーのためにあーでもないこーでもないと議論し合いながら進めていました。<br>なんだか、私たちが日々アプリケーション仕様を決めているのと同じ感じがしました。<br>もちろん、TPACで決めているのは前例のない全く未知のWeb仕様なので、難易度が桁違いなのは間違いないのですが、、、</p>
+<p>続いては、1日目・２日目を個別に振り返ってみます。</p>
+<h3>11/10 月曜日（1日目）</h3>
+<p>午前8時から始まる受付に間に合うように大阪を朝6時ごろに出発しました。<br>場所は、神戸国際会議場でした。</p>
+<p>![](<a href="https://storage.googleapis.com/zenn-user-upload/b5aee7f18cbb-20251203.jpeg">https://storage.googleapis.com/zenn-user-upload/b5aee7f18cbb-20251203.jpeg</a> =250x)</p>
+<p>外観は古めかしい感じでしたが、中は綺麗で非常に居心地が良かったです。</p>
+<p><a href="https://kobe-cc.jp/ja/facilities/conference-center/">https://kobe-cc.jp/ja/facilities/conference-center/</a></p>
+<p>受付は名前のアルファベットごとに列が分かれており、名前と会社名を受付の方に伝えると名札がもらえます。<br>この名札がTPAC参加者を識別するタグのようなものです。（失くすと多分大変）<br>非常に多くの方が参加しており、8時すぐはエレベーターに乗ったり、列に並ぶだけで一苦労でした。</p>
+<p>受付の様子は以下からご覧ください。<br><a href="https://www.w3.org/2025/11/TPAC/registration-photos.html">https://www.w3.org/2025/11/TPAC/registration-photos.html</a></p>
+<hr>
+<p>受付後は、すぐにお目当ての<code>Web Fonts Working Group</code>のミーティングに参加しました。<br>現在、Web Fonts WGでは、IFT（Incremental Font Transfer）という新しい技術について議論しています。</p>
+<p>IFTは、Webフォントの読み込みを高速化するために生み出された技術です。<br>簡単に言えば、「フォント全体を一括ダウンロード」から「必要な分だけ追加取得」へ変わる仕組みです。特に効果が大きいのはCJK（中国語・日本語・韓国語）フォントを使うサイトです。<br>Studioではやはり日本語を使ってサイト作成をする方が多いので、この技術をいち早く取り入れようと日々開発に取り組んでいます。</p>
+<p>詳しい仕様については以下からご覧ください<br><a href="https://w3c.github.io/IFT/Overview.html">https://w3c.github.io/IFT/Overview.html</a></p>
+<p>Web Fonts WGの会議に参加している人数はかなり小規模でした。<br>私たち3人を含めて、オフライン・オンライン合わせて10人弱でした。</p>
+<p>しかし、そのメンツはかなり豪華で</p>
+<ul>
+<li>SVGの生みの親</li>
+<li>Google Fontsの中の人</li>
+<li>Adobe Fontsの中の人 などなど...</li>
+</ul>
+<p>このように普通に日本でエンジニアやってると出会うことのないような人が普通に座って議論してます。<br>この議論を間近で見れただけでもTPAC参加して良かったなと思います。</p>
+<p>今回のTPACでは、IFTを世に出すためにクリアすべきテストケースの策定についての話が主でした。<br>話について行くだけで精一杯で、自分の意見をぶつけたりはできませんでした。</p>
+<p>一通り予定されていたアジェンダをこなした後は、Google Fontsの人に用意してきたIFTのデモを見せたり、雑談をすることができました。<br>デモはsuzukiさんが用意してくださったのですが、IFTを使ったデモはまだこの世に数が少ないので非常に興味を持っていただけたようでした。別の会議に参加していたエンジニアの方も乱入してみんなでデモを触りながら、IFTが今後こういう機能を用意してくれると嬉しいなどの話ができました。</p>
+<p>![](<a href="https://storage.googleapis.com/zenn-user-upload/62a331668f2e-20251209.png">https://storage.googleapis.com/zenn-user-upload/62a331668f2e-20251209.png</a> =350x)</p>
+<p>この会議を通して私の心に残っていることは、議論のレベルの高さはもちろんですが、一番は「みんな自分と同じように悩むことあるんだな」ということです。<br>IFTテストケースの話じゃないんかい！と思われるかもしれませんが、自分にとってはこれを知れたのはかなり大きな収穫だと感じています。<br>Google, Adobeで働いている人は、持っているスキル・知識も桁違いなスーパーサイヤ人みたいなイメージでなんでも卒なくこなしちゃうんだろうなみたいな勝手な先入観がありました。自分もそうならねばみたいな考えもあったと思います。<br>ただ、どんなエンジニアでも毎日壁にぶつかりながら試行錯誤していると身をもって知れたので、自分も毎日思いっきり悩んで、試行錯誤をしていいんだと少し心が楽になりました。</p>
+<p>1日目はこのWeb Fonts WG会議に朝から夕方まで参加して終了でした。</p>
+<h3>11/11 火曜日(２日目)</h3>
+<p>2日目は、朝から「Security guidance for web developers」のBreakout Sessionに参加しました。<br>昨日のWeb Fonts WGの会議室と比べると倍くらい広く、参加人数も2,3倍いたような気がします。</p>
+<p>Breakout Sessionの概要は以下からご覧いただけます。<br><a href="https://github.com/w3c/tpac2025-breakouts/issues/52">https://github.com/w3c/tpac2025-breakouts/issues/52</a></p>
+<p>内容は、MDN上で実践的なセキュリティドキュメントを整備して、セキュリティコミュニティとWeb開発者のギャップを埋めようとしている取り組みについてでした。<br>Web開発者といっても、その人によって必要な知識が異なります。そのため、いかに適切な情報を適切な人に届けるかを各々の所属やこれまでの経験を交えて議論していました。</p>
+<p>昨日のWeb Fonts Working Groupのようなアジェンダを基に進む会議とは異なり、Breakout Sessionではかなりフランクに意見交換がなされていました。<br>言いたいことがあれば、手を挙げてマイクをもらって自分の意見を述べる。すると、それに対して賛同や反論をする人がまた手をあげて喋る。こんなサイクルでした。</p>
+<p>breakout session後は、続けて同じ部屋で「Web Application Security Working Group」の会議に参加しました</p>
+<p><a href="https://www.w3.org/events/meetings/f979d4dd-2934-45c5-bf39-23386f756b0b/">https://www.w3.org/events/meetings/f979d4dd-2934-45c5-bf39-23386f756b0b/</a></p>
+<p>Local Network Access開発の進捗状況についての報告やContent Security Policy（CSP）の新しい書き方について議論していました。<br>あと、最後の方で今後Web標準APIになる可能性のある新規APIについても議論してました。<br>このAPIが世に出た時に、あの時議論してたAPIがついにPublicになった...！となる時が楽しみです。</p>
+<p>この会議の後は、AI Agent Protocol Community GroupやWeb Real-Time Communications WGに参加しました。<br>AI Agent Protocol関連は、去年できたばかりでかなり関心度が高かったです。<br>会議の部屋も椅子が足りず、立ち見の人も出ていました。</p>
+<p>どの会議でも言えることなんですが、やっぱり自分が理解できる事柄の会議だと参加している楽しさが桁違いですね。<br>来年のTPACに向けて、もっと知識を蓄えないとなと思いました。</p>
+<p>その後は、<code>W3C Hackathon TPAC 2025: Kobe Edition</code>にノリと勢いで参加させていただきました。<br>このHackathonでまさかの事件が...!<br>これは、また別の記事を書こうかなと思います。</p>
+<p>こんな感じで２日目も無事に終了しました。</p>
+<h2>最後に</h2>
+<p>人生で初めてのTPACでした。<br>国内外問わず色んな方と出会うことができ、刺激的な二日間でした。<br>短い期間ではありましたが、非常に学びが多く、まだまだエンジニアとしてやりたいことがたくさんあることを再認識できました。</p>
+<p>これまで5、6年ほどエンジニアとしてWeb開発をしていましたが、W3C標準の技術を取り入れることはあっても、それらがどのような思想で作られているのかみたいなところは意識できていませんでした。<br>まだ自分に何ができるのかはっきりとは見えていませんが、W3C加入、そして今回のTPAC参加をきっかけとして、もっと当事者意識を持ってWeb標準と向き合っていきたいと思います。</p>
+<p>来年のTPACはアイルランド開催らしいけど、ぜひ参加したいな...！</p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/da5be52d57e9a1" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
+    // Initialize code copy buttons
+    function initCodeCopyButtons() {
+      const codeBlocks = document.querySelectorAll('.markdown-body pre');
+
+      codeBlocks.forEach((pre) => {
+        if (pre.querySelector('.code-copy-btn')) return;
+
+        const button = document.createElement('button');
+        button.className = 'code-copy-btn';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.setAttribute('title', 'Copy code');
+        button.innerHTML = `
+          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="btn-label">Copy</span>
+        `;
+
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            showCopySuccess(button);
+          } catch (err) {
+            const textArea = document.createElement('textarea');
+            textArea.value = code.textContent;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+
+            try {
+              document.execCommand('copy');
+              showCopySuccess(button);
+            } catch (e) {
+              button.querySelector('.btn-label').textContent = 'Failed';
+              setTimeout(() => {
+                button.querySelector('.btn-label').textContent = 'Copy';
+              }, 2000);
+            }
+
+            document.body.removeChild(textArea);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    }
+
+    function showCopySuccess(button) {
+      button.classList.add('copied');
+      button.querySelector('.btn-label').textContent = 'Copied!';
+      button.setAttribute('aria-label', 'Code copied to clipboard');
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.querySelector('.btn-label').textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+      }, 2000);
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
+    }
+  </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>
