@@ -15,6 +15,17 @@
   --glow-strong: 0 0 30px rgba(0, 255, 65, 0.5);
 }
 
+/* ===== FOCUS INDICATORS - WCAG 2.2 ===== */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--matrix);
+  outline-offset: 3px;
+  box-shadow: var(--glow);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -92,6 +103,14 @@ body::before {
 .back-link:hover {
   color: var(--matrix);
   border-color: var(--matrix-dark);
+  box-shadow: var(--glow);
+}
+
+.back-link:focus-visible {
+  color: var(--matrix);
+  border-color: var(--matrix);
+  outline: 2px solid var(--matrix);
+  outline-offset: 2px;
   box-shadow: var(--glow);
 }
 
