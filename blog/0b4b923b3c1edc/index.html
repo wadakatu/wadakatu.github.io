@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 | wadakatu</title>
+  <meta name="description" content="Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 - Tech article by wadakatu">
+  <meta name="author" content="wadakatu">
+
+  <!-- OGP -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/0b4b923b3c1edc/">
+  <meta property="og:title" content="Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 | wadakatu">
+  <meta property="og:description" content="Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:title" content="Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 | wadakatu">
+  <meta name="twitter:description" content="Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法 - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/0b4b923b3c1edc/">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/ogp.webp">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+  <link rel="stylesheet" href="/styles/common.css">
+    <style>
+    /* ===== ARTICLE PAGE STYLES ===== */
+
+    body {
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+    }
+
+    .article-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== ARTICLE HEADER ===== */
+    .article-header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .article-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--matrix), transparent);
+      box-shadow: var(--glow);
+    }
+
+    .article-emoji {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      display: block;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.3));
+    }
+
+    .article-title {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--bg);
+      background: var(--matrix);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .article-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time svg {
+      width: 14px;
+      height: 14px;
+      color: var(--matrix);
+      opacity: 0.7;
+    }
+
+    .article-topics {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .topic-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--matrix-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .topic-tag:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+    }
+
+    /* ===== ZENN LINK BAR ===== */
+    .zenn-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(0, 255, 65, 0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .zenn-bar-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .zenn-bar-text .terminal-prefix {
+      color: var(--matrix);
+      margin-right: 0.5rem;
+    }
+
+    .zenn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--matrix-dark);
+      border: 1px solid var(--matrix-dim);
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .zenn-link:hover {
+      background: var(--matrix);
+      color: var(--bg);
+      box-shadow: var(--glow-strong);
+      transform: translateY(-2px);
+    }
+
+    .zenn-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== ARTICLE CONTENT ===== */
+    .article-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Markdown Body Styles */
+    .markdown-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    /* Headings */
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2::before {
+      content: '## ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.25rem;
+    }
+
+    .markdown-body h3::before {
+      content: '### ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.5;
+      font-size: 0.85em;
+    }
+
+    .markdown-body h4 {
+      font-size: 1.1rem;
+    }
+
+    /* Paragraphs */
+    .markdown-body p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    .markdown-body a {
+      color: var(--matrix);
+      text-decoration: none;
+      border-bottom: 1px solid var(--matrix-dark);
+      transition: all 0.2s ease;
+    }
+
+    .markdown-body a:hover {
+      color: #4dff7c;
+      border-bottom-color: var(--matrix);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+
+    /* Lists */
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-body ul li::marker {
+      color: var(--matrix);
+    }
+
+    .markdown-body ol li::marker {
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Code - Inline */
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      color: var(--matrix);
+    }
+
+    /* Code - Block */
+    .markdown-body pre {
+      margin: 1.5rem 0 2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .markdown-body pre::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--matrix), var(--matrix-dim), var(--matrix));
+      opacity: 0.6;
+    }
+
+    .markdown-body pre code {
+      display: block;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      background: #1a1b26;
+      border: none;
+      overflow-x: auto;
+      color: #c0caf5;
+    }
+
+    /* ===== CODE COPY BUTTON ===== */
+    .code-copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.25s ease;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .markdown-body pre:hover .code-copy-btn,
+    .code-copy-btn:focus {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      background: rgba(0, 255, 65, 0.08);
+      box-shadow:
+        0 0 20px rgba(0, 255, 65, 0.15),
+        inset 0 0 20px rgba(0, 255, 65, 0.05);
+    }
+
+    .code-copy-btn .copy-icon,
+    .code-copy-btn .check-icon {
+      width: 14px;
+      height: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .code-copy-btn .check-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied {
+      color: var(--matrix);
+      border-color: var(--matrix-dim);
+      background: rgba(0, 255, 65, 0.12);
+      box-shadow:
+        0 0 25px rgba(0, 255, 65, 0.25),
+        inset 0 0 15px rgba(0, 255, 65, 0.1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn.copied .copy-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied .check-icon {
+      display: block;
+      animation: checkPop 0.3s ease;
+    }
+
+    .code-copy-btn .btn-label {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 20px rgba(0, 255, 65, 0.2),
+          inset 0 0 15px rgba(0, 255, 65, 0.1);
+      }
+      50% {
+        box-shadow:
+          0 0 30px rgba(0, 255, 65, 0.35),
+          inset 0 0 20px rgba(0, 255, 65, 0.15);
+      }
+    }
+
+    .code-copy-btn.copied {
+      animation: glowPulse 0.6s ease;
+    }
+
+    .code-copy-btn:focus-visible {
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .code-copy-btn {
+        opacity: 1;
+        transform: translateY(0);
+        padding: 8px 12px;
+      }
+    }
+
+    /* Blockquote */
+    .markdown-body blockquote {
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      border-left: 3px solid var(--matrix);
+      background: linear-gradient(90deg, rgba(0, 255, 65, 0.05), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-body blockquote p {
+      margin-bottom: 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* Images */
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+
+    /* Horizontal Rule */
+    .markdown-body hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--matrix-dark), var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* Tables */
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: var(--card);
+      font-weight: 600;
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .markdown-body tr:hover td {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    /* Strong & Emphasis */
+    .markdown-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .markdown-body em {
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ===== ARTICLE FOOTER ===== */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      box-shadow: var(--glow);
+    }
+
+    .nav-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 1.5rem 0 2rem;
+      }
+
+      .article-emoji {
+        font-size: 3rem;
+      }
+
+      .article-title {
+        font-size: 1.35rem;
+      }
+
+      .zenn-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .markdown-body {
+        font-size: 1rem;
+      }
+
+      .markdown-body pre code {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+
+      .article-footer-nav {
+        flex-direction: column;
+      }
+
+      .nav-button {
+        justify-content: center;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .article-header,
+    .zenn-bar,
+    .article-content,
+    .article-footer {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease-out forwards;
+    }
+
+    .article-header { animation-delay: 0.1s; }
+    .zenn-bar { animation-delay: 0.2s; }
+    .article-content { animation-delay: 0.3s; }
+    .article-footer { animation-delay: 0.4s; }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">⛳</span>
+        <h1 class="article-title">Laravel & Inertiaのテストでresource/js以外をテスト対象にする方法</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2023年3月27日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            2 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#laravel</span><span class="topic-tag">#inertia</span><span class="topic-tag">#pest</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/0b4b923b3c1edc" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h1>背景</h1>
+<p>LaravelとInertia.jsでSPAを作成しています。<br>ユーザー画面と管理画面でディレクトリを分けています。</p>
+<h2>ユーザー画面</h2>
+<p><code>resources/js/Pages</code>配下にページを作成しています。</p>
+<ul>
+<li>resources/js/Pages/User/Show.vueを作成済</li>
+</ul>
+<h3>コントローラー</h3>
+<pre><code class="language-php">use Inertia\Inertia;
+
+class UserController extends Controller
+{
+    public function show(User $user)
+    {
+        return Inertia::render(&#39;User/Show&#39;, [
+          &#39;user&#39; =&gt; $user
+        ]);
+    }
+}
+</code></pre>
+<h3>ルーティング</h3>
+<pre><code class="language-php">Route::get(&#39;/show&#39;, [UserController::class, &#39;show&#39;])-&gt;name(&#39;show&#39;);
+</code></pre>
+<hr>
+<h2>管理画面</h2>
+<p><code>resources/js-admin/Pages</code>配下にページを作成しています。</p>
+<ul>
+<li>resources/js-admin/Pages/Admin/Show.vueを作成済</li>
+</ul>
+<h3>コントローラー</h3>
+<pre><code class="language-php">use Inertia\Inertia;
+
+class AdminController extends Controller
+{
+    public function show(User $admin)
+    {
+        return Inertia::render(&#39;Admin/Show&#39;, [
+          &#39;admin&#39; =&gt; $admin
+        ]);
+    }
+}
+</code></pre>
+<h3>ルーティング</h3>
+<pre><code class="language-php">Route::get(&#39;/admin/show&#39;, [AdminController::class, &#39;show&#39;])-&gt;name(&#39;admin.show&#39;);
+</code></pre>
+<h1>テストを書いていく</h1>
+<p>テストには、<a href="https://pestphp.com/">Pest</a>を利用しています。</p>
+<h2>ユーザー画面</h2>
+<pre><code class="language-php">test(&#39;ログインユーザーの場合、ユーザー画面に遷移できること&#39;, function () {
+    // ユーザー作成
+    $user = User::factory()-&gt;create();
+　　　　　　　　// 作成したユーザーをログインさせて、UserControllerのshowメソッド呼び出し
+    $response = $this-&gt;actingAs($user)-&gt;get(route(&#39;show&#39;));
+
+    $response-&gt;assertOk();
+    $response-&gt;assertInertia(function (Assert $assert) {
+        $assert-&gt;component(&#39;User/Show&#39;);
+    });
+});
+</code></pre>
+<h3>上記のテストを実行すると問題なく成功します。</h3>
+<h2>管理画面</h2>
+<p>では、以下の管理画面のテストは成功するでしょうか？</p>
+<pre><code class="language-php">test(&#39;管理者の場合、管理画面に遷移できること&#39;, function () {
+    // 管理者作成
+    $superAdmin = User::factory()-&gt;superAdmin()-&gt;create();
+　　　　　　　　// 作成した管理者をログインさせて、AdminControllerのshowメソッド呼び出し
+    $response = $this-&gt;actingAs($superAdmin)-&gt;get(route(&#39;admin.show&#39;));
+
+    $response-&gt;assertOk();
+    $response-&gt;assertInertia(function (Assert $assert) {
+        $assert-&gt;component(&#39;Admin/Show&#39;);
+    });
+});
+</code></pre>
+<h3>↑このテストは失敗します。</h3>
+<pre><code>Inertia page component file [Admin/Show] does not exist.
+</code></pre>
+<h1>テスト失敗の原因</h1>
+<p>なぜ同じようなテストを書いても、前者は成功し、後者は失敗するのでしょうか？</p>
+<p>その原因は、Inertiaのconfigにありました。<br><code>vendor/inertiajs/inertia-laravel/config/inertia.php</code>を見てみましょう。</p>
+<pre><code class="language-php">&lt;?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Server Side Rendering
+    |--------------------------------------------------------------------------
+    |
+    | These options configures if and how Inertia uses Server Side Rendering
+    | to pre-render the initial visits made to your application&#39;s pages.
+    |
+    | Do note that enabling these options will NOT automatically make SSR work,
+    | as a separate rendering service needs to be available. To learn more,
+    | please visit https://inertiajs.com/server-side-rendering
+    |
+    */
+
+    &#39;ssr&#39; =&gt; [
+        &#39;enabled&#39; =&gt; false,
+        &#39;url&#39; =&gt; &#39;http://127.0.0.1:13714/render&#39;,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Testing
+    |--------------------------------------------------------------------------
+    |
+    | The values described here are used to locate Inertia components on the
+    | filesystem. For instance, when using `assertInertia`, the assertion
+    | attempts to locate the component as a file relative to any of the
+    | paths AND with any of the extensions specified here.
+    |
+    */
+
+    &#39;testing&#39; =&gt; [
+        &#39;ensure_pages_exist&#39; =&gt; true,
+        &#39;page_paths&#39; =&gt; [
+            resource_path(&#39;js/Pages&#39;),
+        ],
+        &#39;page_extensions&#39; =&gt; [
+
+            &#39;js&#39;,
+            &#39;jsx&#39;,
+            &#39;svelte&#39;,
+            &#39;ts&#39;,
+            &#39;tsx&#39;,
+            &#39;vue&#39;,
+        ],
+    ],
+];
+</code></pre>
+<p>重要なのは、以下の部分です。</p>
+<pre><code class="language-php">&#39;testing&#39; =&gt; [
+       // &#39;ensure_pages_exist&#39; =&gt; true,
+        &#39;page_paths&#39; =&gt; [
+            resource_path(&#39;js/Pages&#39;),
+        ],
+        //&#39;page_extensions&#39; =&gt; [
+        //
+        //  &#39;js&#39;,
+        //  &#39;jsx&#39;,
+        //  &#39;svelte&#39;,
+        //  &#39;ts&#39;,
+        //  &#39;tsx&#39;,
+        //  &#39;vue&#39;,
+       // ],
+    ],
+</code></pre>
+<p>そうです。テスト実行時にデフォルトで読み込まれるパスは、<code>resources/js/Pages</code>のみなのです。<br>管理画面のページを管理しているディレクトリは、どこか思い出してみましょう。。</p>
+<p>...</p>
+<p>...</p>
+<h3>resources/js-admin/Pages !?</h3>
+<p>そうなんです。<code>resources/js-admin/Pages</code>なんです。<br>本来だと、<code>resoruces/js-admin/Pages/Admin/Show.vue</code>を探して欲しいところを、Inertia君は<code>resources/js/Pages/Admin/Show.vue</code>を探していました。<br>これが原因です。</p>
+<h1>解決策</h1>
+<p>この問題の解決策は非常にシンプルです。<br>テスト中だけ一時的に<code>page_paths</code>を書き換えてやれば、OKです。</p>
+<p>テストに下記のように1行追加してください。</p>
+<pre><code class="language-diff">test(&#39;管理者の場合、管理画面に遷移できること&#39;, function () {
+    // パス書き換え
++    Config::set(&#39;inertia.testing.page_paths&#39;,[resource_path(&#39;js-admin/Pages&#39;)]);
+    
+    // 管理者作成
+    $superAdmin = User::factory()-&gt;superAdmin()-&gt;create();
+　　　　　　　　// 作成した管理者をログインさせて、AdminControllerのshowメソッド呼び出し
+    $response = $this-&gt;actingAs($superAdmin)-&gt;get(route(&#39;admin.show&#39;));
+
+    $response-&gt;assertOk();
+    $response-&gt;assertInertia(function (Assert $assert) {
+        $assert-&gt;component(&#39;Admin/Show&#39;);
+    });
+});
+</code></pre>
+<p><code>Config::set(&#39;inertia.testing.page_paths&#39;,[resource_path(&#39;js-admin/Pages&#39;)]);</code></p>
+<p>↑この記述をすることで、<code>resources/js-admin/Pages</code>配下の<code>Admin/Show.vue</code>を検索してくれるようになります。<br>そして、テストも成功します。</p>
+<p>めでたし、めでたし。</p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/0b4b923b3c1edc" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
+    // Initialize code copy buttons
+    function initCodeCopyButtons() {
+      const codeBlocks = document.querySelectorAll('.markdown-body pre');
+
+      codeBlocks.forEach((pre) => {
+        if (pre.querySelector('.code-copy-btn')) return;
+
+        const button = document.createElement('button');
+        button.className = 'code-copy-btn';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.setAttribute('title', 'Copy code');
+        button.innerHTML = `
+          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="btn-label">Copy</span>
+        `;
+
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            showCopySuccess(button);
+          } catch (err) {
+            const textArea = document.createElement('textarea');
+            textArea.value = code.textContent;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+
+            try {
+              document.execCommand('copy');
+              showCopySuccess(button);
+            } catch (e) {
+              button.querySelector('.btn-label').textContent = 'Failed';
+              setTimeout(() => {
+                button.querySelector('.btn-label').textContent = 'Copy';
+              }, 2000);
+            }
+
+            document.body.removeChild(textArea);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    }
+
+    function showCopySuccess(button) {
+      button.classList.add('copied');
+      button.querySelector('.btn-label').textContent = 'Copied!';
+      button.setAttribute('aria-label', 'Code copied to clipboard');
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.querySelector('.btn-label').textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+      }, 2000);
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
+    }
+  </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

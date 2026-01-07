@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu</title>
+  <meta name="description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
+  <meta name="author" content="wadakatu">
+
+  <!-- OGP -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/431afa748fbed1/">
+  <meta property="og:title" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu">
+  <meta property="og:description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:title" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? | wadakatu">
+  <meta name="twitter:description" content="🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...? - Tech article by wadakatu">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/431afa748fbed1/">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/ogp.webp">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Preconnect to external resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+  <link rel="stylesheet" href="/styles/common.css">
+    <style>
+    /* ===== ARTICLE PAGE STYLES ===== */
+
+    body {
+      font-family: 'Noto Sans JP', 'Outfit', sans-serif;
+    }
+
+    .article-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* ===== ARTICLE HEADER ===== */
+    .article-header {
+      text-align: center;
+      padding: 2rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .article-header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--matrix), transparent);
+      box-shadow: var(--glow);
+    }
+
+    .article-emoji {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      display: block;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.3));
+    }
+
+    .article-title {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+
+    .article-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .article-category {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--bg);
+      background: var(--matrix);
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .article-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time svg {
+      width: 14px;
+      height: 14px;
+      color: var(--matrix);
+      opacity: 0.7;
+    }
+
+    .article-topics {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .topic-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--matrix-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .topic-tag:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+    }
+
+    /* ===== ZENN LINK BAR ===== */
+    .zenn-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--card) 0%, rgba(0, 255, 65, 0.03) 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      flex-wrap: wrap;
+    }
+
+    .zenn-bar-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .zenn-bar-text .terminal-prefix {
+      color: var(--matrix);
+      margin-right: 0.5rem;
+    }
+
+    .zenn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--matrix-dark);
+      border: 1px solid var(--matrix-dim);
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .zenn-link:hover {
+      background: var(--matrix);
+      color: var(--bg);
+      box-shadow: var(--glow-strong);
+      transform: translateY(-2px);
+    }
+
+    .zenn-link svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== ARTICLE CONTENT ===== */
+    .article-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Markdown Body Styles */
+    .markdown-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: var(--text);
+    }
+
+    /* Headings */
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4 {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .markdown-body h2::before {
+      content: '## ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.6;
+      font-size: 0.9em;
+    }
+
+    .markdown-body h3 {
+      font-size: 1.25rem;
+    }
+
+    .markdown-body h3::before {
+      content: '### ';
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--matrix);
+      opacity: 0.5;
+      font-size: 0.85em;
+    }
+
+    .markdown-body h4 {
+      font-size: 1.1rem;
+    }
+
+    /* Paragraphs */
+    .markdown-body p {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Links */
+    .markdown-body a {
+      color: var(--matrix);
+      text-decoration: none;
+      border-bottom: 1px solid var(--matrix-dark);
+      transition: all 0.2s ease;
+    }
+
+    .markdown-body a:hover {
+      color: #4dff7c;
+      border-bottom-color: var(--matrix);
+      text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+    }
+
+    /* Lists */
+    .markdown-body ul,
+    .markdown-body ol {
+      margin-bottom: 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .markdown-body li {
+      margin-bottom: 0.5rem;
+    }
+
+    .markdown-body ul li::marker {
+      color: var(--matrix);
+    }
+
+    .markdown-body ol li::marker {
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Code - Inline */
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.2em 0.5em;
+      border-radius: 4px;
+      color: var(--matrix);
+    }
+
+    /* Code - Block */
+    .markdown-body pre {
+      margin: 1.5rem 0 2rem;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+    }
+
+    .markdown-body pre::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--matrix), var(--matrix-dim), var(--matrix));
+      opacity: 0.6;
+    }
+
+    .markdown-body pre code {
+      display: block;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      background: #1a1b26;
+      border: none;
+      overflow-x: auto;
+      color: #c0caf5;
+    }
+
+    /* ===== CODE COPY BUTTON ===== */
+    .code-copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.25s ease;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .markdown-body pre:hover .code-copy-btn,
+    .code-copy-btn:focus {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      background: rgba(0, 255, 65, 0.08);
+      box-shadow:
+        0 0 20px rgba(0, 255, 65, 0.15),
+        inset 0 0 20px rgba(0, 255, 65, 0.05);
+    }
+
+    .code-copy-btn .copy-icon,
+    .code-copy-btn .check-icon {
+      width: 14px;
+      height: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .code-copy-btn .check-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied {
+      color: var(--matrix);
+      border-color: var(--matrix-dim);
+      background: rgba(0, 255, 65, 0.12);
+      box-shadow:
+        0 0 25px rgba(0, 255, 65, 0.25),
+        inset 0 0 15px rgba(0, 255, 65, 0.1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-copy-btn.copied .copy-icon {
+      display: none;
+    }
+
+    .code-copy-btn.copied .check-icon {
+      display: block;
+      animation: checkPop 0.3s ease;
+    }
+
+    .code-copy-btn .btn-label {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 20px rgba(0, 255, 65, 0.2),
+          inset 0 0 15px rgba(0, 255, 65, 0.1);
+      }
+      50% {
+        box-shadow:
+          0 0 30px rgba(0, 255, 65, 0.35),
+          inset 0 0 20px rgba(0, 255, 65, 0.15);
+      }
+    }
+
+    .code-copy-btn.copied {
+      animation: glowPulse 0.6s ease;
+    }
+
+    .code-copy-btn:focus-visible {
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .code-copy-btn {
+        opacity: 1;
+        transform: translateY(0);
+        padding: 8px 12px;
+      }
+    }
+
+    /* Blockquote */
+    .markdown-body blockquote {
+      margin: 1.5rem 0;
+      padding: 1rem 1.5rem;
+      border-left: 3px solid var(--matrix);
+      background: linear-gradient(90deg, rgba(0, 255, 65, 0.05), transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .markdown-body blockquote p {
+      margin-bottom: 0;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* Images */
+    .markdown-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+    }
+
+    /* Horizontal Rule */
+    .markdown-body hr {
+      border: none;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), var(--matrix-dark), var(--border), transparent);
+      margin: 3rem 0;
+    }
+
+    /* Tables */
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: var(--card);
+      font-weight: 600;
+      color: var(--matrix);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .markdown-body tr:hover td {
+      background: rgba(0, 255, 65, 0.03);
+    }
+
+    /* Strong & Emphasis */
+    .markdown-body strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .markdown-body em {
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* ===== ARTICLE FOOTER ===== */
+    .article-footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .article-footer-nav {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-button:hover {
+      color: var(--matrix);
+      border-color: var(--matrix-dark);
+      box-shadow: var(--glow);
+    }
+
+    .nav-button svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .article-header {
+        padding: 1.5rem 0 2rem;
+      }
+
+      .article-emoji {
+        font-size: 3rem;
+      }
+
+      .article-title {
+        font-size: 1.35rem;
+      }
+
+      .zenn-bar {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .markdown-body {
+        font-size: 1rem;
+      }
+
+      .markdown-body pre code {
+        font-size: 0.8rem;
+        padding: 1rem;
+      }
+
+      .article-footer-nav {
+        flex-direction: column;
+      }
+
+      .nav-button {
+        justify-content: center;
+      }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .article-header,
+    .zenn-bar,
+    .article-content,
+    .article-footer {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.6s ease-out forwards;
+    }
+
+    .article-header { animation-delay: 0.1s; }
+    .zenn-bar { animation-delay: 0.2s; }
+    .article-content { animation-delay: 0.3s; }
+    .article-footer { animation-delay: 0.4s; }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="page-header">
+      <a href="/blog/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ../blog
+      </a>
+    </header>
+
+    <main class="article-container" id="main-content">
+      <header class="article-header">
+        <span class="article-emoji">👩‍💻</span>
+        <h1 class="article-title">🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...?</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2025年7月31日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            5 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#ai</span><span class="topic-tag">#mcp</span><span class="topic-tag">#claude</span><span class="topic-tag">#vibecoding</span><span class="topic-tag">#serena</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/431afa748fbed1" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
+      </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>📖 はじめに - Claude Codeのパフォーマンス低下問題</h2>
+<p>最近、X(Twitter)でClaude Codeのパフォーマンスに関する以下のような投稿を多く見かけます。</p>
+<ul>
+<li>Claude Codeの応答精度が低下している</li>
+<li>Claude Codeの出力品質に不満がある</li>
+<li>最近のClaude Codeの動作が期待に沿わない</li>
+</ul>
+<p>GitHubでも以下のようなissueが立てられて、Claude Codeのバージョンダウンしようみたいな風潮があります。</p>
+<p><a href="https://github.com/anthropics/claude-code/issues/4487">https://github.com/anthropics/claude-code/issues/4487</a></p>
+<p>実際に使用していると、CLAUDE.mdに記載された指示の見落としや、プロジェクト構造の把握精度の低下を感じることがあります。<br>しかし、バージョンダウンすると最新機能の<code>/agents</code>や<code>plan mode</code>が使用できなくなるため、最新版を使いながらパフォーマンスを向上させる方法を模索していました。</p>
+<p><strong>そこで見つけたのが「Serena MCP」です。</strong></p>
+<h2>🎯 Serena MCPとは？</h2>
+<p>Semantic Retrieval &amp; Editing noetic agentの略で「Serena」です。<br>日本語訳すると「セマンティック検索・編集型の知的エージェント」みたいな感じです。<br>ライブラリの名前ってオシャレなの多いですよね〜</p>
+<p>Serenaは、プロジェクトのコンテキストを効率的に管理し、Claude Codeの理解力を向上させるMCP（Model Context Protocol）サーバーです。<br>プロジェクト構造をセマンティックに分析し、必要な情報を適切にClaude Codeに提供することで、より正確な出力を実現するそうです。</p>
+<p>Serena自体の詳しい説明についてはGitHubリポジトリのREADMEを参照してください</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md">https://github.com/oraios/serena/blob/main/README.md</a></p>
+<h2>🛠 Mac環境での環境構築</h2>
+<p>Serenaには複数のインストール方法があります。あなたの環境に合わせて選択してください。</p>
+<h3>📋 前提条件</h3>
+<ul>
+<li>macOS（Intel/Apple Silicon対応）</li>
+<li>Claude Code がインストール済み</li>
+<li>Homebrew がインストール済み</li>
+</ul>
+<h3>方法1: uvxを使った直接実行（推奨）</h3>
+<p>最も簡単な方法です。事前のインストールが不要で、常に最新版を使用できます。<br>自分もこの方法を使っています。手頃で良い感じです。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#using-uvx">https://github.com/oraios/serena/blob/main/README.md#using-uvx</a></p>
+<h4>Step 1: uvのインストール</h4>
+<pre><code class="language-bash"># Homebrewでuvをインストール
+brew install uv
+</code></pre>
+<h4>Step 2: Claude Codeへの登録</h4>
+<p>プロジェクトディレクトリで以下を実行：</p>
+<pre><code class="language-bash">claude mcp add serena -- uvx --from git+https://github.com/oraios/serena serena-mcp-server --context ide-assistant --project $(pwd)
+</code></pre>
+<h3>方法2: ローカルインストール</h3>
+<p>より細かい制御が必要な場合や、オフライン環境で使用する場合に適しています。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#local-installation">https://github.com/oraios/serena/blob/main/README.md#local-installation</a></p>
+<h4>Step 1: Serenaのクローンとインストール</h4>
+<pre><code class="language-bash"># 作業ディレクトリを作成
+mkdir -p ~/Developer/mcp &amp;&amp; cd ~/Developer/mcp
+
+# Serenaをクローン
+git clone https://github.com/oraios/serena
+cd serena
+
+# mcpサーバー起動
+uv run serena-mcp-server
+</code></pre>
+<h4>Step 2: Claude Codeへの登録</h4>
+<pre><code class="language-bash"># プロジェクトディレクトリで実行
+claude mcp add serena -- uv run --directory ~/Developer/mcp/serena serena-mcp-server --project $(pwd)
+</code></pre>
+<h3>方法3: Docker(⚠️)</h3>
+<p>隔離された環境で実行したい場合はDockerを使いましょう<br><strong>注意</strong>: Docker版はまだ本番Readyではなく、いくつかの制限があるそうです。</p>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#using-docker-experimental">https://github.com/oraios/serena/blob/main/README.md#using-docker-experimental</a></p>
+<pre><code class="language-bash"># Dockerイメージを使用
+docker run --rm -i --network host \
+  -v ~/Projects:/workspaces/projects \
+  ghcr.io/oraios/serena:latest \
+  serena-mcp-server --transport stdio
+</code></pre>
+<h3>方法4: SSEモード（トラブルシューティング用）</h3>
+<p><a href="https://github.com/oraios/serena/blob/main/README.md#sse-mode">https://github.com/oraios/serena/blob/main/README.md#sse-mode</a></p>
+<p>標準のstdio通信で問題が発生する場合：</p>
+<pre><code class="language-bash"># SSEモードでサーバーを起動
+uv run --directory ~/Developer/mcp/serena serena-mcp-server --transport sse --port 9121
+
+# Claude Codeの設定でSSE接続を設定
+# http://localhost:9121/sse を指定
+```動
+uv run --directory ~/Developer/mcp/serena serena-mcp-server --transport sse --port 9121
+</code></pre>
+<h3>✅ 動作確認</h3>
+<pre><code class="language-bash"># MCPサーバーの状態確認
+claude mcp list
+
+# 出力例：
+# Available MCP servers:
+# - serena (connected) ✅
+</code></pre>
+<p>Serena MCPが起動すると、ブラウザで <code>http://localhost:24282/dashboard/index.html</code> が自動で開くはずです。</p>
+<h2>🎮 実際の使い方</h2>
+<h3>1️⃣ プロジェクトの初期化</h3>
+<p>新しいプロジェクトでSerenaを使い始める際：</p>
+<pre><code class="language-bash"># プロジェクトディレクトリで
+cd /path/to/your/project
+
+# Claude Codeを起動
+claude
+</code></pre>
+<hr>
+<p>Claude Code上で、<code>/mcp</code>を入力して、Serena MCPの起動状況を確認</p>
+<p>以下のような表示なればOK<br><img src="https://storage.googleapis.com/zenn-user-upload/e37bdeb4188d-20250731.png" alt=""></p>
+<hr>
+<p>Claude Codeのチャットで以下のコマンドを実行：</p>
+<pre><code>/mcp__serena__initial_instructions
+</code></pre>
+<p>または自然言語で：</p>
+<pre><code>read Serena&#39;s initial instructions
+</code></pre>
+<hr>
+<p>これにより、Serenaがプロジェクトをスキャンし、コードの構造を理解します。<br>このスキャンは１回走ると、.serenaディレクトリを新規作成します<br>そのディレクトリの中に、project構造などのmemoryをmd形式で複数作成してくれます。（CLAUDE.mdみたいな感じかなと思ってます）</p>
+<h2>🔧 設定のカスタマイズ</h2>
+<h3>グローバル設定</h3>
+<p><code>~/.serena/serena_config.yml</code> でグローバルな設定が可能：</p>
+<p><a href="https://github.com/oraios/serena/blob/main/src/serena/resources/serena_config.template.yml">https://github.com/oraios/serena/blob/main/src/serena/resources/serena_config.template.yml</a></p>
+<h3>プロジェクト固有の設定</h3>
+<p>プロジェクトディレクトリに <code>.serena/project.yml</code> を作成：</p>
+<p><a href="https://github.com/oraios/serena/blob/main/.serena/project.yml">https://github.com/oraios/serena/blob/main/.serena/project.yml</a></p>
+<h2>🚀 さらなる活用</h2>
+<h3>他のツールとの連携</h3>
+<p>SerenaはClaude Code以外にも様々なMCPクライアントと連携できるので、Claude Code以外に恩恵を得られるはずです。</p>
+<ul>
+<li><strong>IDE統合</strong>: VSCode, Cursor, IntelliJ</li>
+<li><strong>CLI ツール</strong>: Cline, Roo Code, Goose</li>
+<li><strong>その他</strong>: Windsurf, Agno</li>
+</ul>
+<h3>コミュニティとサポート</h3>
+<ul>
+<li><a href="https://github.com/oraios/serena">GitHub Repository</a></li>
+<li><a href="https://github.com/oraios/serena/blob/main/CHANGELOG.md">Changelog</a></li>
+<li><a href="https://github.com/oraios/serena/blob/main/ROADMAP.md">Roadmap</a></li>
+</ul>
+<h2>🎯 まとめ</h2>
+<p>Serenaを使ってまだ3日くらいですが、かなりClaude Codeの出力精度が上がっている気がして、実装中の不満が格段に減りました。（個人の感想です。）<br>AI系のツールって最初の数回使って期待値を下回ったらすぐ使わなくなって、次のツールに移るみたいなことが多いんですが、Serenaは期待値を上回る結果でこれからも使い続ける予定です！</p>
+<p>現状のClaude Codeに満足していない方、Serenaを導入してみませんか？<br>他にも良いツールあれば教えてください！</p>
+<p>Serenaに興味が出てきた方は、次はこの記事を読んでみるのおすすめです！<br>より実践的にSerenaを使う方法が書いてあり、勉強になりました！<br><a href="https://zenn.dev/sc30gsw/articles/ff81891959aaef">https://zenn.dev/sc30gsw/articles/ff81891959aaef</a></p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/431afa748fbed1" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="/scripts/common.js"></script>
+    <script>
+    // Initialize code copy buttons
+    function initCodeCopyButtons() {
+      const codeBlocks = document.querySelectorAll('.markdown-body pre');
+
+      codeBlocks.forEach((pre) => {
+        if (pre.querySelector('.code-copy-btn')) return;
+
+        const button = document.createElement('button');
+        button.className = 'code-copy-btn';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.setAttribute('title', 'Copy code');
+        button.innerHTML = `
+          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="btn-label">Copy</span>
+        `;
+
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+
+          try {
+            await navigator.clipboard.writeText(code.textContent);
+            showCopySuccess(button);
+          } catch (err) {
+            const textArea = document.createElement('textarea');
+            textArea.value = code.textContent;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+
+            try {
+              document.execCommand('copy');
+              showCopySuccess(button);
+            } catch (e) {
+              button.querySelector('.btn-label').textContent = 'Failed';
+              setTimeout(() => {
+                button.querySelector('.btn-label').textContent = 'Copy';
+              }, 2000);
+            }
+
+            document.body.removeChild(textArea);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    }
+
+    function showCopySuccess(button) {
+      button.classList.add('copied');
+      button.querySelector('.btn-label').textContent = 'Copied!';
+      button.setAttribute('aria-label', 'Code copied to clipboard');
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.querySelector('.btn-label').textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+      }, 2000);
+    }
+
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('SW registered:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('SW registration failed:', error);
+        });
+    }
+  </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .article-header, .zenn-bar, .article-content, .article-footer, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+    <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
+      <p>JavaScript is required for interactive features.</p>
+      <p style="margin-top: 1rem;">
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
+        <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
+      </p>
+    </div>
+  </noscript>
+</body>
+</html>

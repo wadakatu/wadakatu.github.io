@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading... | wadakatu</title>
-  <meta name="description" content="Tech article by wadakatu">
+  <title>[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ | wadakatu</title>
+  <meta name="description" content="[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ - Tech article by wadakatu">
   <meta name="author" content="wadakatu">
 
-  <!-- OGP (dynamically updated by JavaScript) -->
+  <!-- OGP -->
   <meta property="og:type" content="article">
-  <meta property="og:url" id="og-url" content="https://www.wadakatu.dev/blog/article.html">
-  <meta property="og:title" id="og-title" content="Article | wadakatu">
-  <meta property="og:description" id="og-description" content="Tech article by wadakatu">
+  <meta property="og:url" content="https://www.wadakatu.dev/blog/01a6f8c9376ff1/">
+  <meta property="og:title" content="[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ | wadakatu">
+  <meta property="og:description" content="[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ - Tech article by wadakatu">
   <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
@@ -20,16 +20,16 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
-  <meta name="twitter:title" id="twitter-title" content="Article | wadakatu">
-  <meta name="twitter:description" id="twitter-description" content="Tech article by wadakatu">
+  <meta name="twitter:title" content="[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ | wadakatu">
+  <meta name="twitter:description" content="[Laravel Subscriber] 関数名を文字列で定義するの怖くない？ - Tech article by wadakatu">
   <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Canonical URL -->
-  <link rel="canonical" id="canonical-url" href="https://www.wadakatu.dev/blog/article.html">
+  <link rel="canonical" href="https://www.wadakatu.dev/blog/01a6f8c9376ff1/">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/webp" href="../ogp.webp">
+  <link rel="icon" type="image/webp" href="/ogp.webp">
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
@@ -37,7 +37,6 @@
   <!-- Preconnect to external resources -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
@@ -45,8 +44,8 @@
   <!-- Highlight.js for syntax highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
-  <link rel="stylesheet" href="../styles/common.css">
-  <style>
+  <link rel="stylesheet" href="/styles/common.css">
+    <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
     body {
@@ -353,16 +352,6 @@
       color: #c0caf5;
     }
 
-    /* Code block filename */
-    .code-block-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      background: #15161e;
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-
     /* ===== CODE COPY BUTTON ===== */
     .code-copy-btn {
       position: absolute;
@@ -586,63 +575,6 @@
       height: 16px;
     }
 
-    /* ===== LOADING STATE ===== */
-    .loading-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      text-align: center;
-    }
-
-    .loading-spinner {
-      width: 48px;
-      height: 48px;
-      border: 3px solid var(--border);
-      border-top-color: var(--matrix);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      color: var(--text-dim);
-    }
-
-    /* ===== ERROR STATE ===== */
-    .error-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      text-align: center;
-    }
-
-    .error-icon {
-      font-size: 4rem;
-    }
-
-    .error-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.25rem;
-      color: #ff4444;
-    }
-
-    .error-message {
-      font-size: 1rem;
-      color: var(--text-dim);
-      max-width: 400px;
-    }
-
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
       .article-header {
@@ -695,7 +627,7 @@
     .article-content { animation-delay: 0.3s; }
     .article-footer { animation-delay: 0.4s; }
 
-    /* Skip Link - Hidden until focused */
+    /* Skip Link */
     .skip-link {
       position: absolute;
       top: -100%;
@@ -726,7 +658,7 @@
 
   <div class="container">
     <header class="page-header">
-      <a href="/blog" class="back-link">
+      <a href="/blog/" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
@@ -735,16 +667,175 @@
     </header>
 
     <main class="article-container" id="main-content">
-      <!-- Loading State -->
-      <div class="loading-state" id="loading-state">
-        <div class="loading-spinner"></div>
-        <p class="loading-text">Loading article<span class="cursor"></span></p>
+      <header class="article-header">
+        <span class="article-emoji">🫥</span>
+        <h1 class="article-title">[Laravel Subscriber] 関数名を文字列で定義するの怖くない？</h1>
+        <div class="article-meta">
+          <span class="article-category">Tech</span>
+          <span class="article-date">2024年4月5日</span>
+          <span class="article-reading-time">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            3 min read
+          </span>
+        </div>
+        <div class="article-topics">
+          <span class="topic-tag">#laravel</span><span class="topic-tag">#php</span><span class="topic-tag">#phpunit</span><span class="topic-tag">#mockery</span><span class="topic-tag">#suscriber</span>
+        </div>
+      </header>
+
+      <div class="zenn-bar">
+        <span class="zenn-bar-text">
+          <span class="terminal-prefix">$</span>
+          This article is also available on Zenn
+        </span>
+        <a href="https://zenn.dev/wadakatu/articles/01a6f8c9376ff1" target="_blank" rel="noopener noreferrer" class="zenn-link">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
+          </svg>
+          Read on Zenn
+        </a>
       </div>
+
+      <article class="article-content">
+        <div class="markdown-body">
+          <h2>LaravelのSubscriber　is 何</h2>
+<p>イベントシステム内で特定のイベントが発生したときに、一連のリスナー（イベントハンドラー）を登録することを可能にするクラスです。イベントリスナーは、イベントが発生した際にアプリケーションが実行すべき具体的な動作を定義しますが、Subscriberを使用することで、関連する複数のイベントリスナーを一つのクラス内で管理し、効率的にイベントに対する反応を定義することができます。</p>
+<p>詳しいことは、公式ドキュメントや日本語訳ドキュメントを読んでください。<br><a href="https://laravel.com/docs/10.x/events#writing-event-subscribers">https://laravel.com/docs/10.x/events#writing-event-subscribers</a></p>
+<p><a href="https://readouble.com/laravel/10.x/ja/events.html">https://readouble.com/laravel/10.x/ja/events.html</a></p>
+<h2>Subscriber実装</h2>
+<p>各イベント毎にメッセージをカスタマイズしてSlack通知を送信したい。<br>そのために書いたSubscriberが以下のような感じです。</p>
+<p>::::details 実装例</p>
+<pre><code class="language-php">
+&lt;?php
+
+declare(strict_types=1);
+
+namespace App\Listeners;
+
+use App\Events\UserCreatedEvent;
+use App\Events\UserDeletedEvent;
+use App\Services\User\SendSlackNotificationService;
+use Illuminate\Events\Dispatcher;
+
+class SendSlackNotificationSubscriber
+{
+    public function __construct(private readonly SendSlackNotificationService $send_slack_notification_service)
+    {
+    }
+
+    public function handleUserCreated(UserCreatedEvent $userCreatedEvent): void
+    {
+        $this-&gt;send_slack_notification_service-&gt;handle(
+            $userCreatedEvent-&gt;getUser(),
+            &#39;新規登録がありました。&#39;
+        );
+    }
+
+    public function handleUserDeleted(UserDeletedEvent $userDeletedEvent): void
+    {
+        $this-&gt;send_slack_notification_service-&gt;handle(
+            $userDeletedEvent-&gt;getTrashedUser(),
+            &#39;退会がありました。&#39;
+        );
+    }
+
+    /**
+     * サブスクライバのリスナを登録
+     *
+     * @return array&lt;string, string&gt;
+     */
+    public function subscribe(Dispatcher $events): array
+    {
+        return [
+            UserCreatedEvent::class   =&gt; &#39;handleUserCreated&#39;,
+            UserDeletedEvent::class   =&gt; &#39;handleUserDeleted&#39;,
+        ];
+    }
+}
+</code></pre>
+<p>::::</p>
+<h2>湧き上がる恐怖</h2>
+<p>Subscriberを書いて恐怖を感じた部分は、イベントとメソッドを紐付ける<code>subscribe</code>メソッドです。</p>
+<pre><code class="language-php">return [
+            UserCreatedEvent::class    =&gt; &#39;handleUserCreated&#39;,
+            UserDeletedEvent::class   =&gt; &#39;handleUserDeleted&#39;,
+        ];
+</code></pre>
+<p>:::message</p>
+<h3>関数名を文字列で定義するのちょっと怖くない・・・？</h3>
+<h3>タイポしてたらどうしよう...</h3>
+<p>:::</p>
+<h2>テストを書いて恐怖に打ち勝つ</h2>
+<p>おそらく、Subscriberの各メソッドに対してテストを普通書こうとしたら、以下のようになると思います。</p>
+<pre><code class="language-php">public function test_userCreatedEvent(){
+    $user = User::factory()-&gt;create();
+
+    $service = Mockery::mock(SendSlackNotificationService::class);
+    $service-&gt;shouldReceive(&#39;handle&#39;)-&gt;once();
+
+    $subscriber = new SendSlackNotificationSubscriber($service);
+
+    $subscriber-&gt;handleUserCreated(new UserCreatedEvent($user));
+}
+</code></pre>
+<p>これだと、subscribeメソッドは通さず直接メソッドを呼び出すので、まだ「タイポしてたらどうしよう」の恐怖には勝てません。。。</p>
+<p>そこで、私はメソッドの実行に<code>Dispatcher</code>を利用することにしました。</p>
+<pre><code class="language-php">public function test_userCreatedEvent(){
+    $service = Mockery::mock(SendSlackNotificationService::class);
+    $service-&gt;shouldReceive(&#39;handle&#39;)-&gt;once();
+
+    $this-&gt;app-&gt;instance(SendSlackNotificationService::class, $this-&gt;service);
+
+    $dispatcher = app(Dispatcher::class);
+    // UserCreatedEventと紐づくリスナーを一旦全削除（テスト対象外のリスナーを走らせないため）
+    $dispatcher-&gt;forget(UserCreatedEvent::class);
+    // 今回テスト対象のsubscriberを登録
+    $dispatcher-&gt;subscribe(SendSlackNotificationSubscriber::class);
+    // イベント発火
+    $dispatcher-&gt;dispatch(new UserCreatedEvent($user));
+}
+</code></pre>
+<p>このように書くことで、subscribeメソッドを通してイベントに紐づくメソッドを実行することができました。<br>もし、メソッドの文字列でタイポがある場合でも、下記のようにエラーが出てくれます。</p>
+<pre><code class="language-diff:php">return [
+-           UserCreatedEvent::class    =&gt; &#39;handleUserCreated&#39;, 
++           UserCreatedEvent::class    =&gt; &#39;handleUserCreate&#39;,
+            UserDeletedEvent::class   　　=&gt; &#39;handleUserDeleted&#39;,
+        ];
+</code></pre>
+<p>:::message alert<br> FAILED  Tests\Unit\Listeners\SendSlackNotificationSubscriberTest &gt; handle…  BindingResolutionException<br>  Target class [handleUserCreate] does not exist.<br>:::</p>
+<h2>これでもう安心だ！！！！</h2>
+<p>このテストが必須かと言われるとそんなことはないと思います。<br>ただ、個人的には文字列で関数名定義することにモヤモヤしたので、一案としては良いかなと思います。</p>
+<p>他に良いテスト方法あれば教えてください🙇</p>
+
+        </div>
+      </article>
+
+      <footer class="article-footer">
+        <nav class="article-footer-nav">
+          <a href="/blog/" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Blog
+          </a>
+          <a href="https://zenn.dev/wadakatu/articles/01a6f8c9376ff1" target="_blank" rel="noopener noreferrer" class="nav-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            Open in Zenn
+          </a>
+        </nav>
+      </footer>
     </main>
 
     <footer class="footer">
       <div class="footer-brand">
-        <img src="../ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
         <div class="footer-info">
           <span class="footer-name">wadakatu_</span>
           <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
@@ -760,174 +851,9 @@
     </footer>
   </div>
 
-  <!-- Marked.js for Markdown parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
-  <!-- Highlight.js for syntax highlighting -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-
-  <script src="../scripts/common.js"></script>
-  <script>
-    // ===== ARTICLE PAGE LOGIC =====
-
-    const categoryMap = {
-      tech: 'Tech',
-      idea: 'Life'
-    };
-
-    function getCategory(article) {
-      if (article.category) return article.category;
-      return categoryMap[article.type] || 'Other';
-    }
-
-    function formatDate(dateString) {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-
-    function getSlugFromURL() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('slug');
-    }
-
-    async function loadArticleMetadata(slug) {
-      const response = await fetch('/data/articles.json');
-      if (!response.ok) throw new Error('Failed to load articles');
-      const articles = await response.json();
-      return articles.find(a => a.slug === slug);
-    }
-
-    async function loadArticleContent(slug) {
-      const response = await fetch(`/articles/${slug}.md`);
-      if (!response.ok) throw new Error('Article not found');
-      const content = await response.text();
-
-      // Remove frontmatter
-      const stripped = content.replace(/^---[\s\S]*?---\n*/, '');
-      return stripped;
-    }
-
-    function updateMetaTags(metadata) {
-      const articleUrl = `https://www.wadakatu.dev/blog/article.html?slug=${metadata.slug}`;
-      const description = `${metadata.title} - Tech article by wadakatu`;
-
-      // Update page meta tags
-      document.querySelector('meta[name="description"]').setAttribute('content', description);
-
-      // Update OGP tags
-      document.getElementById('og-url').setAttribute('content', articleUrl);
-      document.getElementById('og-title').setAttribute('content', `${metadata.title} | wadakatu`);
-      document.getElementById('og-description').setAttribute('content', description);
-
-      // Update Twitter Card tags
-      document.getElementById('twitter-title').setAttribute('content', `${metadata.title} | wadakatu`);
-      document.getElementById('twitter-description').setAttribute('content', description);
-
-      // Update canonical URL
-      document.getElementById('canonical-url').setAttribute('href', articleUrl);
-    }
-
-    function renderArticle(metadata, content) {
-      const main = document.getElementById('article-main');
-      const category = getCategory(metadata);
-      const date = formatDate(metadata.published_at);
-      const zennUrl = `https://zenn.dev/wadakatu/articles/${metadata.slug}`;
-
-      // Update page title and meta tags
-      document.title = `${metadata.title} | wadakatu`;
-      updateMetaTags(metadata);
-
-      // Configure marked
-      marked.setOptions({
-        highlight: function(code, lang) {
-          if (lang && hljs.getLanguage(lang)) {
-            return hljs.highlight(code, { language: lang }).value;
-          }
-          return hljs.highlightAuto(code).value;
-        },
-        breaks: true,
-        gfm: true
-      });
-
-      // Parse markdown
-      const htmlContent = marked.parse(content);
-
-      const readingTime = metadata.reading_time || 1;
-
-      main.innerHTML = `
-        <header class="article-header">
-          <span class="article-emoji">${metadata.emoji}</span>
-          <h1 class="article-title">${metadata.title}</h1>
-          <div class="article-meta">
-            <span class="article-category">${category}</span>
-            <span class="article-date">${date}</span>
-            <span class="article-reading-time">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-              ${readingTime} min read
-            </span>
-          </div>
-          <div class="article-topics">
-            ${metadata.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}
-          </div>
-        </header>
-
-        <div class="zenn-bar">
-          <span class="zenn-bar-text">
-            <span class="terminal-prefix">$</span>
-            This article is also available on Zenn
-          </span>
-          <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="zenn-link">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-            </svg>
-            Read on Zenn
-          </a>
-        </div>
-
-        <article class="article-content">
-          <div class="markdown-body">
-            ${htmlContent}
-          </div>
-        </article>
-
-        <footer class="article-footer">
-          <nav class="article-footer-nav">
-            <a href="/blog" class="nav-button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-              </svg>
-              Back to Blog
-            </a>
-            <a href="${zennUrl}" target="_blank" rel="noopener noreferrer" class="nav-button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                <polyline points="15 3 21 3 21 9"/>
-                <line x1="10" y1="14" x2="21" y2="3"/>
-              </svg>
-              Open in Zenn
-            </a>
-          </nav>
-        </footer>
-      `;
-
-      // Re-apply syntax highlighting to any code blocks
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-      });
-
-      // Initialize code copy buttons
-      initCodeCopyButtons();
-    }
-
-    /**
-     * Initialize code copy buttons for all code blocks
-     */
+  <script src="/scripts/common.js"></script>
+    <script>
+    // Initialize code copy buttons
     function initCodeCopyButtons() {
       const codeBlocks = document.querySelectorAll('.markdown-body pre');
 
@@ -957,7 +883,6 @@
             await navigator.clipboard.writeText(code.textContent);
             showCopySuccess(button);
           } catch (err) {
-            // Fallback for older browsers
             const textArea = document.createElement('textarea');
             textArea.value = code.textContent;
             textArea.style.position = 'fixed';
@@ -995,51 +920,8 @@
       }, 2000);
     }
 
-    function showError(message) {
-      const main = document.getElementById('article-main');
-      main.innerHTML = `
-        <div class="error-state">
-          <span class="error-icon">💀</span>
-          <h2 class="error-title">Error 404</h2>
-          <p class="error-message">${message}</p>
-          <a href="/blog" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Back to Blog
-          </a>
-        </div>
-      `;
-    }
-
-    async function initArticle() {
-      const slug = getSlugFromURL();
-
-      if (!slug) {
-        showError('No article specified. Please select an article from the blog.');
-        return;
-      }
-
-      try {
-        const [metadata, content] = await Promise.all([
-          loadArticleMetadata(slug),
-          loadArticleContent(slug)
-        ]);
-
-        if (!metadata) {
-          showError(`Article "${slug}" not found.`);
-          return;
-        }
-
-        renderArticle(metadata, content);
-      } catch (error) {
-        console.error('Error loading article:', error);
-        showError('Failed to load article. Please try again later.');
-      }
-    }
-
     // Initialize on DOM ready
-    document.addEventListener('DOMContentLoaded', initArticle);
+    document.addEventListener('DOMContentLoaded', initCodeCopyButtons);
   </script>
 
   <!-- Service Worker Registration -->
@@ -1063,12 +945,11 @@
         opacity: 1;
         transform: none;
       }
-      #loading-state { display: none; }
     </style>
     <div style="text-align: center; padding: 3rem; font-family: 'JetBrains Mono', monospace; color: #888;">
-      <p>JavaScript is required to load this article.</p>
+      <p>JavaScript is required for interactive features.</p>
       <p style="margin-top: 1rem;">
-        <a href="/blog" style="color: #00ff41;">Return to Blog</a> or
+        <a href="/blog/" style="color: #00ff41;">Return to Blog</a> or
         <a href="https://zenn.dev/wadakatu" style="color: #00ff41;">Visit Zenn</a>
       </p>
     </div>
