@@ -123,11 +123,11 @@ This portfolio website is intentionally built with minimal dependencies:
 
 | Page | URL | Description |
 |------|-----|-------------|
-| Home | https://wadakatu.github.io/ | Main portfolio with navigation hub |
-| Projects | https://wadakatu.github.io/projects | OSS contributions and personal works |
-| Blog | https://wadakatu.github.io/blog | Technical articles and learnings |
-| About | https://wadakatu.github.io/about | Career history and detailed skills |
-| 404 | https://wadakatu.github.io/404.html | Custom error page with Matrix theme |
+| Home | https://www.wadakatu.dev/ | Main portfolio with navigation hub |
+| Projects | https://www.wadakatu.dev/projects | OSS contributions and personal works |
+| Blog | https://www.wadakatu.dev/blog | Technical articles and learnings |
+| About | https://www.wadakatu.dev/about | Career history and detailed skills |
+| 404 | https://www.wadakatu.dev/404.html | Custom error page with Matrix theme |
 
 ---
 

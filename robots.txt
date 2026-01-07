@@ -1,11 +1,11 @@
-# robots.txt for wadakatu.github.io
+# robots.txt for www.wadakatu.dev
 
 User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://wadakatu.github.io/sitemap.xml
+Sitemap: https://www.wadakatu.dev/sitemap.xml
 
 # AI crawlers - welcome to use llms.txt
-# See: https://wadakatu.github.io/llms.txt
-# Full content: https://wadakatu.github.io/llms-full.txt
+# See: https://www.wadakatu.dev/llms.txt
+# Full content: https://www.wadakatu.dev/llms-full.txt

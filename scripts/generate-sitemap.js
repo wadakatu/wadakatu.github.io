@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASE_URL = 'https://wadakatu.github.io';
+const BASE_URL = 'https://www.wadakatu.dev';
 const ARTICLES_JSON = path.join(__dirname, '..', 'data', 'articles.json');
 const OUTPUT_FILE = path.join(__dirname, '..', 'sitemap.xml');
 
