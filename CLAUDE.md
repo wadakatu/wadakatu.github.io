@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal portfolio website for wadakatu (Backend Developer). Static site hosted on GitHub Pages at https://wadakatu.github.io/.
+Personal portfolio website for wadakatu (Backend Developer). Static site hosted on GitHub Pages at https://www.wadakatu.dev/.
 
 ## Tech Stack
 

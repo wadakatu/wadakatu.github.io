@@ -29,10 +29,10 @@ Location: Osaka, Japan
 
 ## Site Structure
 
-- [Homepage](https://wadakatu.github.io/): Main portfolio page with navigation hub
-- [Projects](https://wadakatu.github.io/projects): OSS contributions and personal works
-- [Blog](https://wadakatu.github.io/blog): Technical articles and learnings
-- [About](https://wadakatu.github.io/about): Career history and skills
+- [Homepage](https://www.wadakatu.dev/): Main portfolio page with navigation hub
+- [Projects](https://www.wadakatu.dev/projects): OSS contributions and personal works
+- [Blog](https://www.wadakatu.dev/blog): Technical articles and learnings
+- [About](https://www.wadakatu.dev/about): Career history and skills
 
 ## Technical Stack
 
