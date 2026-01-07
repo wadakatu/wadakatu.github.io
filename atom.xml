@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>wadakatu Blog</title>
+  <subtitle>Tech articles and learnings by wadakatu - Laravel, TypeScript, and web development.</subtitle>
+  <link href="https://www.wadakatu.dev/blog/" rel="alternate" type="text/html"/>
+  <link href="https://www.wadakatu.dev/atom.xml" rel="self" type="application/atom+xml"/>
+  <id>https://www.wadakatu.dev/blog/</id>
+  <updated>2025-12-10T04:20:00.000Z</updated>
+  <author>
+    <name>wadakatu</name>
+    <uri>https://www.wadakatu.dev</uri>
+  </author>
+  <rights>Copyright 2026 wadakatu</rights>
+  <icon>https://www.wadakatu.dev/ogp.webp</icon>
+  <logo>https://www.wadakatu.dev/ogp.webp</logo>
+  <entry>
+    <title>🧑‍💻 W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？）</title>
+    <link href="https://www.wadakatu.dev/blog/da5be52d57e9a1/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/da5be52d57e9a1/</id>
+    <published>2025-12-10T04:20:00.000Z</published>
+    <updated>2025-12-10T04:20:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Life"/>
+    <category term="w3c"/>
+    <category term="report"/>
+    <category term="tpac"/>
+    <category term="kobe"/>
+    <category term="worldwideweb"/>
+  </entry>
+  <entry>
+    <title>🥷 \5を追加したら動いた！iTerm2でPhpStormを起動する設定方法</title>
+    <link href="https://www.wadakatu.dev/blog/c438613853e766/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/c438613853e766/</id>
+    <published>2025-08-12T00:47:00.000Z</published>
+    <updated>2025-08-12T00:47:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="terminal"/>
+    <category term="phpstorm"/>
+    <category term="iterm2"/>
+  </entry>
+  <entry>
+    <title>👩‍💻 🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...?</title>
+    <link href="https://www.wadakatu.dev/blog/431afa748fbed1/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/431afa748fbed1/</id>
+    <published>2025-07-31T02:13:00.000Z</published>
+    <updated>2025-07-31T02:13:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="ai"/>
+    <category term="mcp"/>
+    <category term="claude"/>
+    <category term="vibecoding"/>
+    <category term="serena"/>
+  </entry>
+  <entry>
+    <title>🫠 Contextual Bindingの仕様変更について（Lumen v10 -&gt; v11）</title>
+    <link href="https://www.wadakatu.dev/blog/2b6012f10b777d/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/2b6012f10b777d/</id>
+    <published>2025-04-14T02:26:00.000Z</published>
+    <updated>2025-04-14T02:26:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="laravel"/>
+    <category term="php"/>
+    <category term="lumen"/>
+    <category term="servicecontainer"/>
+    <category term="contextualbinding"/>
+  </entry>
+  <entry>
+    <title>🤪 `php artisan schema:dump`で `TLS/SSL`に関するエラーが出た時の対処法</title>
+    <link href="https://www.wadakatu.dev/blog/ce0260ada646f4/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/ce0260ada646f4/</id>
+    <published>2025-02-03T05:13:00.000Z</published>
+    <updated>2025-02-03T05:13:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="laravel"/>
+    <category term="mysql"/>
+    <category term="php"/>
+    <category term="mariadb"/>
+    <category term="mysqldump"/>
+  </entry>
+  <entry>
+    <title>🤫 pecl install grpcで大量のwarningメッセージ出た時の対処法</title>
+    <link href="https://www.wadakatu.dev/blog/ad3ddb6ff13abe/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/ad3ddb6ff13abe/</id>
+    <published>2024-12-04T04:40:00.000Z</published>
+    <updated>2024-12-04T04:40:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="php"/>
+    <category term="grpc"/>
+    <category term="dockerfile"/>
+    <category term="gnu"/>
+    <category term="pecl"/>
+  </entry>
+  <entry>
+    <title>🍪 [Laravel] 最も簡単で最も難しい419エラーの解決策</title>
+    <link href="https://www.wadakatu.dev/blog/f3948e577a3b65/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/f3948e577a3b65/</id>
+    <published>2024-04-22T11:49:00.000Z</published>
+    <updated>2024-04-22T11:49:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="laravel"/>
+    <category term="php"/>
+    <category term="csrf"/>
+    <category term="419"/>
+  </entry>
+  <entry>
+    <title>🫥 [Laravel Subscriber] 関数名を文字列で定義するの怖くない？</title>
+    <link href="https://www.wadakatu.dev/blog/01a6f8c9376ff1/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/01a6f8c9376ff1/</id>
+    <published>2024-04-05T03:07:00.000Z</published>
+    <updated>2024-04-05T03:07:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="laravel"/>
+    <category term="php"/>
+    <category term="phpunit"/>
+    <category term="mockery"/>
+    <category term="suscriber"/>
+  </entry>
+  <entry>
+    <title>🤕 [Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法</title>
+    <link href="https://www.wadakatu.dev/blog/46d7b3e367d930/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/46d7b3e367d930/</id>
+    <published>2024-01-13T17:18:00.000Z</published>
+    <updated>2024-01-13T17:18:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="framer"/>
+    <category term="react"/>
+    <category term="framermotion"/>
+  </entry>
+  <entry>
+    <title>🙇‍♂️ Next.js初心者がLogを出すまでに苦労した話</title>
+    <link href="https://www.wadakatu.dev/blog/e78c7f39dab62f/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/e78c7f39dab62f/</id>
+    <published>2023-08-18T06:52:00.000Z</published>
+    <updated>2023-08-18T06:52:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="next"/>
+    <category term="typescript"/>
+    <category term="ecs"/>
+    <category term="logger"/>
+    <category term="pino"/>
+  </entry>
+  <entry>
+    <title>👹 sendgrid-nodejsでbaseUrlを変更するときに注意すること</title>
+    <link href="https://www.wadakatu.dev/blog/d261ae9bcb4d6b/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/d261ae9bcb4d6b/</id>
+    <published>2023-07-31T14:55:00.000Z</published>
+    <updated>2023-07-31T14:55:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="javascript"/>
+    <category term="typescript"/>
+    <category term="node"/>
+    <category term="sendgrid"/>
+    <category term="sendgridnodejs"/>
+  </entry>
+  <entry>
+    <title>🧿 【Next.js v13】 Metadata APIを使ってFaviconを設定</title>
+    <link href="https://www.wadakatu.dev/blog/33b761aeb80772/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/33b761aeb80772/</id>
+    <published>2023-07-25T08:32:00.000Z</published>
+    <updated>2023-07-25T08:32:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="javascript"/>
+    <category term="nextjs"/>
+    <category term="favicon"/>
+  </entry>
+  <entry>
+    <title>⛳ Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法</title>
+    <link href="https://www.wadakatu.dev/blog/0b4b923b3c1edc/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/0b4b923b3c1edc/</id>
+    <published>2023-03-27T11:03:00.000Z</published>
+    <updated>2023-03-27T11:03:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="laravel"/>
+    <category term="inertia"/>
+    <category term="pest"/>
+  </entry>
+  <entry>
+    <title>⚡ PHP/Composerなしで始めるLaravel/Sail入門</title>
+    <link href="https://www.wadakatu.dev/blog/afc2c86306ca88/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/afc2c86306ca88/</id>
+    <published>2023-01-17T09:03:00.000Z</published>
+    <updated>2023-01-17T09:03:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="docker"/>
+    <category term="laravel"/>
+    <category term="php"/>
+    <category term="composer"/>
+    <category term="sail"/>
+  </entry>
+  <entry>
+    <title>🔖 【vimeo.js】doNotTrack is not defined.</title>
+    <link href="https://www.wadakatu.dev/blog/8b5deda18d7967/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/8b5deda18d7967/</id>
+    <published>2023-01-16T01:38:00.000Z</published>
+    <updated>2023-01-16T01:38:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="javascript"/>
+    <category term="vimeo"/>
+  </entry>
+  <entry>
+    <title>😎 【Inertia.js】[object Object] could not be cloned.の対処法</title>
+    <link href="https://www.wadakatu.dev/blog/3828103014143e/" rel="alternate" type="text/html"/>
+    <id>https://www.wadakatu.dev/blog/3828103014143e/</id>
+    <published>2023-01-06T05:40:00.000Z</published>
+    <updated>2023-01-06T05:40:00.000Z</updated>
+    <author>
+      <name>wadakatu</name>
+      <uri>https://www.wadakatu.dev</uri>
+    </author>
+    <category term="Tech"/>
+    <category term="javascript"/>
+    <category term="laravel"/>
+    <category term="inertia"/>
+    <category term="channeltalk"/>
+  </entry>
+</feed>
