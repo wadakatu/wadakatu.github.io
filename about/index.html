@@ -13,7 +13,17 @@
   <meta property="og:title" content="About | wadakatu">
   <meta property="og:description" content="Career and skills of wadakatu - Backend Developer @ Studio Inc. Active OSS contributor to Laravel ecosystem.">
   <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content="About | wadakatu">
+  <meta name="twitter:description" content="Career and skills of wadakatu - Backend Developer @ Studio Inc. Active OSS contributor to Laravel ecosystem.">
+  <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
@@ -437,9 +447,34 @@
     .stats-section { animation-delay: 0.25s; }
     .stack-section { animation-delay: 0.35s; }
     .oss-section { animation-delay: 0.45s; }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
   <div class="container">
@@ -453,7 +488,7 @@
       <h1 class="page-title">About<span class="highlight">_</span></h1>
     </header>
 
-    <main class="about-content">
+    <main id="main-content" class="about-content">
       <!-- Profile Section -->
       <section class="profile-section">
         <div class="profile-header">
@@ -629,5 +664,16 @@
         });
     }
   </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .profile-section, .stats-section, .stack-section, .oss-section, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+  </noscript>
 </body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,18 @@
   <meta property="og:title" content="Blog | wadakatu">
   <meta property="og:description" content="Tech articles and learnings by wadakatu - Laravel, TypeScript, and web development.">
   <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content="Blog | wadakatu">
+  <meta name="twitter:description" content="Tech articles and learnings by wadakatu - Laravel, TypeScript, and web development.">
+  <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
 
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
@@ -335,9 +346,34 @@
     .blog-stats { animation-delay: 0.2s; }
     .category-section { animation-delay: 0.3s; }
     .articles-list { animation-delay: 0.4s; }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10000;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
   <div class="container">
@@ -351,7 +387,7 @@
       <h1 class="page-title">Blog<span class="highlight">_</span></h1>
     </header>
 
-    <main class="blog-content">
+    <main id="main-content" class="blog-content">
       <!-- Stats Header -->
       <div class="blog-stats">
         <div class="stats-info">
@@ -418,5 +454,25 @@
         });
     }
   </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .blog-stats, .category-section, .articles-list, .footer {
+        opacity: 1;
+        transform: none;
+      }
+      .loading { display: none; }
+      #articles-container::before {
+        content: 'JavaScript is required to load articles. Please enable JavaScript or visit Zenn directly.';
+        display: block;
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-dim);
+        font-family: 'JetBrains Mono', monospace;
+      }
+    </style>
+  </noscript>
 </body>
 </html>

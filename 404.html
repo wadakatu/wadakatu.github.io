@@ -7,6 +7,24 @@
   <meta name="description" content="You've reached a dead end in the Matrix. Make your choice.">
   <meta name="robots" content="noindex">
 
+  <!-- OGP -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://wadakatu.github.io/404.html">
+  <meta property="og:title" content="404 - Page Not Found | wadakatu">
+  <meta property="og:description" content="The path you seek does not exist in this reality.">
+  <meta property="og:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content="404 - Page Not Found | wadakatu">
+  <meta name="twitter:description" content="The path you seek does not exist in this reality.">
+  <meta name="twitter:image" content="https://wadakatu.github.io/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
   <link rel="icon" type="image/webp" href="./ogp.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -553,12 +571,37 @@
       white-space: nowrap;
       border: 0;
     }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10001;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <canvas id="matrix-rain" aria-hidden="true"></canvas>
 
-  <main class="container" role="main">
+  <main id="main-content" class="container" role="main">
     <!-- Glitchy 404 -->
     <div class="glitch-wrapper">
       <h1 class="glitch" aria-label="404 Error">404</h1>
@@ -666,5 +709,18 @@
       drops = Array(columns).fill(0).map(() => Math.random() * -100);
     });
   </script>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before, body::after { display: none; }
+      .glitch-wrapper, .subtitle, .terminal, .choice-section, .terminal-line {
+        opacity: 1;
+        transform: none;
+      }
+      .glitch::before, .glitch::after { display: none; }
+      .cursor { animation: none; opacity: 1; }
+    </style>
+  </noscript>
 </body>
 </html>
