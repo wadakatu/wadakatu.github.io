@@ -2,38 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.wadakatu.dev/</loc>
-    <lastmod>2025-01-06</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-01-07</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.wadakatu.dev/projects</loc>
-    <lastmod>2025-01-06</lastmod>
+    <loc>https://www.wadakatu.dev/about/</loc>
+    <lastmod>2026-01-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.wadakatu.dev/blog</loc>
-    <lastmod>2025-01-06</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.wadakatu.dev/projects/</loc>
+    <lastmod>2026-01-07</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.wadakatu.dev/about</loc>
-    <lastmod>2025-01-06</lastmod>
+    <loc>https://www.wadakatu.dev/blog/</loc>
+    <lastmod>2026-01-07</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/da5be52d57e9a1/</loc>
+    <lastmod>2025-12-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.wadakatu.dev/llms.txt</loc>
-    <lastmod>2025-01-06</lastmod>
+    <loc>https://www.wadakatu.dev/blog/c438613853e766/</loc>
+    <lastmod>2025-08-12</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.wadakatu.dev/llms-full.txt</loc>
-    <lastmod>2025-01-06</lastmod>
+    <loc>https://www.wadakatu.dev/blog/431afa748fbed1/</loc>
+    <lastmod>2025-07-31</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/2b6012f10b777d/</loc>
+    <lastmod>2025-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/ce0260ada646f4/</loc>
+    <lastmod>2025-02-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/ad3ddb6ff13abe/</loc>
+    <lastmod>2024-12-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/f3948e577a3b65/</loc>
+    <lastmod>2024-04-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/01a6f8c9376ff1/</loc>
+    <lastmod>2024-04-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/46d7b3e367d930/</loc>
+    <lastmod>2024-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/e78c7f39dab62f/</loc>
+    <lastmod>2023-08-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/d261ae9bcb4d6b/</loc>
+    <lastmod>2023-07-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/33b761aeb80772/</loc>
+    <lastmod>2023-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/0b4b923b3c1edc/</loc>
+    <lastmod>2023-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/afc2c86306ca88/</loc>
+    <lastmod>2023-01-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/8b5deda18d7967/</loc>
+    <lastmod>2023-01-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.wadakatu.dev/blog/3828103014143e/</loc>
+    <lastmod>2023-01-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>
