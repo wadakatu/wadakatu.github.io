@@ -29,7 +29,7 @@ const FEED_CONFIG = {
     atom: `${BASE_URL}/atom.xml`
   },
   siteUrl: `${BASE_URL}/blog/`,
-  image: `${BASE_URL}/ogp.webp`,
+  image: `${BASE_URL}/images/logo-144.webp`,
   ttl: 60, // Minutes between feed checks (RSS)
   maxItems: 20 // Limit feed to most recent N articles
 };
