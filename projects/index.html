@@ -31,6 +31,37 @@
   <!-- Favicon -->
   <link rel="icon" type="image/webp" href="../ogp.webp">
 
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": "https://www.wadakatu.dev/projects/#page",
+    "name": "Projects | wadakatu",
+    "description": "OSS contributions and personal projects by wadakatu - Laravel, TypeScript, and frontend experiments.",
+    "url": "https://www.wadakatu.dev/projects/",
+    "author": {
+      "@id": "https://www.wadakatu.dev/#person"
+    },
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://www.wadakatu.dev/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Projects"
+        }
+      ]
+    }
+  }
+  </script>
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
 
