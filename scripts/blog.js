@@ -46,6 +46,7 @@ function createArticleCard(article) {
   const date = formatDate(article.published_at);
   const topics = article.topics.slice(0, 3).map(t => `#${t}`).join(' ');
   const articleUrl = `/blog/article.html?slug=${article.slug}`;
+  const readingTime = article.reading_time || 1;
 
   return `
     <a href="${articleUrl}" class="article-card">
@@ -56,6 +57,8 @@ function createArticleCard(article) {
           <span class="article-category">${category}</span>
           <span class="article-separator">•</span>
           <span class="article-date">${date}</span>
+          <span class="article-separator">•</span>
+          <span class="article-reading-time">${readingTime} min</span>
         </div>
         <div class="article-topics">${topics}</div>
       </div>

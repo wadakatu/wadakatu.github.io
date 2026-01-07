@@ -121,6 +121,22 @@
       color: var(--text-dim);
     }
 
+    .article-reading-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .article-reading-time svg {
+      width: 14px;
+      height: 14px;
+      color: var(--matrix);
+      opacity: 0.7;
+    }
+
     .article-topics {
       display: flex;
       flex-wrap: wrap;
@@ -699,6 +715,8 @@
       // Parse markdown
       const htmlContent = marked.parse(content);
 
+      const readingTime = metadata.reading_time || 1;
+
       main.innerHTML = `
         <header class="article-header">
           <span class="article-emoji">${metadata.emoji}</span>
@@ -706,6 +724,13 @@
           <div class="article-meta">
             <span class="article-category">${category}</span>
             <span class="article-date">${date}</span>
+            <span class="article-reading-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              ${readingTime} min read
+            </span>
           </div>
           <div class="article-topics">
             ${metadata.topics.map(t => `<span class="topic-tag">#${t}</span>`).join('')}

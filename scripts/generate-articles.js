@@ -78,6 +78,39 @@ function parseFrontmatter(content) {
 }
 
 /**
+ * Calculate reading time from markdown content
+ * Japanese: ~500 characters/minute
+ */
+function calculateReadingTime(content) {
+  // Remove frontmatter
+  const body = content.replace(/^---[\s\S]*?---\n*/, '');
+
+  // Remove code blocks (they're usually skimmed, not read word-by-word)
+  const withoutCode = body.replace(/```[\s\S]*?```/g, '');
+
+  // Remove inline code
+  const withoutInlineCode = withoutCode.replace(/`[^`]+`/g, '');
+
+  // Remove URLs
+  const withoutUrls = withoutInlineCode.replace(/https?:\/\/[^\s)]+/g, '');
+
+  // Remove markdown syntax
+  const plainText = withoutUrls
+    .replace(/[#*_\[\]()!]/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+
+  // Count characters (Japanese text)
+  const charCount = plainText.length;
+
+  // Calculate reading time (500 chars/min for Japanese)
+  const minutes = Math.ceil(charCount / 500);
+
+  // Minimum 1 minute
+  return Math.max(1, minutes);
+}
+
+/**
  * Parse published_at string to ISO format
  */
 function parsePublishedAt(dateStr) {
@@ -119,6 +152,7 @@ function main() {
     }
 
     const slug = file.replace('.md', '');
+    const readingTime = calculateReadingTime(content);
 
     articles.push({
       slug,
@@ -126,7 +160,8 @@ function main() {
       emoji: frontmatter.emoji || '',
       type: frontmatter.type || 'tech',
       topics: frontmatter.topics || [],
-      published_at: parsePublishedAt(frontmatter.published_at) || ''
+      published_at: parsePublishedAt(frontmatter.published_at) || '',
+      reading_time: readingTime
     });
   }
 

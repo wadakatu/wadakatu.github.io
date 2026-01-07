@@ -11,7 +11,8 @@
       "kobe",
       "worldwideweb"
     ],
-    "published_at": "2025-12-10T13:20:00"
+    "published_at": "2025-12-10T13:20:00",
+    "reading_time": 8
   },
   {
     "slug": "c438613853e766",
@@ -23,7 +24,8 @@
       "phpstorm",
       "iterm2"
     ],
-    "published_at": "2025-08-12T09:47:00"
+    "published_at": "2025-08-12T09:47:00",
+    "reading_time": 3
   },
   {
     "slug": "431afa748fbed1",
@@ -37,7 +39,8 @@
       "vibecoding",
       "serena"
     ],
-    "published_at": "2025-07-31T11:13:00"
+    "published_at": "2025-07-31T11:13:00",
+    "reading_time": 5
   },
   {
     "slug": "2b6012f10b777d",
@@ -51,7 +54,8 @@
       "servicecontainer",
       "contextualbinding"
     ],
-    "published_at": "2025-04-14T11:26:00"
+    "published_at": "2025-04-14T11:26:00",
+    "reading_time": 5
   },
   {
     "slug": "ce0260ada646f4",
@@ -65,7 +69,8 @@
       "mariadb",
       "mysqldump"
     ],
-    "published_at": "2025-02-03T14:13:00"
+    "published_at": "2025-02-03T14:13:00",
+    "reading_time": 3
   },
   {
     "slug": "ad3ddb6ff13abe",
@@ -79,7 +84,8 @@
       "gnu",
       "pecl"
     ],
-    "published_at": "2024-12-04T13:40:00"
+    "published_at": "2024-12-04T13:40:00",
+    "reading_time": 3
   },
   {
     "slug": "f3948e577a3b65",
@@ -92,7 +98,8 @@
       "csrf",
       "419"
     ],
-    "published_at": "2024-04-22T20:49:00"
+    "published_at": "2024-04-22T20:49:00",
+    "reading_time": 2
   },
   {
     "slug": "01a6f8c9376ff1",
@@ -106,7 +113,8 @@
       "mockery",
       "suscriber"
     ],
-    "published_at": "2024-04-05T12:07:00"
+    "published_at": "2024-04-05T12:07:00",
+    "reading_time": 3
   },
   {
     "slug": "46d7b3e367d930",
@@ -118,7 +126,8 @@
       "react",
       "framermotion"
     ],
-    "published_at": "2024-01-14T02:18:00"
+    "published_at": "2024-01-14T02:18:00",
+    "reading_time": 2
   },
   {
     "slug": "e78c7f39dab62f",
@@ -132,7 +141,8 @@
       "logger",
       "pino"
     ],
-    "published_at": "2023-08-18T15:52:00"
+    "published_at": "2023-08-18T15:52:00",
+    "reading_time": 3
   },
   {
     "slug": "d261ae9bcb4d6b",
@@ -146,7 +156,8 @@
       "sendgrid",
       "sendgridnodejs"
     ],
-    "published_at": "2023-07-31T23:55:00"
+    "published_at": "2023-07-31T23:55:00",
+    "reading_time": 1
   },
   {
     "slug": "33b761aeb80772",
@@ -158,7 +169,8 @@
       "nextjs",
       "favicon"
     ],
-    "published_at": "2023-07-25T17:32:00"
+    "published_at": "2023-07-25T17:32:00",
+    "reading_time": 1
   },
   {
     "slug": "0b4b923b3c1edc",
@@ -170,7 +182,8 @@
       "inertia",
       "pest"
     ],
-    "published_at": "2023-03-27T20:03:00"
+    "published_at": "2023-03-27T20:03:00",
+    "reading_time": 2
   },
   {
     "slug": "afc2c86306ca88",
@@ -184,7 +197,8 @@
       "composer",
       "sail"
     ],
-    "published_at": "2023-01-17T18:03:00"
+    "published_at": "2023-01-17T18:03:00",
+    "reading_time": 3
   },
   {
     "slug": "8b5deda18d7967",
@@ -195,7 +209,8 @@
       "javascript",
       "vimeo"
     ],
-    "published_at": "2023-01-16T10:38:00"
+    "published_at": "2023-01-16T10:38:00",
+    "reading_time": 1
   },
   {
     "slug": "3828103014143e",
@@ -208,6 +223,7 @@
       "inertia",
       "channeltalk"
     ],
-    "published_at": "2023-01-06T14:40:00"
+    "published_at": "2023-01-06T14:40:00",
+    "reading_time": 1
   }
 ]
