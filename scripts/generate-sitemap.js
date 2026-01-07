@@ -64,7 +64,7 @@ function main() {
     const articles = JSON.parse(fs.readFileSync(ARTICLES_JSON, 'utf-8'));
 
     for (const article of articles) {
-      const articleUrl = `${BASE_URL}/blog/article.html?slug=${article.slug}`;
+      const articleUrl = `${BASE_URL}/blog/${article.slug}/`;
       const lastmod = formatDate(article.published_at);
 
       urls.push(generateUrlEntry(

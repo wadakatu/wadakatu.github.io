@@ -45,7 +45,7 @@ function createArticleCard(article) {
   const category = getCategory(article);
   const date = formatDate(article.published_at);
   const topics = article.topics.slice(0, 3).map(t => `#${t}`).join(' ');
-  const articleUrl = `/blog/article.html?slug=${article.slug}`;
+  const articleUrl = `/blog/${article.slug}/`;
   const readingTime = article.reading_time || 1;
 
   return `
