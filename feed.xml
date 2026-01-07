@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>wadakatu Blog</title>
+    <link>https://www.wadakatu.dev/blog/</link>
+    <description>Tech articles and learnings by wadakatu - Laravel, TypeScript, and web development.</description>
+    <language>ja</language>
+    <copyright>Copyright 2026 wadakatu</copyright>
+    <lastBuildDate>Wed, 07 Jan 2026 06:13:07 GMT</lastBuildDate>
+    <ttl>60</ttl>
+    <image>
+      <url>https://www.wadakatu.dev/ogp.webp</url>
+      <title>wadakatu Blog</title>
+      <link>https://www.wadakatu.dev/blog/</link>
+    </image>
+    <atom:link href="https://www.wadakatu.dev/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>🧑‍💻 W3C TPAC 2025参加レポ （Web標準ってどうやってできてるの？）</title>
+      <link>https://www.wadakatu.dev/blog/da5be52d57e9a1/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/da5be52d57e9a1/</guid>
+      <pubDate>Wed, 10 Dec 2025 04:20:00 GMT</pubDate>
+      <category>Life</category>
+      <category>w3c</category>
+      <category>report</category>
+      <category>tpac</category>
+      <category>kobe</category>
+      <category>worldwideweb</category>
+    </item>
+    <item>
+      <title>🥷 \5を追加したら動いた！iTerm2でPhpStormを起動する設定方法</title>
+      <link>https://www.wadakatu.dev/blog/c438613853e766/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/c438613853e766/</guid>
+      <pubDate>Tue, 12 Aug 2025 00:47:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>terminal</category>
+      <category>phpstorm</category>
+      <category>iterm2</category>
+    </item>
+    <item>
+      <title>👩‍💻 🚀 Claude Code × Serena MCP：もうバージョンダウンしなくても良いのか...?</title>
+      <link>https://www.wadakatu.dev/blog/431afa748fbed1/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/431afa748fbed1/</guid>
+      <pubDate>Thu, 31 Jul 2025 02:13:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>ai</category>
+      <category>mcp</category>
+      <category>claude</category>
+      <category>vibecoding</category>
+      <category>serena</category>
+    </item>
+    <item>
+      <title>🫠 Contextual Bindingの仕様変更について（Lumen v10 -&gt; v11）</title>
+      <link>https://www.wadakatu.dev/blog/2b6012f10b777d/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/2b6012f10b777d/</guid>
+      <pubDate>Mon, 14 Apr 2025 02:26:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>laravel</category>
+      <category>php</category>
+      <category>lumen</category>
+      <category>servicecontainer</category>
+      <category>contextualbinding</category>
+    </item>
+    <item>
+      <title>🤪 `php artisan schema:dump`で `TLS/SSL`に関するエラーが出た時の対処法</title>
+      <link>https://www.wadakatu.dev/blog/ce0260ada646f4/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/ce0260ada646f4/</guid>
+      <pubDate>Mon, 03 Feb 2025 05:13:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>laravel</category>
+      <category>mysql</category>
+      <category>php</category>
+      <category>mariadb</category>
+      <category>mysqldump</category>
+    </item>
+    <item>
+      <title>🤫 pecl install grpcで大量のwarningメッセージ出た時の対処法</title>
+      <link>https://www.wadakatu.dev/blog/ad3ddb6ff13abe/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/ad3ddb6ff13abe/</guid>
+      <pubDate>Wed, 04 Dec 2024 04:40:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>php</category>
+      <category>grpc</category>
+      <category>dockerfile</category>
+      <category>gnu</category>
+      <category>pecl</category>
+    </item>
+    <item>
+      <title>🍪 [Laravel] 最も簡単で最も難しい419エラーの解決策</title>
+      <link>https://www.wadakatu.dev/blog/f3948e577a3b65/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/f3948e577a3b65/</guid>
+      <pubDate>Mon, 22 Apr 2024 11:49:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>laravel</category>
+      <category>php</category>
+      <category>csrf</category>
+      <category>419</category>
+    </item>
+    <item>
+      <title>🫥 [Laravel Subscriber] 関数名を文字列で定義するの怖くない？</title>
+      <link>https://www.wadakatu.dev/blog/01a6f8c9376ff1/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/01a6f8c9376ff1/</guid>
+      <pubDate>Fri, 05 Apr 2024 03:07:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>laravel</category>
+      <category>php</category>
+      <category>phpunit</category>
+      <category>mockery</category>
+      <category>suscriber</category>
+    </item>
+    <item>
+      <title>🤕 [Framer motion] アニメーション動作後にposition: fixedが効かない時の対処法</title>
+      <link>https://www.wadakatu.dev/blog/46d7b3e367d930/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/46d7b3e367d930/</guid>
+      <pubDate>Sat, 13 Jan 2024 17:18:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>framer</category>
+      <category>react</category>
+      <category>framermotion</category>
+    </item>
+    <item>
+      <title>🙇‍♂️ Next.js初心者がLogを出すまでに苦労した話</title>
+      <link>https://www.wadakatu.dev/blog/e78c7f39dab62f/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/e78c7f39dab62f/</guid>
+      <pubDate>Fri, 18 Aug 2023 06:52:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>next</category>
+      <category>typescript</category>
+      <category>ecs</category>
+      <category>logger</category>
+      <category>pino</category>
+    </item>
+    <item>
+      <title>👹 sendgrid-nodejsでbaseUrlを変更するときに注意すること</title>
+      <link>https://www.wadakatu.dev/blog/d261ae9bcb4d6b/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/d261ae9bcb4d6b/</guid>
+      <pubDate>Mon, 31 Jul 2023 14:55:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>javascript</category>
+      <category>typescript</category>
+      <category>node</category>
+      <category>sendgrid</category>
+      <category>sendgridnodejs</category>
+    </item>
+    <item>
+      <title>🧿 【Next.js v13】 Metadata APIを使ってFaviconを設定</title>
+      <link>https://www.wadakatu.dev/blog/33b761aeb80772/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/33b761aeb80772/</guid>
+      <pubDate>Tue, 25 Jul 2023 08:32:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>javascript</category>
+      <category>nextjs</category>
+      <category>favicon</category>
+    </item>
+    <item>
+      <title>⛳ Laravel &amp; Inertiaのテストでresource/js以外をテスト対象にする方法</title>
+      <link>https://www.wadakatu.dev/blog/0b4b923b3c1edc/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/0b4b923b3c1edc/</guid>
+      <pubDate>Mon, 27 Mar 2023 11:03:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>laravel</category>
+      <category>inertia</category>
+      <category>pest</category>
+    </item>
+    <item>
+      <title>⚡ PHP/Composerなしで始めるLaravel/Sail入門</title>
+      <link>https://www.wadakatu.dev/blog/afc2c86306ca88/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/afc2c86306ca88/</guid>
+      <pubDate>Tue, 17 Jan 2023 09:03:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>docker</category>
+      <category>laravel</category>
+      <category>php</category>
+      <category>composer</category>
+      <category>sail</category>
+    </item>
+    <item>
+      <title>🔖 【vimeo.js】doNotTrack is not defined.</title>
+      <link>https://www.wadakatu.dev/blog/8b5deda18d7967/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/8b5deda18d7967/</guid>
+      <pubDate>Mon, 16 Jan 2023 01:38:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>javascript</category>
+      <category>vimeo</category>
+    </item>
+    <item>
+      <title>😎 【Inertia.js】[object Object] could not be cloned.の対処法</title>
+      <link>https://www.wadakatu.dev/blog/3828103014143e/</link>
+      <guid isPermaLink="true">https://www.wadakatu.dev/blog/3828103014143e/</guid>
+      <pubDate>Fri, 06 Jan 2023 05:40:00 GMT</pubDate>
+      <category>Tech</category>
+      <category>javascript</category>
+      <category>laravel</category>
+      <category>inertia</category>
+      <category>channeltalk</category>
+    </item>
+  </channel>
+</rss>
