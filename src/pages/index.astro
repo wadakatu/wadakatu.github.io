@@ -1,0 +1,862 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "mainEntity": {
+      "@type": "Person",
+      "@id": "https://www.wadakatu.dev/#person",
+      "name": "wadakatu",
+      "alternateName": "koyolympus",
+      "jobTitle": "Backend Developer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Studio Inc."
+      },
+      "description": "Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem. Creator of laravel-spectrum & gitlyte.",
+      "url": "https://www.wadakatu.dev/",
+      "image": "https://www.wadakatu.dev/images/logo-400.webp",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Osaka",
+        "addressCountry": "JP"
+      },
+      "sameAs": [
+        "https://github.com/wadakatu",
+        "https://zenn.dev/wadakatu",
+        "https://x.com/koyolympus"
+      ],
+      "knowsAbout": ["PHP", "Laravel", "Backend Development", "Open Source Software"]
+    },
+    "dateCreated": "2024-01-01",
+    "dateModified": "2025-01-06"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Featured Projects",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "SoftwareSourceCode",
+          "name": "W3C Hackathon - TPAC 2025",
+          "description": "Dashboard built with vibe-coding, guided by web-standards. Winner project.",
+          "url": "https://github.com/wadakatu/w3c-hackathon",
+          "author": { "@id": "https://www.wadakatu.dev/#person" }
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "SoftwareSourceCode",
+          "name": "Laravel Spectrum",
+          "description": "Zero-annotation API documentation generator for Laravel.",
+          "url": "https://docs.laravel-spectrum.dev",
+          "author": { "@id": "https://www.wadakatu.dev/#person" },
+          "programmingLanguage": "PHP"
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": "https://www.wadakatu.dev/#website",
+    "name": "wadakatu",
+    "alternateName": "wadakatu.dev",
+    "url": "https://www.wadakatu.dev/",
+    "description": "Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem.",
+    "publisher": { "@id": "https://www.wadakatu.dev/#person" },
+    "inLanguage": ["en", "ja"]
+  }
+];
+---
+
+<BaseLayout
+  title="wadakatu | Backend Developer"
+  description="Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem. Creator of laravel-spectrum & gitlyte."
+  ogUrl="https://www.wadakatu.dev/"
+  canonicalUrl="https://www.wadakatu.dev/"
+  jsonLd={jsonLd}
+>
+  <!-- Skip Link for Keyboard Navigation -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Matrix Rain Background -->
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
+  <main id="main-content" class="container">
+    <!-- Hero Section -->
+    <header class="hero">
+      <p class="hero-greeting">Hello, World!<span class="cursor"></span></p>
+      <h1 class="hero-name">wadakatu<span class="highlight">_</span></h1>
+      <p class="hero-role">Backend Developer @ Studio Inc.</p>
+      <div class="hero-meta">
+        <span class="hero-location">
+          <span>📍</span> Osaka, Japan
+        </span>
+        <nav class="social-links" aria-label="Social links">
+          <a href="https://github.com/wadakatu" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+          </a>
+          <a href="https://zenn.dev/wadakatu" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Zenn">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.587.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.205-.001.381-.118.586-.353z"/>
+            </svg>
+          </a>
+          <a href="https://x.com/koyolympus" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="X (Twitter)">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a href="mailto:wadakatu.dev@gmail.com" class="social-link" aria-label="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M22 6L12 13L2 6"/>
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Navigation Hub -->
+    <section class="nav-hub" aria-labelledby="nav-heading">
+      <h2 id="nav-heading" class="section-label"><span aria-hidden="true">$ </span>ls ./<span class="sr-only"> - Site Navigation</span></h2>
+      <nav class="nav-grid" aria-label="Main navigation">
+        <a href="/projects" class="nav-card">
+          <span class="nav-icon">🚀</span>
+          <h3 class="nav-title">Projects</h3>
+          <p class="nav-desc">OSS contributions & personal works</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        <a href="/blog" class="nav-card">
+          <span class="nav-icon">📝</span>
+          <h3 class="nav-title">Blog</h3>
+          <p class="nav-desc">Tech articles & learnings</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        <a href="/about" class="nav-card">
+          <span class="nav-icon">👤</span>
+          <h3 class="nav-title">About</h3>
+          <p class="nav-desc">Career & skills</p>
+          <div class="nav-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+      </nav>
+    </section>
+
+    <!-- Featured Section -->
+    <section class="featured" aria-labelledby="featured-heading">
+      <h2 id="featured-heading" class="section-label"><span aria-hidden="true">$ </span>cat featured.txt<span class="sr-only"> - Featured Projects</span></h2>
+      <div class="featured-grid">
+        <a href="https://github.com/wadakatu/w3c-hackathon" target="_blank" rel="noopener noreferrer" class="featured-card">
+          <span class="featured-badge">WINNER</span>
+          <span class="featured-type">Project</span>
+          <h3 class="featured-title">W3C Hackathon - TPAC 2025</h3>
+          <p class="featured-desc">Dashboard built with vibe-coding, guided by web-standards.</p>
+          <div class="featured-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        <a href="https://docs.laravel-spectrum.dev" target="_blank" rel="noopener noreferrer" class="featured-card">
+          <span class="featured-type">OSS</span>
+          <h3 class="featured-title">Laravel Spectrum</h3>
+          <p class="featured-desc">Zero-annotation API documentation generator for Laravel.</p>
+          <div class="featured-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/images/logo-48.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" rel="noopener noreferrer" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #0f0f0f;
+    --card-hover: #141414;
+    --border: #1a1a1a;
+    --border-glow: #00ff4130;
+    --text: #e0e0e0;
+    --text-dim: #888888;
+    --matrix: #00ff41;
+    --matrix-dim: #00aa2a;
+    --matrix-dark: #004010;
+    --glow: 0 0 20px rgba(0, 255, 65, 0.3);
+    --glow-strong: 0 0 30px rgba(0, 255, 65, 0.5);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Skip Link - Hidden until focused */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--matrix);
+    color: var(--bg);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0 0 8px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 10000;
+    transition: top 0.3s ease;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  /* Focus Indicators - WCAG 2.2 Focus Appearance */
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--matrix);
+    outline-offset: 3px;
+    box-shadow: var(--glow);
+  }
+
+  /* Screen Reader Only - Visually hidden but accessible */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  :global(body) {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* CRT Scanline Effect */
+  :global(body)::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Matrix Rain Canvas */
+  #matrix-rain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.08;
+  }
+
+  /* Main Container */
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ===== HERO SECTION ===== */
+  .hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+
+  .hero-greeting {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--matrix);
+    margin-bottom: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-greeting::before {
+    content: '>';
+    opacity: 0.5;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--matrix);
+    animation: blink 1s step-end infinite;
+    box-shadow: var(--glow);
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .hero-name {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-name .highlight {
+    color: var(--matrix);
+    text-shadow: var(--glow);
+  }
+
+  .hero-role {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-location {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .social-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-dim);
+    transition: all 0.3s ease;
+  }
+
+  .social-link:hover {
+    border-color: var(--matrix-dark);
+    color: var(--matrix);
+    box-shadow: var(--glow);
+    transform: translateY(-2px);
+  }
+
+  .social-link:focus-visible {
+    border-color: var(--matrix);
+    color: var(--matrix);
+    outline: 2px solid var(--matrix);
+    outline-offset: 2px;
+    box-shadow: var(--glow);
+  }
+
+  .social-link svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  /* ===== NAVIGATION HUB ===== */
+  .nav-hub {
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--matrix);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-label::before {
+    content: '$';
+    opacity: 0.5;
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .nav-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .nav-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .nav-card:hover {
+    border-color: var(--matrix-dark);
+    transform: translateY(-4px);
+    box-shadow: var(--glow-strong);
+  }
+
+  .nav-card:focus-visible {
+    border-color: var(--matrix);
+    outline: 2px solid var(--matrix);
+    outline-offset: 3px;
+    box-shadow: var(--glow-strong);
+  }
+
+  .nav-card:hover::before,
+  .nav-card:focus-visible::before {
+    opacity: 1;
+  }
+
+  .nav-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  .nav-card:hover .nav-title {
+    color: var(--matrix);
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+  }
+
+  .nav-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-arrow {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: var(--text-dim);
+  }
+
+  .nav-card:hover .nav-arrow {
+    background: var(--matrix);
+    color: var(--bg);
+    transform: rotate(-45deg);
+    box-shadow: var(--glow);
+  }
+
+  .nav-arrow svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ===== FEATURED SECTION ===== */
+  .featured {
+    margin-bottom: 3rem;
+    flex: 1;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .featured-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .featured-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .featured-card:hover {
+    border-color: var(--matrix-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+  }
+
+  .featured-card:focus-visible {
+    border-color: var(--matrix);
+    outline: 2px solid var(--matrix);
+    outline-offset: 3px;
+    box-shadow: var(--glow);
+  }
+
+  .featured-card:hover::before,
+  .featured-card:focus-visible::before {
+    opacity: 1;
+  }
+
+  .featured-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--matrix);
+    background: transparent;
+    padding: 0.35rem 0.6rem;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--matrix);
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    box-shadow: var(--glow), inset 0 0 15px rgba(0, 255, 65, 0.2);
+    animation: badgePulse 2s ease-in-out infinite;
+    text-shadow: 0 0 8px var(--matrix);
+  }
+
+  @keyframes badgePulse {
+    0%, 100% {
+      box-shadow: var(--glow), inset 0 0 15px rgba(0, 255, 65, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 25px rgba(0, 255, 65, 0.6), inset 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+  }
+
+  .featured-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--matrix-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .featured-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s ease;
+  }
+
+  .featured-card:hover .featured-title {
+    color: var(--matrix);
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+  }
+
+  .featured-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  .featured-arrow {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: var(--text-dim);
+  }
+
+  .featured-card:hover .featured-arrow {
+    background: var(--matrix);
+    color: var(--bg);
+    transform: rotate(-45deg);
+    box-shadow: var(--glow);
+  }
+
+  .featured-arrow svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .footer-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .footer-credit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-credit:hover {
+    color: var(--matrix);
+  }
+
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .uplink {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--matrix-dim);
+    font-size: 0.65rem;
+  }
+
+  .uplink-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--matrix);
+    border-radius: 50%;
+    box-shadow: var(--glow);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.2); }
+  }
+
+  .footer-time {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--matrix);
+    font-size: 0.7rem;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .nav-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-meta {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .footer {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .footer-status {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+
+  /* ===== ANIMATIONS ===== */
+  .hero,
+  .nav-hub,
+  .featured,
+  .footer {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .hero { animation-delay: 0.1s; }
+  .nav-hub { animation-delay: 0.2s; }
+  .featured { animation-delay: 0.3s; }
+  .footer { animation-delay: 0.4s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .cursor,
+    .uplink-dot {
+      animation: none;
+    }
+
+    .featured-badge {
+      animation: none;
+    }
+
+    #matrix-rain {
+      display: none;
+    }
+
+    :global(body)::before {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,592 @@
+---
+// Offline page - self-contained with inline styles for offline availability
+const title = 'Offline';
+const description = 'You are currently offline.';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | wadakatu</title>
+  <meta name="description" content={description}>
+
+  <!-- OGP -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.wadakatu.dev/offline">
+  <meta property="og:title" content="Offline | wadakatu">
+  <meta property="og:description" content="You are currently offline. Cached pages are available.">
+  <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content="Offline | wadakatu">
+  <meta name="twitter:description" content="You are currently offline. Cached pages are available.">
+  <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
+
+  <style is:inline>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: #0d0d0d;
+      --matrix: #00ff41;
+      --matrix-dim: #00cc33;
+      --matrix-dark: #009922;
+      --text: #e0e0e0;
+      --text-dim: #888888;
+      --border: #1a1a1a;
+      --glow: 0 0 20px rgba(0, 255, 65, 0.3);
+      --scanline-opacity: 0.03;
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== CRT MONITOR EFFECT ===== */
+    .crt-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Scanlines */
+    .crt-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, var(--scanline-opacity)),
+        rgba(0, 0, 0, var(--scanline-opacity)) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      animation: scanlines 0.1s linear infinite;
+    }
+
+    /* CRT flicker */
+    .crt-container::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 255, 65, 0.01);
+      animation: flicker 0.15s infinite;
+    }
+
+    @keyframes scanlines {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(2px); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 0.97; }
+      50% { opacity: 1; }
+    }
+
+    /* ===== MATRIX RAIN BACKGROUND ===== */
+    .matrix-rain {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.15;
+    }
+
+    .matrix-column {
+      position: absolute;
+      top: -100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      line-height: 1.2;
+      color: var(--matrix);
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      animation: rain linear infinite;
+      text-shadow: 0 0 8px var(--matrix);
+    }
+
+    @keyframes rain {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(200vh); }
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .offline-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+    }
+
+    /* ===== GLITCH EFFECT ===== */
+    .glitch-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2rem;
+    }
+
+    .glitch {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(3rem, 12vw, 6rem);
+      font-weight: 700;
+      color: var(--matrix);
+      text-shadow: var(--glow);
+      position: relative;
+      animation: glitch-skew 1s infinite linear alternate-reverse;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .glitch::before {
+      color: #ff0040;
+      animation: glitch-1 0.3s infinite linear alternate-reverse;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      transform: translateX(-2px);
+    }
+
+    .glitch::after {
+      color: #00ffff;
+      animation: glitch-2 0.3s infinite linear alternate-reverse;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      transform: translateX(2px);
+    }
+
+    @keyframes glitch-1 {
+      0%, 100% { transform: translateX(-2px); }
+      20% { transform: translateX(2px); }
+      40% { transform: translateX(-2px); }
+      60% { transform: translateX(0); }
+      80% { transform: translateX(-3px); }
+    }
+
+    @keyframes glitch-2 {
+      0%, 100% { transform: translateX(2px); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(3px); }
+      60% { transform: translateX(-1px); }
+      80% { transform: translateX(2px); }
+    }
+
+    @keyframes glitch-skew {
+      0%, 100% { transform: skew(0deg); }
+      20% { transform: skew(-0.5deg); }
+      40% { transform: skew(0.5deg); }
+      60% { transform: skew(0deg); }
+      80% { transform: skew(-0.3deg); }
+    }
+
+    /* ===== TERMINAL MESSAGE ===== */
+    .terminal-box {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--matrix-dark);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: left;
+      box-shadow: var(--glow), inset 0 0 30px rgba(0, 255, 65, 0.02);
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .terminal-dot.red { background: #ff5f56; }
+    .terminal-dot.yellow { background: #ffbd2e; }
+    .terminal-dot.green { background: #27ca40; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    .terminal-line {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .terminal-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .terminal-prompt {
+      color: var(--matrix);
+      flex-shrink: 0;
+    }
+
+    .terminal-text {
+      color: var(--text);
+    }
+
+    .terminal-error {
+      color: #ff5f56;
+    }
+
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 16px;
+      background: var(--matrix);
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* ===== CACHED PAGES ===== */
+    .cached-section {
+      margin-bottom: 2rem;
+    }
+
+    .cached-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--matrix-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .cached-title::before {
+      content: '$ ';
+      opacity: 0.6;
+    }
+
+    .cached-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+    }
+
+    .cached-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cached-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.5s ease;
+    }
+
+    .cached-link:hover {
+      border-color: var(--matrix-dark);
+      color: var(--matrix);
+      box-shadow: var(--glow);
+    }
+
+    .cached-link:focus-visible {
+      border-color: var(--matrix);
+      color: var(--matrix);
+      outline: 2px solid var(--matrix);
+      outline-offset: 2px;
+      box-shadow: var(--glow);
+    }
+
+    .cached-link:hover::before {
+      transform: translateX(100%);
+    }
+
+    /* ===== RETRY BUTTON ===== */
+    .retry-button {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--bg);
+      background: var(--matrix);
+      border: none;
+      border-radius: 8px;
+      padding: 0.9rem 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .retry-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .retry-button:hover {
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), 0 0 60px rgba(0, 255, 65, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .retry-button:hover::before {
+      transform: translateX(100%);
+    }
+
+    .retry-button:active {
+      transform: translateY(0);
+    }
+
+    /* ===== ASCII ART ===== */
+    .ascii-decoration {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--matrix-dark);
+      opacity: 0.5;
+      white-space: pre;
+      line-height: 1.1;
+      margin-top: 2rem;
+      user-select: none;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      .terminal-box {
+        padding: 1rem;
+      }
+
+      .terminal-line {
+        font-size: 0.75rem;
+      }
+
+      .cached-links {
+        flex-direction: column;
+      }
+
+      .cached-link {
+        width: 100%;
+        text-align: center;
+      }
+
+      .ascii-decoration {
+        display: none;
+      }
+    }
+
+    /* ===== REDUCED MOTION ===== */
+    @media (prefers-reduced-motion: reduce) {
+      .glitch::before,
+      .glitch::after,
+      .glitch,
+      .matrix-column,
+      .crt-container::before,
+      .crt-container::after {
+        animation: none;
+      }
+
+      .matrix-rain {
+        display: none;
+      }
+    }
+
+    /* Skip Link - Hidden until focused */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--matrix);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0 0 8px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 10001;
+      transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      outline: 2px solid var(--text);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <!-- CRT Effect Overlay -->
+  <div class="crt-container" aria-hidden="true"></div>
+
+  <!-- Matrix Rain Background -->
+  <div class="matrix-rain" aria-hidden="true" id="matrix-rain"></div>
+
+  <!-- Main Content -->
+  <main id="main-content" class="offline-content">
+    <!-- Glitch Title -->
+    <div class="glitch-wrapper">
+      <h1 class="glitch" data-text="OFFLINE">OFFLINE</h1>
+    </div>
+
+    <!-- Terminal Message -->
+    <div class="terminal-box">
+      <div class="terminal-header">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+        <span class="terminal-title">connection.sh</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">$</span>
+        <span class="terminal-text">ping www.wadakatu.dev</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">&gt;</span>
+        <span class="terminal-error">Request timeout. Network unreachable.</span>
+      </div>
+      <div class="terminal-line">
+        <span class="terminal-prompt">$</span>
+        <span class="terminal-text">Loading cached pages...</span>
+        <span class="terminal-cursor"></span>
+      </div>
+    </div>
+
+    <!-- Cached Pages -->
+    <section class="cached-section">
+      <h2 class="cached-title">available cached pages</h2>
+      <nav class="cached-links" aria-label="Cached pages">
+        <a href="/" class="cached-link">~/home</a>
+        <a href="/about/" class="cached-link">~/about</a>
+        <a href="/projects/" class="cached-link">~/projects</a>
+        <a href="/blog/" class="cached-link">~/blog</a>
+      </nav>
+    </section>
+
+    <!-- Retry Button -->
+    <button class="retry-button" onclick="location.reload()">
+      Reconnect
+    </button>
+
+    <!-- ASCII Art Decoration -->
+    <div class="ascii-decoration" aria-hidden="true">
+    {`╔══════════════════════════════════════╗
+    ║  CONNECTION LOST • CACHE AVAILABLE   ║
+    ╚══════════════════════════════════════╝`}
+    </div>
+  </main>
+
+  <script is:inline>
+    // Generate Matrix Rain columns
+    (function() {
+      const container = document.getElementById('matrix-rain');
+      if (!container) return;
+
+      const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+      const columnCount = Math.floor(window.innerWidth / 20);
+
+      for (let i = 0; i < columnCount; i++) {
+        const column = document.createElement('div');
+        column.className = 'matrix-column';
+        column.style.left = (i * 20) + 'px';
+        column.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        column.style.animationDelay = (Math.random() * 10) + 's';
+
+        // Generate random characters
+        let text = '';
+        const length = Math.floor(Math.random() * 20 + 10);
+        for (let j = 0; j < length; j++) {
+          text += chars[Math.floor(Math.random() * chars.length)];
+        }
+        column.textContent = text;
+
+        container.appendChild(column);
+      }
+    })();
+
+    // Auto-reload only when connection is restored (not on page load)
+    // This prevents infinite reload loops when the page is served from cache
+    window.addEventListener('online', () => {
+      location.reload();
+    });
+  </script>
+
+  <noscript>
+    <style>
+      .matrix-rain { display: none; }
+      .crt-container::before, .crt-container::after { display: none; }
+      .glitch::before, .glitch::after, .glitch { animation: none; }
+      .terminal-cursor { animation: none; opacity: 1; }
+    </style>
+  </noscript>
+</body>
+</html>

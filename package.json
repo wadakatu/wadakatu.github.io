@@ -1,24 +1,28 @@
 {
   "name": "wadakatu.github.io",
+  "type": "module",
   "version": "1.0.0",
-  "description": "<div align=\"center\">",
-  "main": "sw.js",
+  "description": "Personal portfolio website for wadakatu",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync": "astro sync"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wadakatu/wadakatu.github.io.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["portfolio", "blog", "astro"],
+  "author": "wadakatu",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wadakatu/wadakatu.github.io/issues"
   },
-  "homepage": "https://github.com/wadakatu/wadakatu.github.io#readme",
-  "dependencies": {
-    "highlight.js": "^11.11.1",
-    "marked": "^17.0.1"
+  "homepage": "https://www.wadakatu.dev",
+  "devDependencies": {
+    "@astrojs/sitemap": "^3.6.1",
+    "astro": "^5.16.7"
   }
 }

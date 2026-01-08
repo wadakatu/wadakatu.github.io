@@ -1,0 +1,114 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  ogType?: 'website' | 'article';
+  ogUrl?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+  lang?: string;
+  jsonLd?: object | object[];
+}
+
+const {
+  title,
+  description,
+  ogType = 'website',
+  ogUrl = Astro.url.href,
+  ogImage = 'https://www.wadakatu.dev/ogp.webp',
+  canonicalUrl = Astro.url.href,
+  noIndex = false,
+  lang = 'en',
+  jsonLd,
+} = Astro.props;
+
+const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://storage.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{siteTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="author" content="wadakatu">
+  {noIndex && <meta name="robots" content="noindex">}
+
+  <!-- OGP -->
+  <meta property="og:type" content={ogType}>
+  <meta property="og:url" content={ogUrl}>
+  <meta property="og:title" content={siteTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
+  <meta property="og:site_name" content="wadakatu">
+  <meta property="og:locale" content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@koyolympus">
+  <meta name="twitter:creator" content="@koyolympus">
+  <meta name="twitter:title" content={siteTitle}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  <meta name="twitter:image:alt" content="wadakatu - Backend Developer portfolio preview">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalUrl}>
+
+  <!-- Theme Color -->
+  <meta name="theme-color" content="#0a0a0a">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+  <!-- Structured Data (JSON-LD) -->
+  {jsonLd && (
+    Array.isArray(jsonLd)
+      ? jsonLd.map(ld => <script type="application/ld+json" set:html={JSON.stringify(ld)} />)
+      : <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  )}
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Google Fonts (Non-blocking) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  </noscript>
+
+  <!-- Scroll to Top Styles -->
+  <link rel="stylesheet" href="/styles/scroll-to-top.css">
+
+  <!-- Page-specific head elements -->
+  <slot name="head" />
+</head>
+<body>
+  <slot />
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"/>
+    </svg>
+  </button>
+
+  <!-- Common Scripts -->
+  <script is:inline src="/scripts/common.js"></script>
+  <script is:inline src="/scripts/scroll-to-top.js"></script>
+  <script is:inline src="/scripts/sw-register.js"></script>
+
+  <!-- Page-specific scripts -->
+  <slot name="scripts" />
+</body>
+</html>
