@@ -1,0 +1,679 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const title = 'About';
+const description = 'Career and skills of wadakatu - Backend Developer @ Studio Inc. Active OSS contributor to Laravel ecosystem.';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "@id": "https://www.wadakatu.dev/about/#page",
+  "name": "About | wadakatu",
+  "description": description,
+  "url": "https://www.wadakatu.dev/about/",
+  "mainEntity": {
+    "@id": "https://www.wadakatu.dev/#person"
+  },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.wadakatu.dev/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About"
+      }
+    ]
+  }
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+  <Fragment slot="head">
+    <link rel="stylesheet" href="/styles/common.css">
+  </Fragment>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+
+  <div class="container">
+    <header class="page-header">
+      <a href="/" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        cd ..
+      </a>
+      <h1 class="page-title">About<span class="highlight">_</span></h1>
+    </header>
+
+    <main id="main-content" class="about-content">
+      <!-- Profile Section -->
+      <section class="profile-section">
+        <div class="profile-header">
+          <img src="/images/logo-80.webp" alt="wadakatu" class="profile-avatar" width="80" height="80">
+          <div class="profile-info">
+            <h2 class="profile-name">wadakatu<span class="highlight">_</span></h2>
+            <p class="profile-role">Backend Developer @ Studio Inc.</p>
+          </div>
+        </div>
+        <div class="profile-bio">
+          <div class="bio-terminal">
+            <span class="bio-line"><span class="prompt">$</span> <span class="cmd">cat profile.txt</span></span>
+            <span class="bio-line"><span class="output">Building <span class="highlight">no-code website builders</span> @ <span class="highlight">Studio Inc.</span></span></span>
+            <span class="bio-line"><span class="output">Active <span class="highlight">OSS contributor</span> to Laravel ecosystem.</span></span>
+            <span class="bio-line"><span class="output">Based in <span class="highlight">Osaka, Japan</span>.</span></span>
+          </div>
+          <a href="https://www.wadakatu.dev/resume" target="_blank" class="resume-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            View Full Resume
+          </a>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats-section">
+        <div class="stat-card">
+          <div class="stat-value">13</div>
+          <div class="stat-label">Original Repos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">17</div>
+          <div class="stat-label">OSS Forks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">29</div>
+          <div class="stat-label">Recent PRs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">2020</div>
+          <div class="stat-label">Since</div>
+        </div>
+      </section>
+
+      <!-- Tech Stack Section -->
+      <section class="stack-section">
+        <h2 class="section-label">ls ./skills</h2>
+        <div class="stack-grid">
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 9.51a4.2 4.2 0 0 1-1.91-1.34A5.77 5.77 0 0 0 12 6a5.51 5.51 0 0 0-4.59 2.17A4.2 4.2 0 0 1 5.5 9.51 2.5 2.5 0 0 0 4 12a2.5 2.5 0 0 0 1.5 2.33v1.17A2.5 2.5 0 0 0 8 18h8a2.5 2.5 0 0 0 2.5-2.5v-1.17A2.5 2.5 0 0 0 20 12a2.5 2.5 0 0 0-1.5-2.49M9 13a1 1 0 1 1 0-2 1 1 0 0 1 0 2m6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/></svg>
+            </span>
+            <span class="stack-name">PHP</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.642 5.43a.4.4 0 0 1 .014.1v5.149c0 .135-.073.26-.189.326l-4.323 2.49v4.934a.38.38 0 0 1-.188.326L9.93 23.949a.3.3 0 0 1-.066.027l-.024.01a.35.35 0 0 1-.192 0q-.016-.005-.03-.012-.031-.01-.062-.025L.533 18.755a.38.38 0 0 1-.189-.326V2.974q0-.05.014-.098c.003-.012.01-.02.014-.032a.4.4 0 0 1 .023-.058c.004-.013.015-.022.023-.033l.033-.045.037-.027q.02-.018.041-.034L4.89.044a.38.38 0 0 1 .377 0L9.63 2.647q.021.015.04.033.02.013.038.028l.032.045c.01.012.02.02.024.034q.015.027.024.058l.016.032a.3.3 0 0 1 .012.098v9.652l3.76-2.164V5.527q0-.05.013-.098c.003-.011.01-.02.013-.032a.3.3 0 0 1 .025-.058c.007-.013.018-.022.025-.033.01-.016.017-.031.03-.045q.02-.017.04-.028a.3.3 0 0 1 .04-.034l4.36-2.603a.38.38 0 0 1 .377 0l4.36 2.605q.022.014.042.032l.036.028c.016.014.024.03.035.045.008.012.019.02.024.033q.016.029.025.059.01.015.015.032zm-.74 5.032V6.179l-1.578.908-2.182 1.256v4.283zm-4.36 7.483v-4.292l-2.147 1.225-6.574 3.754v4.319zM1.093 3.624v14.588l8.273 4.761v-4.321l-4.322-2.445-.002-.003-.002-.002L5 16.17l-.035-.027-.001-.002q-.018-.018-.031-.04-.016-.016-.028-.036h-.002c-.009-.014-.013-.031-.02-.047q-.012-.018-.019-.038v-.001q-.008-.024-.01-.052-.005-.02-.006-.04V6.18zm3.8-2.836L1.137 2.973l3.755 2.183 3.755-2.183zm1.956 13.641 2.183-1.256V3.624l-1.926.906-2.181 1.257v9.63l1.924-1.109zm13.943-10.23-3.755 2.185 3.755 2.183 3.754-2.183zm-.377 5.017L18.233 7.96l-1.579-.908v4.283l2.182 1.256 1.579.908zm-8.65 9.654 5.514-3.148 2.756-1.572-3.748-2.18-4.323 2.489-3.947 2.27z"/></svg>
+            </span>
+            <span class="stack-name">Laravel</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 1.61h-9.94L12 5.16 9.94 1.61H0l12 20.78zM12 14.08 5.16 2.23h4.43L12 6.41l2.41-4.18h4.43z"/></svg>
+            </span>
+            <span class="stack-name">Vue.js</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75q.918 0 1.627.111a6.4 6.4 0 0 1 1.306.34v2.458a4 4 0 0 0-.643-.361 5 5 0 0 0-.717-.26 5.5 5.5 0 0 0-1.426-.2q-.45 0-.819.086a2.1 2.1 0 0 0-.623.242q-.254.156-.393.374a.9.9 0 0 0-.14.49q0 .294.156.529.156.234.443.444c.287.21.423.276.696.395q.409.18.909.352.684.254 1.242.541.558.285.954.665a2.6 2.6 0 0 1 .605.874q.208.495.208 1.15 0 .865-.34 1.469a2.9 2.9 0 0 1-.906 1.008q-.57.378-1.297.559a7 7 0 0 1-1.529.173q-.916 0-1.833-.17a9.3 9.3 0 0 1-1.639-.504v-2.594a6 6 0 0 0 .832.466q.455.217.89.352.435.136.852.19t.756.054a3.7 3.7 0 0 0 .84-.082q.346-.082.56-.218a.86.86 0 0 0 .312-.322.85.85 0 0 0 .099-.399.87.87 0 0 0-.18-.536 1.9 1.9 0 0 0-.512-.444 5 5 0 0 0-.781-.399 26 26 0 0 0-.988-.362 8 8 0 0 1-1.209-.535 4 4 0 0 1-.926-.69 2.9 2.9 0 0 1-.594-.897 3.1 3.1 0 0 1-.209-1.18q0-.829.357-1.427.357-.597.951-.99a4.4 4.4 0 0 1 1.37-.598 6.6 6.6 0 0 1 1.59-.19zm-9.426.121h3.007v10.385H9.062v-3.998H5.993v3.998H2.986V9.871h3.007v4.265h3.069z"/></svg>
+            </span>
+            <span class="stack-name">TypeScript</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 5v14c0 1.66-4.03 3-9 3s-9-1.34-9-3V5"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/></svg>
+            </span>
+            <span class="stack-name">MySQL</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.186m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 0 0 .185-.186V6.29a.185.185 0 0 0-.185-.185H5.136a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 0 0 .185-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.186.186 0 0 0-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 0 0 .184-.185V9.006a.185.185 0 0 0-.184-.186h-2.12a.185.185 0 0 0-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51q-.508.001-1.01.087c-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.75.75 0 0 0-.75.748 11.4 11.4 0 0 0 .692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137a15.7 15.7 0 0 0 2.93-.266 12.3 12.3 0 0 0 3.823-1.389 10.5 10.5 0 0 0 2.61-2.136c1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288z"/></svg>
+            </span>
+            <span class="stack-name">Docker</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.19 2.38a9.344 9.344 0 0 0-9.234 6.893c.053-.02-.055.013 0 0-3.875 2.551-3.922 8.11-.247 10.941l.006-.007-.007.03a6.7 6.7 0 0 0 4.077 1.356h5.173l.03.03h5.192c6.687.053 9.376-8.605 3.835-12.35A9.365 9.365 0 0 0 12.19 2.38M8.073 19.39a5.37 5.37 0 0 1-4.453-2.871 5.15 5.15 0 0 1 .676-5.849c.267 1.79 1.323 3.36 2.78 4.085 1.807.973 4.377.903 5.618-.79.093 1.75-.482 3.33-1.676 4.38a5.2 5.2 0 0 1-2.945 1.045m7.612-1.175c-1.27 1.203-3.097 1.636-4.67.878l-.005-.002h-.022c-1.08-.507-1.908-1.548-2.167-2.772l-.002-.013a4.44 4.44 0 0 1 .296-2.903h-.002a3.42 3.42 0 0 1 1.703-1.483l.014-.004a3.27 3.27 0 0 1 2.92.395c1.177.718 1.978 2.158 1.631 3.555a6 6 0 0 0-.536 1.15 3.8 3.8 0 0 0-.191 1.658l.013.13a4.5 4.5 0 0 0 1.018 1.41zm4.308-4.084c-1.058.22-2.013.755-2.681 1.51a4.2 4.2 0 0 1-2.766 1.44q-.301.018-.595-.054h-.003l.002-.004a4 4 0 0 1-.57-.228c-2.294-1.177-2.336-4.38-.052-5.62l.006-.002v-.007c1.953-.925 4.476-.322 5.542 1.364.562.934.72 2.091.442 3.165q-.066.255-.178.493l-.148-.057z"/></svg>
+            </span>
+            <span class="stack-name">GCP</span>
+          </div>
+          <div class="stack-item">
+            <span class="stack-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.546 10.93 13.067.452a1.55 1.55 0 0 0-2.188 0L8.708 2.627l2.76 2.76a1.838 1.838 0 0 1 2.327 2.341l2.658 2.66a1.838 1.838 0 0 1 1.9 3.039 1.837 1.837 0 0 1-2.6 0 1.85 1.85 0 0 1-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348a1.85 1.85 0 0 1 0 2.6 1.844 1.844 0 0 1-2.609 0 1.834 1.834 0 0 1 0-2.598c.182-.18.387-.316.605-.406V8.835a1.834 1.834 0 0 1-.996-2.41L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477a1.545 1.545 0 0 0 2.186 0l10.43-10.43a1.544 1.544 0 0 0 0-2.187"/></svg>
+            </span>
+            <span class="stack-name">Git</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- OSS Projects Section -->
+      <section class="oss-section">
+        <a href="https://docs.laravel-spectrum.dev" target="_blank" class="oss-card">
+          <div class="oss-header">
+            <div class="oss-icon">&#127752;</div>
+            <h3 class="oss-name">laravel-spectrum</h3>
+          </div>
+          <p class="oss-desc">A powerful testing utility for Laravel applications with beautiful output.</p>
+          <div class="oss-tags">
+            <span class="oss-tag">#laravel</span>
+            <span class="oss-tag">#php</span>
+            <span class="oss-tag">#testing</span>
+          </div>
+          <div class="oss-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        <a href="https://github.com/wadakatu/screenbook" target="_blank" class="oss-card">
+          <div class="oss-header">
+            <div class="oss-icon">&#128214;</div>
+            <h3 class="oss-name">screenbook</h3>
+          </div>
+          <p class="oss-desc">Screen catalog & navigation graph generator for frontend apps.</p>
+          <div class="oss-tags">
+            <span class="oss-tag">#typescript</span>
+            <span class="oss-tag">#cli</span>
+            <span class="oss-tag">#docs</span>
+          </div>
+          <div class="oss-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/images/logo-48.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <div class="footer-info">
+          <span class="footer-name">wadakatu_</span>
+          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
+        </div>
+      </div>
+      <div class="footer-status">
+        <div class="uplink">
+          <span class="uplink-dot"></span>
+          <span>UPLINK ACTIVE</span>
+        </div>
+        <span class="footer-time" id="jst-time">--:--:-- JST</span>
+      </div>
+    </footer>
+  </div>
+
+  <noscript>
+    <style>
+      #matrix-rain { display: none; }
+      body::before { display: none; }
+      .page-header, .profile-section, .stats-section, .stack-section, .oss-section, .footer {
+        opacity: 1;
+        transform: none;
+      }
+    </style>
+  </noscript>
+</BaseLayout>
+
+<style>
+  /* ===== ABOUT PAGE STYLES ===== */
+
+  .about-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  /* Profile Section */
+  .profile-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    border: 2px solid var(--matrix-dark);
+    box-shadow: var(--glow);
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-name .highlight {
+    color: var(--matrix);
+    text-shadow: var(--glow);
+  }
+
+  .profile-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--matrix-dim);
+  }
+
+  .profile-bio {
+    position: relative;
+    z-index: 1;
+  }
+
+  .bio-terminal {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .bio-line {
+    display: block;
+    color: var(--text-dim);
+  }
+
+  .bio-line .prompt {
+    color: var(--matrix);
+    margin-right: 0.5rem;
+  }
+
+  .bio-line .cmd {
+    color: var(--text);
+  }
+
+  .bio-line .output {
+    color: var(--text-dim);
+    padding-left: 1.5rem;
+  }
+
+  .bio-line .highlight {
+    color: var(--matrix);
+  }
+
+  /* Stats Section */
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--matrix-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--glow);
+  }
+
+  .stat-card:hover::before {
+    opacity: 1;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--matrix);
+    text-shadow: var(--glow);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Tech Stack Section */
+  .stack-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stack-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+    background: rgba(0, 255, 65, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .stack-item:hover {
+    border-color: var(--matrix-dark);
+    background: rgba(0, 255, 65, 0.08);
+    transform: translateY(-3px);
+    box-shadow: var(--glow);
+  }
+
+  .stack-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stack-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+    color: var(--matrix-dim);
+    transition: color 0.3s ease;
+  }
+
+  .stack-item:hover .stack-icon svg {
+    color: var(--matrix);
+  }
+
+  .stack-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    transition: color 0.3s ease;
+  }
+
+  .stack-item:hover .stack-name {
+    color: var(--text);
+  }
+
+  /* OSS Projects Section */
+  .oss-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .oss-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .oss-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 255, 65, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .oss-card:hover {
+    border-color: var(--matrix-dark);
+    transform: translateY(-3px);
+    box-shadow: var(--glow-strong);
+  }
+
+  .oss-card:focus-visible {
+    border-color: var(--matrix);
+    outline: 2px solid var(--matrix);
+    outline-offset: 3px;
+    box-shadow: var(--glow-strong);
+  }
+
+  .oss-card:hover::before {
+    opacity: 1;
+  }
+
+  .oss-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .oss-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--matrix-dark);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .oss-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .oss-card:hover .oss-name {
+    color: var(--matrix);
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+  }
+
+  .oss-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1rem;
+  }
+
+  .oss-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .oss-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--matrix);
+    background: rgba(0, 255, 65, 0.08);
+    border: 1px solid var(--matrix-dark);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .oss-arrow {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    color: var(--text-dim);
+  }
+
+  .oss-card:hover .oss-arrow {
+    background: var(--matrix);
+    color: var(--bg);
+    transform: rotate(-45deg);
+    box-shadow: var(--glow);
+  }
+
+  .oss-arrow svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Resume Link */
+  .resume-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--matrix);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--matrix-dark);
+    border-radius: 8px;
+    background: rgba(0, 255, 65, 0.05);
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+  }
+
+  .resume-link:hover {
+    background: rgba(0, 255, 65, 0.15);
+    box-shadow: var(--glow);
+    transform: translateY(-2px);
+  }
+
+  .resume-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Skip Link */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--matrix);
+    color: var(--bg);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0 0 8px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 10000;
+    transition: top 0.3s ease;
+  }
+
+  .skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .profile-header {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .stats-section {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stack-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .oss-section {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Animations */
+  .profile-section,
+  .stats-section,
+  .stack-section,
+  .oss-section {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .profile-section { animation-delay: 0.15s; }
+  .stats-section { animation-delay: 0.25s; }
+  .stack-section { animation-delay: 0.35s; }
+  .oss-section { animation-delay: 0.45s; }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
