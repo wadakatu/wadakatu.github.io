@@ -30,12 +30,9 @@ if (workboxLoaded) {
     { url: '/', revision: CACHE_VERSION },
     { url: '/index.html', revision: CACHE_VERSION },
     { url: '/blog/', revision: CACHE_VERSION },
-    { url: '/blog/index.html', revision: CACHE_VERSION },
-    { url: '/blog/article.html', revision: CACHE_VERSION },
     { url: '/about/', revision: CACHE_VERSION },
-    { url: '/about/index.html', revision: CACHE_VERSION },
     { url: '/projects/', revision: CACHE_VERSION },
-    { url: '/projects/index.html', revision: CACHE_VERSION },
+    { url: '/offline/', revision: CACHE_VERSION },
     { url: '/styles/common.css', revision: CACHE_VERSION },
     { url: '/styles/toc.css', revision: CACHE_VERSION },
     { url: '/styles/scroll-to-top.css', revision: CACHE_VERSION },
@@ -49,7 +46,6 @@ if (workboxLoaded) {
     { url: '/images/logo-48.webp', revision: CACHE_VERSION },
     { url: '/images/icon-192.png', revision: CACHE_VERSION },
     { url: '/images/icon-512.png', revision: CACHE_VERSION },
-    { url: '/offline.html', revision: CACHE_VERSION },
   ]);
 
   // =====================
@@ -185,7 +181,7 @@ if (workboxLoaded) {
 
       // Try to return offline page from precache
       try {
-        const offlinePage = await matchPrecache('/offline.html');
+        const offlinePage = await matchPrecache('/offline/');
         if (offlinePage) {
           return offlinePage;
         }
