@@ -96,11 +96,11 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet"></noscript>
 
-
   <!-- Highlight.js for syntax highlighting -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
+  <link rel="stylesheet" href="/styles/toc.css">
     <style>
     /* ===== ARTICLE PAGE STYLES ===== */
 
@@ -626,14 +626,6 @@
       box-shadow: var(--glow);
     }
 
-    .nav-button:focus-visible {
-      color: var(--matrix);
-      border-color: var(--matrix);
-      outline: 2px solid var(--matrix);
-      outline-offset: 2px;
-      box-shadow: var(--glow);
-    }
-
     .nav-button svg {
       width: 16px;
       height: 16px;
@@ -810,7 +802,7 @@ mail.setClient(client);
       </article>
 
       <footer class="article-footer">
-        <nav class="article-footer-nav" aria-label="Article navigation">
+        <nav class="article-footer-nav">
           <a href="/blog/" class="nav-button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -831,7 +823,7 @@ mail.setClient(client);
 
     <footer class="footer">
       <div class="footer-brand">
-        <img src="/images/logo-48.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
+        <img src="/ogp.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
         <div class="footer-info">
           <span class="footer-name">wadakatu_</span>
           <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
@@ -849,6 +841,7 @@ mail.setClient(client);
 
   <script src="/scripts/common.js"></script>
   <script src="/scripts/code-copy.js"></script>
+  <script src="/scripts/toc.js"></script>
   <script src="/scripts/sw-register.js"></script>
 
   <noscript>

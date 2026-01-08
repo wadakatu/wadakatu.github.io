@@ -323,6 +323,7 @@ ${JSON.stringify(breadcrumbJsonLd, null, 2)}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
 
   <link rel="stylesheet" href="/styles/common.css">
+  <link rel="stylesheet" href="/styles/toc.css">
   ${getArticleStyles()}
 </head>
 <body>
@@ -418,6 +419,7 @@ ${JSON.stringify(breadcrumbJsonLd, null, 2)}
 
   <script src="/scripts/common.js"></script>
   <script src="/scripts/code-copy.js"></script>
+  <script src="/scripts/toc.js"></script>
   <script src="/scripts/sw-register.js"></script>
 
   <noscript>
