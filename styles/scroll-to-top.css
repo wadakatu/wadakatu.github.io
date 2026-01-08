@@ -1,0 +1,124 @@
+/* ============================================
+   Scroll to Top Button
+   ============================================ */
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 98;
+
+  /* Size - matching mobile TOC trigger */
+  width: 44px;
+  height: 44px;
+
+  /* Appearance */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  border: 1px solid var(--matrix-dim);
+  border-radius: 50%;
+  cursor: pointer;
+
+  /* Initial state - hidden */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+
+  /* Transitions */
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Visible state */
+.scroll-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Arrow icon */
+.scroll-to-top svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--matrix-dim);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover state */
+.scroll-to-top:hover {
+  background: var(--matrix-dark);
+  border-color: var(--matrix);
+  box-shadow: var(--glow);
+}
+
+.scroll-to-top:hover svg {
+  stroke: var(--matrix);
+  transform: translateY(-2px);
+}
+
+/* Focus state for accessibility */
+.scroll-to-top:focus {
+  outline: none;
+}
+
+.scroll-to-top:focus-visible {
+  outline: 2px solid var(--matrix);
+  outline-offset: 2px;
+  border-color: var(--matrix);
+  box-shadow: var(--glow);
+}
+
+/* Active state */
+.scroll-to-top:active {
+  transform: scale(0.95);
+}
+
+.scroll-to-top:active svg {
+  transform: translateY(-4px);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-to-top {
+    transition: opacity 0.1s ease, visibility 0.1s ease;
+    transform: none;
+  }
+
+  .scroll-to-top.visible {
+    transform: none;
+  }
+
+  .scroll-to-top svg {
+    transition: none;
+  }
+
+  .scroll-to-top:hover svg,
+  .scroll-to-top:active svg {
+    transform: none;
+  }
+}
+
+/* Mobile adjustments - move up when TOC trigger is present */
+@media (max-width: 1100px) {
+  .scroll-to-top {
+    bottom: 80px; /* Above mobile TOC trigger at 20px */
+  }
+}
+
+/* Larger screens - can be at bottom */
+@media (min-width: 1101px) {
+  .scroll-to-top {
+    bottom: 30px;
+  }
+}
