@@ -34,6 +34,12 @@ Location: Osaka, Japan
 - [Blog](https://www.wadakatu.dev/blog): Technical articles and learnings
 - [About](https://www.wadakatu.dev/about): Career history and skills
 
+## Language Support
+
+- Primary language: English (homepage, about, projects)
+- Japanese content: Blog section (all articles)
+- hreflang attributes link English and Japanese versions
+
 ## Technical Stack
 
 This portfolio site is built with:
