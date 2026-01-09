@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import FooterLogo from '@components/FooterLogo.astro';
 import { getCollection } from 'astro:content';
 
 const title = 'Blog';
@@ -72,17 +73,17 @@ const jsonLd = [
   </Fragment>
 
   <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+  <canvas id="matrix-rain" aria-hidden="true" transition:persist></canvas>
 
   <div class="container">
-    <header class="page-header">
+    <header class="page-header" transition:name="page-header">
       <a href="/" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
         cd ..
       </a>
-      <h1 class="page-title">Blog<span class="highlight">_</span></h1>
+      <h1 class="page-title" transition:name="page-title">Blog<span class="highlight">_</span></h1>
     </header>
 
     <main id="main-content" class="blog-content">
@@ -148,14 +149,8 @@ const jsonLd = [
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="footer-brand">
-        <img src="/images/logo-48.webp" alt="wadakatu logo" class="footer-logo" width="48" height="48">
-        <div class="footer-info">
-          <span class="footer-name">wadakatu_</span>
-          <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" class="footer-credit">Logo by Chisato Satoh</a>
-        </div>
-      </div>
+    <footer class="footer" transition:name="footer">
+      <FooterLogo />
       <div class="footer-status">
         <div class="uplink">
           <span class="uplink-dot"></span>

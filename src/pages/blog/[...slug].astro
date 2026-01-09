@@ -102,10 +102,10 @@ const jsonLd = [
   </Fragment>
 
   <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+  <canvas id="matrix-rain" aria-hidden="true" transition:persist></canvas>
 
   <div class="container">
-    <header class="page-header">
+    <header class="page-header" transition:name="page-header">
       <a href="/blog/" class="back-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -173,7 +173,7 @@ const jsonLd = [
       </footer>
     </main>
 
-    <footer class="footer">
+    <footer class="footer" transition:name="footer">
       <FooterLogo />
       <div class="footer-status">
         <div class="uplink">
