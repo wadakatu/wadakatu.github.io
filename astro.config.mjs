@@ -15,6 +15,13 @@ export default defineConfig({
     prefetchAll: true,
     defaultStrategy: 'viewport',
   },
+  // Markdown configuration
+  markdown: {
+    shikiConfig: {
+      theme: 'one-dark-pro',
+      wrap: true,
+    },
+  },
   // Compression and optimization
   compressHTML: true,
   vite: {
