@@ -28,5 +28,8 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.6.1",
     "astro": "^5.16.7"
+  },
+  "dependencies": {
+    "web-vitals": "^5.1.0"
   }
 }

@@ -113,6 +113,12 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   <script is:inline src="/scripts/scroll-to-top.js"></script>
   <script is:inline src="/scripts/sw-register.js"></script>
 
+  <!-- Web Vitals monitoring -->
+  <script>
+    import { initWebVitals } from '../scripts/web-vitals-reporter';
+    initWebVitals();
+  </script>
+
   <!-- Page-specific scripts -->
   <slot name="scripts" />
 </body>
