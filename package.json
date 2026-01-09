@@ -14,7 +14,11 @@
     "type": "git",
     "url": "git+https://github.com/wadakatu/wadakatu.github.io.git"
   },
-  "keywords": ["portfolio", "blog", "astro"],
+  "keywords": [
+    "portfolio",
+    "blog",
+    "astro"
+  ],
   "author": "wadakatu",
   "license": "MIT",
   "bugs": {
