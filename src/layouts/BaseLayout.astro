@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
   title: string;
   description: string;
@@ -89,6 +91,9 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
 
   <!-- Scroll to Top Styles -->
   <link rel="stylesheet" href="/styles/scroll-to-top.css">
+
+  <!-- View Transitions -->
+  <ViewTransitions />
 
   <!-- Page-specific head elements -->
   <slot name="head" />

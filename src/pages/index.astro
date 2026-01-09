@@ -89,7 +89,7 @@ const jsonLd = [
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- Matrix Rain Background -->
-  <canvas id="matrix-rain" aria-hidden="true"></canvas>
+  <canvas id="matrix-rain" aria-hidden="true" transition:persist></canvas>
 
   <main id="main-content" class="container">
     <!-- Hero Section -->
@@ -193,7 +193,7 @@ const jsonLd = [
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" transition:name="footer">
       <FooterLogo />
       <div class="footer-status">
         <div class="uplink">
