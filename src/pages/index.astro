@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import FooterLogo from '@components/FooterLogo.astro';
+import SkipLink from '@components/SkipLink.astro';
+import MatrixRain from '@components/MatrixRain.astro';
+import Footer from '@components/Footer.astro';
 
 const jsonLd = [
   {
@@ -86,10 +88,10 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <!-- Skip Link for Keyboard Navigation -->
-  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <SkipLink />
 
   <!-- Matrix Rain Background -->
-  <canvas id="matrix-rain" aria-hidden="true" transition:persist></canvas>
+  <MatrixRain />
 
   <main id="main-content" class="container">
     <!-- Hero Section -->
@@ -193,16 +195,7 @@ const jsonLd = [
     </section>
 
     <!-- Footer -->
-    <footer class="footer" transition:name="footer">
-      <FooterLogo />
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
+    <Footer />
   </main>
 </BaseLayout>
 
@@ -226,30 +219,6 @@ const jsonLd = [
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-
-  /* Skip Link - Hidden until focused */
-  .skip-link {
-    position: absolute;
-    top: -100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--matrix);
-    color: var(--bg);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0 0 8px 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    z-index: 10000;
-    transition: top 0.3s ease;
-  }
-
-  .skip-link:focus {
-    top: 0;
-    outline: 2px solid var(--text);
-    outline-offset: 2px;
   }
 
   /* Focus Indicators - WCAG 2.2 Focus Appearance */

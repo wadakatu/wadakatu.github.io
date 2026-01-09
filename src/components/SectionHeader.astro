@@ -1,0 +1,51 @@
+---
+interface Props {
+  command: string;
+  srLabel?: string;
+  showDollar?: boolean;
+  id?: string;
+}
+
+const {
+  command,
+  srLabel,
+  showDollar = true,
+  id,
+} = Astro.props;
+---
+
+<h2 class="section-header" id={id}>
+  {showDollar && <span class="dollar" aria-hidden="true">$ </span>}
+  {command}
+  {srLabel && <span class="sr-only"> - {srLabel}</span>}
+</h2>
+
+<style>
+  .section-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--matrix);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dollar {
+    opacity: 0.5;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

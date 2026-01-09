@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import FooterLogo from '@components/FooterLogo.astro';
+import SkipLink from '@components/SkipLink.astro';
+import PageHeader from '@components/PageHeader.astro';
+import MatrixRain from '@components/MatrixRain.astro';
+import Footer from '@components/Footer.astro';
 
 const title = 'Projects';
 const description = 'OSS contributions and personal projects by wadakatu - Laravel, TypeScript, and frontend experiments.';
@@ -39,19 +42,11 @@ const jsonLd = {
     <link rel="stylesheet" href="/styles/common.css">
   </Fragment>
 
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  <canvas id="matrix-rain" aria-hidden="true" transition:persist></canvas>
+  <SkipLink />
+  <MatrixRain />
 
   <div class="container">
-    <header class="page-header" transition:name="page-header">
-      <a href="/" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        cd ..
-      </a>
-      <h1 class="page-title" transition:name="page-title">Projects<span class="highlight">_</span></h1>
-    </header>
+    <PageHeader title="Projects" />
 
     <main id="main-content" class="projects-content">
       <!-- Stats Bar -->
@@ -211,16 +206,7 @@ const jsonLd = {
       </div>
     </main>
 
-    <footer class="footer" transition:name="footer">
-      <FooterLogo />
-      <div class="footer-status">
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
-        <span class="footer-time" id="jst-time">--:--:-- JST</span>
-      </div>
-    </footer>
+    <Footer />
   </div>
 
   <noscript>
@@ -560,30 +546,6 @@ const jsonLd = {
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-  }
-
-  /* Skip Link */
-  .skip-link {
-    position: absolute;
-    top: -100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--matrix);
-    color: var(--bg);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0 0 8px 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-    z-index: 10000;
-    transition: top 0.3s ease;
-  }
-
-  .skip-link:focus {
-    top: 0;
-    outline: 2px solid var(--text);
-    outline-offset: 2px;
   }
 
   /* Responsive */
