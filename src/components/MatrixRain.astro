@@ -1,0 +1,28 @@
+---
+interface Props {
+  id?: string;
+  persist?: boolean;
+  opacity?: number;
+}
+
+const {
+  id = 'matrix-rain',
+  persist = true,
+  opacity = 0.08,
+} = Astro.props;
+---
+
+{persist ? (
+  <canvas id={id} aria-hidden="true" transition:persist style={`--matrix-opacity: ${opacity}`}></canvas>
+) : (
+  <canvas id={id} aria-hidden="true" style={`--matrix-opacity: ${opacity}`}></canvas>
+)}
+
+<style>
+  canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: var(--matrix-opacity, 0.08);
+  }
+</style>
