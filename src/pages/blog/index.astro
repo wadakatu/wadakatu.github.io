@@ -1,8 +1,36 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
 
 const title = 'Blog';
 const description = 'Tech articles and learnings by wadakatu - Laravel, TypeScript, and web development.';
+
+// Get all published blog posts
+const allPosts = await getCollection('blog', ({ data }) => data.published === true);
+const posts = allPosts.sort((a, b) => {
+  const dateA = a.data.published_at?.getTime() ?? 0;
+  const dateB = b.data.published_at?.getTime() ?? 0;
+  return dateB - dateA;
+});
+
+// Category helpers
+function getCategory(type: string) {
+  return type === 'tech' ? 'Tech' : 'Life';
+}
+
+function formatDate(date: Date | undefined) {
+  if (!date) return '';
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function calculateReadingTime(body: string) {
+  const text = body.replace(/```[\s\S]*?```/g, '').replace(/`[^`]+`/g, '');
+  return Math.max(1, Math.ceil(text.length / 500));
+}
 
 const jsonLd = [
   {
@@ -61,7 +89,7 @@ const jsonLd = [
       <!-- Stats Header -->
       <div class="blog-stats">
         <div class="stats-info">
-          <span class="stats-count" id="article-count">-- articles</span>
+          <span class="stats-count" id="article-count">{posts.length} articles</span>
           <span class="stats-label">Published on Zenn</span>
         </div>
         <a href="https://zenn.dev/wadakatu" target="_blank" class="zenn-badge">
@@ -93,7 +121,30 @@ const jsonLd = [
 
       <!-- Articles List -->
       <section class="articles-list" id="articles-container">
-        <div class="loading">Loading articles</div>
+        {posts.map((post) => (
+          <a href={`/blog/${post.id.replace(/\.md$/, '')}/`} class="article-card" data-category={getCategory(post.data.type)}>
+            <span class="article-emoji">{post.data.emoji}</span>
+            <div class="article-content">
+              <h3 class="article-title">{post.data.title}</h3>
+              <div class="article-meta">
+                <span class="article-category">{getCategory(post.data.type)}</span>
+                <span class="article-separator">•</span>
+                <span class="article-date">{formatDate(post.data.published_at)}</span>
+                <span class="article-separator">•</span>
+                <span class="article-reading-time">{calculateReadingTime(post.body ?? '')} min</span>
+              </div>
+              <div class="article-topics">
+                {post.data.topics.slice(0, 3).map((topic) => `#${topic}`).join(' ')}
+              </div>
+            </div>
+            <svg class="article-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        ))}
+        {posts.length === 0 && (
+          <div class="no-articles">No articles found</div>
+        )}
       </section>
     </main>
 
@@ -116,28 +167,50 @@ const jsonLd = [
   </div>
 
   <Fragment slot="scripts">
-    <script is:inline src="/scripts/blog.js"></script>
-  </Fragment>
+    <script is:inline>
+      // Category filtering
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const category = tab.dataset.category;
+          const container = document.getElementById('articles-container');
+          const countEl = document.getElementById('article-count');
 
-  <noscript>
-    <style>
-      #matrix-rain { display: none; }
-      body::before { display: none; }
-      .page-header, .blog-stats, .category-section, .articles-list, .footer {
-        opacity: 1;
-        transform: none;
+          // Update active tab
+          document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // Filter articles
+          const cards = container.querySelectorAll('.article-card');
+          let visibleCount = 0;
+
+          cards.forEach(card => {
+            if (category === 'All' || card.dataset.category === category) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          // Update count
+          countEl.textContent = visibleCount + ' articles';
+        });
+      });
+
+      // JST Clock
+      function updateJSTTime() {
+        const now = new Date();
+        const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+        const h = String(jst.getHours()).padStart(2, '0');
+        const m = String(jst.getMinutes()).padStart(2, '0');
+        const s = String(jst.getSeconds()).padStart(2, '0');
+        const el = document.getElementById('jst-time');
+        if (el) el.textContent = `${h}:${m}:${s} JST`;
       }
-      .loading { display: none; }
-      #articles-container::before {
-        content: 'JavaScript is required to load articles. Please enable JavaScript or visit Zenn directly.';
-        display: block;
-        padding: 2rem;
-        text-align: center;
-        color: var(--text-dim);
-        font-family: 'JetBrains Mono', monospace;
-      }
-    </style>
-  </noscript>
+      updateJSTTime();
+      setInterval(updateJSTTime, 1000);
+    </script>
+  </Fragment>
 </BaseLayout>
 
 <style>
@@ -280,23 +353,102 @@ const jsonLd = [
     gap: 1rem;
   }
 
-  /* Loading State */
-  .loading {
+  /* Article Card */
+  .article-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+  }
+
+  .article-card:hover {
+    border-color: var(--matrix-dark);
+    box-shadow: var(--glow);
+  }
+
+  .article-card:focus-visible {
+    border-color: var(--matrix);
+    outline: 2px solid var(--matrix);
+    outline-offset: 2px;
+    box-shadow: var(--glow);
+  }
+
+  .article-emoji {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 255, 65, 0.05);
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .article-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .article-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.4;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .article-category {
+    color: var(--matrix);
+  }
+
+  .article-separator {
+    opacity: 0.5;
+  }
+
+  .article-topics {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    opacity: 0.7;
+  }
+
+  .article-arrow {
+    width: 20px;
+    height: 20px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+
+  .article-card:hover .article-arrow {
+    color: var(--matrix);
+    transform: translateX(4px);
+  }
+
+  /* No Articles */
+  .no-articles {
     text-align: center;
     padding: 3rem 2rem;
     font-family: 'JetBrains Mono', monospace;
     color: var(--text-dim);
-  }
-
-  .loading::after {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 14px;
-    background: var(--matrix);
-    animation: blink 1s step-end infinite;
-    vertical-align: middle;
-    margin-left: 4px;
   }
 
   /* Skip Link */
@@ -330,6 +482,20 @@ const jsonLd = [
       gap: 1rem;
       text-align: center;
     }
+
+    .article-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .article-meta {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .article-arrow {
+      display: none;
+    }
   }
 
   /* Animations */
@@ -350,10 +516,5 @@ const jsonLd = [
       opacity: 1;
       transform: translateY(0);
     }
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
   }
 </style>
