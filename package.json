@@ -27,7 +27,8 @@
   "homepage": "https://www.wadakatu.dev",
   "devDependencies": {
     "@astrojs/sitemap": "^3.6.1",
-    "astro": "^5.16.7"
+    "astro": "^5.16.7",
+    "canvas": "^3.2.0"
   },
   "dependencies": {
     "web-vitals": "^5.1.0"
