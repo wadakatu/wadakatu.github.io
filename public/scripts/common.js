@@ -1,57 +1,66 @@
 // ===== MATRIX RAIN EFFECT =====
-let matrixRainInterval = null;
+const MATRIX_CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789'.split('');
+const MATRIX_FONT_SIZE = 14;
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+let matrixAnimationId = null;
+let matrixDrawFn = null;
 
 function initMatrixRain() {
   const canvas = document.getElementById('matrix-rain');
-  if (!canvas) return;
+  if (!canvas || reducedMotionQuery.matches) return;
 
-  // Check reduced motion preference
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) return;
-
-  // Clear any existing interval
-  if (matrixRainInterval) {
-    clearInterval(matrixRainInterval);
+  if (matrixAnimationId) {
+    cancelAnimationFrame(matrixAnimationId);
+    matrixAnimationId = null;
   }
 
   const ctx = canvas.getContext('2d');
+  let drops = [];
 
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    const columns = Math.floor(canvas.width / MATRIX_FONT_SIZE);
+    drops = Array(columns).fill(0).map(() => Math.random() * -50);
   }
-  resize();
-
-  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789';
-  const charArray = chars.split('');
-  const fontSize = 14;
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = Array(columns).fill(0).map(() => Math.random() * -50);
 
   function draw() {
     ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00ff41';
-    ctx.font = fontSize + 'px JetBrains Mono, monospace';
+    ctx.font = MATRIX_FONT_SIZE + 'px JetBrains Mono, monospace';
 
     for (let i = 0; i < drops.length; i++) {
-      const char = charArray[Math.floor(Math.random() * charArray.length)];
-      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-      if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+      const char = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+      ctx.fillText(char, i * MATRIX_FONT_SIZE, drops[i] * MATRIX_FONT_SIZE);
+      if (drops[i] * MATRIX_FONT_SIZE > canvas.height && Math.random() > 0.98) {
         drops[i] = 0;
       }
       drops[i]++;
     }
+    matrixAnimationId = requestAnimationFrame(draw);
   }
 
-  matrixRainInterval = setInterval(draw, 60);
+  resize();
+  matrixDrawFn = draw;
+  matrixAnimationId = requestAnimationFrame(draw);
 
-  // Handle resize
   window.removeEventListener('resize', resize);
   window.addEventListener('resize', resize);
 }
 
-// Initialize on first load
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    if (matrixAnimationId) {
+      cancelAnimationFrame(matrixAnimationId);
+      matrixAnimationId = null;
+    }
+  } else if (!matrixAnimationId && matrixDrawFn && !reducedMotionQuery.matches) {
+    matrixAnimationId = requestAnimationFrame(matrixDrawFn);
+  }
+});
+
 initMatrixRain();
 
 // ===== JST CLOCK =====
@@ -126,7 +135,7 @@ document.addEventListener('astro:after-swap', () => {
  */
 document.addEventListener('astro:page-load', () => {
   // Ensure Matrix Rain is running
-  if (!matrixRainInterval) {
+  if (!matrixAnimationId) {
     initMatrixRain();
   }
 
