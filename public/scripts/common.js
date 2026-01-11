@@ -5,6 +5,10 @@ function initMatrixRain() {
   const canvas = document.getElementById('matrix-rain');
   if (!canvas) return;
 
+  // Check reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) return;
+
   // Clear any existing interval
   if (matrixRainInterval) {
     clearInterval(matrixRainInterval);
