@@ -2,14 +2,20 @@
 // https://developer.chrome.com/docs/workbox
 
 // Cache version - increment this when assets change
-const CACHE_VERSION = '3';
+const CACHE_VERSION = '4';
 
-// Try to load Workbox with error handling
+// Try to load Workbox with error handling (self-hosted for security)
 let workboxLoaded = false;
 
 try {
-  importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
-  workboxLoaded = typeof workbox !== 'undefined';
+  importScripts('/workbox/workbox-v7.4.0/workbox-sw.js');
+  if (typeof workbox !== 'undefined') {
+    // Configure Workbox to use local modules
+    workbox.setConfig({
+      modulePathPrefix: '/workbox/workbox-v7.4.0/',
+    });
+    workboxLoaded = true;
+  }
 } catch (error) {
   console.error('Failed to import Workbox:', error);
 }
@@ -97,21 +103,6 @@ if (workboxLoaded) {
     ({ url }) => url.origin === 'https://fonts.gstatic.com',
     new CacheFirst({
       cacheName: 'google-fonts-webfonts',
-      plugins: [
-        new CacheableResponsePlugin({ statuses: [0, 200] }),
-        new ExpirationPlugin({
-          maxEntries: 30,
-          maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
-        }),
-      ],
-    })
-  );
-
-  // CDN resources (marked.js, highlight.js) - Cache First
-  registerRoute(
-    ({ url }) => url.origin === 'https://cdnjs.cloudflare.com',
-    new CacheFirst({
-      cacheName: 'cdn-resources',
       plugins: [
         new CacheableResponsePlugin({ statuses: [0, 200] }),
         new ExpirationPlugin({
