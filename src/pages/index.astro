@@ -95,10 +95,10 @@ const jsonLd = [
 
   <main id="main-content" class="container">
     <!-- Hero Section -->
-    <header class="hero">
+    <header class="hero" transition:name="hero">
       <p class="hero-greeting">Hello, World!<span class="cursor"></span></p>
-      <h1 class="hero-name">wadakatu<span class="highlight">_</span></h1>
-      <p class="hero-role">Backend Developer @ Studio Inc.</p>
+      <h1 class="hero-name" transition:name="site-title">wadakatu<span class="highlight">_</span></h1>
+      <p class="hero-role" transition:name="site-role">Backend Developer @ Studio Inc.</p>
       <div class="hero-meta">
         <span class="hero-location">
           <span>📍</span> Osaka, Japan
@@ -133,7 +133,7 @@ const jsonLd = [
     <section class="nav-hub" aria-labelledby="nav-heading">
       <h2 id="nav-heading" class="section-label"><span aria-hidden="true">$ </span>ls ./<span class="sr-only"> - Site Navigation</span></h2>
       <nav class="nav-grid" aria-label="Main navigation">
-        <a href="/projects" class="nav-card">
+        <a href="/projects" class="nav-card" transition:name="nav-projects">
           <span class="nav-icon">🚀</span>
           <h3 class="nav-title">Projects</h3>
           <p class="nav-desc">OSS contributions & personal works</p>
@@ -143,7 +143,7 @@ const jsonLd = [
             </svg>
           </div>
         </a>
-        <a href="/blog" class="nav-card">
+        <a href="/blog" class="nav-card" transition:name="nav-blog">
           <span class="nav-icon">📝</span>
           <h3 class="nav-title">Blog</h3>
           <p class="nav-desc">Tech articles & learnings</p>
@@ -153,7 +153,7 @@ const jsonLd = [
             </svg>
           </div>
         </a>
-        <a href="/about" class="nav-card">
+        <a href="/about" class="nav-card" transition:name="nav-about">
           <span class="nav-icon">👤</span>
           <h3 class="nav-title">About</h3>
           <p class="nav-desc">Career & skills</p>
