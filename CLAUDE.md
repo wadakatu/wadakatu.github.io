@@ -4,54 +4,65 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal portfolio website for wadakatu (Backend Developer). Static site hosted on GitHub Pages at https://www.wadakatu.dev/.
+Personal portfolio website for wadakatu (Backend Developer). Hosted on GitHub Pages at https://www.wadakatu.dev/.
 
 ## Tech Stack
 
-- Pure HTML/CSS/JavaScript (no build tools or frameworks)
-- Single `index.html` file with inline styles and scripts
-- GitHub Pages for hosting
+- **Static Pages**: Pure HTML/CSS/JavaScript (index.html, about/, projects/)
+- **Blog**: Astro with content collections
+- **Hosting**: GitHub Pages
 
-## Development
-
-No build or install commands needed. Open `index.html` directly in a browser or use a local server:
+## Development Commands
 
 ```bash
-# Using Python
-python -m http.server 8000
+# Install dependencies
+npm install
 
-# Using PHP
-php -S localhost:8000
+# Start development server (Astro)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# For static pages only (no Astro)
+python -m http.server 8000
 ```
 
 ## Architecture
 
-The site is a single-page bento grid layout with:
-- **CSS Variables**: Theme colors defined in `:root` (Matrix green theme)
-- **Bento Grid**: CSS Grid with responsive breakpoints (1024px, 640px)
-- **Inline JavaScript**: Matrix rain canvas animation, JST clock, card expand transitions
-- **Accessibility**: Reduced motion support via `prefers-reduced-motion`
+### Hybrid Structure
+The site uses a hybrid approach:
+- **Static HTML pages**: `index.html`, `about/index.html`, `projects/index.html`, `404.html`, `offline.html`
+- **Astro-generated pages**: Blog posts from `src/content/blog/`
 
-### Key Sections
-- Hero card with name/role
-- About card with stats and tech tags
-- Tech stack grid
-- Project cards (Resume, UI Lab, W3C Hackathon)
-- Social links (GitHub, Zenn, X, Email)
-- Footer with logo
+### Key Directories
+- `src/components/` - Reusable Astro components (Footer, PageHeader, MatrixRain, etc.)
+- `src/content/blog/` - Blog posts in Markdown
+- `src/layouts/` - Astro page layouts
+- `src/pages/` - Astro page routes
+- `public/scripts/` - Shared JavaScript (common.js, scroll-to-top.js, sw.js)
+- `public/styles/` - Shared CSS
+- `public/images/` - Static images (favicon, logo, etc.)
 
-## File Structure
+### Design System
+- **Theme**: Matrix-inspired (dark background, green accents)
+- **Primary color**: `--matrix: #00ff41`
+- **Font**: JetBrains Mono (monospace)
+- **Layout**: Bento grid with responsive breakpoints (768px)
 
-```
-/
-├── index.html    # Main page (all HTML, CSS, JS inline)
-├── ogp.webp      # OGP image and favicon
-└── CLAUDE.md     # This file
-```
+### JavaScript Features
+- Matrix rain canvas animation (with frame rate limiting)
+- JST clock display
+- Service Worker for offline support (PWA)
+- Scroll-to-top button
 
-## Subpages
+## Subpages (Static HTML)
 
-Internal links reference subpages not in this repo:
-- `/resume` - Career history page
-- `/ui_lab` - Frontend experiments
-- `/w3c-hackathon` - Hackathon project page
+These pages are standalone HTML files, not Astro-generated:
+- `/` - Navigation hub
+- `/about` - Career & skills
+- `/projects` - OSS & personal works
+- `/blog` - Tech articles (Astro-generated)
