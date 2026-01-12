@@ -17,3 +17,47 @@ import logoImage from '@assets/images/logo-48.webp';
     <a href="https://chisatosatoh.myportfolio.com/work" target="_blank" rel="noopener noreferrer" class="footer-credit">Logo by Chisato Satoh</a>
   </div>
 </div>
+
+<style>
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .footer-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+
+  .footer-credit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: #888888;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .footer-credit:visited {
+    color: #888888;
+  }
+
+  .footer-credit:hover {
+    color: var(--matrix);
+  }
+</style>
