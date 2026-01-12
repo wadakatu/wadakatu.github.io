@@ -3,13 +3,14 @@ import { Image } from 'astro:assets';
 import logoImage from '@assets/images/logo-48.webp';
 ---
 
-<div class="footer-brand">
+<div class="footer-brand" transition:persist>
   <Image
     src={logoImage}
     alt="wadakatu logo"
     width={48}
     height={48}
     class="footer-logo"
+    transition:name="footer-logo"
   />
   <div class="footer-info">
     <span class="footer-name">wadakatu_</span>
