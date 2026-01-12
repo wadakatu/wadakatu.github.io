@@ -1,10 +1,13 @@
 // ===== MATRIX RAIN EFFECT =====
 const MATRIX_CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789'.split('');
 const MATRIX_FONT_SIZE = 14;
+const TARGET_FPS = 30;
+const FRAME_INTERVAL = 1000 / TARGET_FPS;
 const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 let matrixAnimationId = null;
 let matrixDrawFn = null;
+let lastFrameTime = 0;
 
 function initMatrixRain() {
   const canvas = document.getElementById('matrix-rain');
@@ -25,7 +28,14 @@ function initMatrixRain() {
     drops = Array(columns).fill(0).map(() => Math.random() * -50);
   }
 
-  function draw() {
+  function draw(currentTime) {
+    matrixAnimationId = requestAnimationFrame(draw);
+
+    if (currentTime - lastFrameTime < FRAME_INTERVAL) {
+      return;
+    }
+    lastFrameTime = currentTime;
+
     ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00ff41';
@@ -39,11 +49,11 @@ function initMatrixRain() {
       }
       drops[i]++;
     }
-    matrixAnimationId = requestAnimationFrame(draw);
   }
 
   resize();
   matrixDrawFn = draw;
+  lastFrameTime = 0;
   matrixAnimationId = requestAnimationFrame(draw);
 
   window.removeEventListener('resize', resize);

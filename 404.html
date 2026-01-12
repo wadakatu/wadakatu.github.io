@@ -664,10 +664,13 @@
     const ctx = canvas.getContext('2d');
     const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789'.split('');
     const fontSize = 14;
+    const TARGET_FPS = 30;
+    const FRAME_INTERVAL = 1000 / TARGET_FPS;
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     let animationId = null;
     let drops = [];
+    let lastFrameTime = 0;
 
     function resize() {
       canvas.width = window.innerWidth;
@@ -683,7 +686,14 @@
       return 'rgba(0, 255, 65, 0.6)';
     }
 
-    function draw() {
+    function draw(currentTime) {
+      animationId = requestAnimationFrame(draw);
+
+      if (currentTime - lastFrameTime < FRAME_INTERVAL) {
+        return;
+      }
+      lastFrameTime = currentTime;
+
       ctx.fillStyle = 'rgba(10, 10, 10, 0.04)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.font = fontSize + 'px JetBrains Mono, monospace';
@@ -698,7 +708,6 @@
         }
         drops[i]++;
       }
-      animationId = requestAnimationFrame(draw);
     }
 
     resize();
@@ -714,6 +723,7 @@
           animationId = null;
         }
       } else if (!animationId && !reducedMotionQuery.matches) {
+        lastFrameTime = 0;
         animationId = requestAnimationFrame(draw);
       }
     });
