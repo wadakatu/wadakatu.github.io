@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Security Headers -->
+  <!-- Note: X-Frame-Options, X-Content-Type-Options require HTTP headers (not possible on GitHub Pages) -->
+  <!-- Note: frame-ancestors CSP directive only works via HTTP header, not meta tag -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+
   <title>wadakatu | Backend Developer</title>
   <meta name="description" content="Backend Developer @ Studio Inc. Building no-code website builders. Active OSS contributor to Laravel ecosystem. Creator of laravel-spectrum & gitlyte.">
   <meta name="author" content="wadakatu">
