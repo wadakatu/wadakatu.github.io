@@ -24,6 +24,7 @@
   let mobileBackdrop = null;
   let mobileTrigger = null;
   let isInitialized = false;
+  let prefersReducedMotion = false;
 
   /**
    * Initialize TOC
@@ -33,6 +34,9 @@
 
     const content = document.querySelector(CONFIG.contentSelector);
     if (!content) return;
+
+    // Check for reduced motion preference
+    prefersReducedMotion = checkReducedMotion();
 
     headings = Array.from(document.querySelectorAll(CONFIG.headingSelectors));
 
@@ -242,13 +246,39 @@
   }
 
   /**
+   * Check if user prefers reduced motion
+   * Uses both CSS media query and JavaScript check for comprehensive coverage
+   */
+  function checkReducedMotion() {
+    // Check via matchMedia (handles both CSS preference and JS-triggered check)
+    if (window.matchMedia) {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      // Listen for changes to the preference
+      mediaQuery.addEventListener('change', (e) => {
+        prefersReducedMotion = e.matches;
+      });
+
+      return mediaQuery.matches;
+    }
+    return false;
+  }
+
+  /**
+   * Get scroll behavior based on user preference
+   */
+  function getScrollBehavior() {
+    return prefersReducedMotion ? 'auto' : 'smooth';
+  }
+
+  /**
    * Scroll to heading with offset
    */
   function scrollToHeading(heading) {
     const top = heading.getBoundingClientRect().top + window.pageYOffset - CONFIG.scrollOffset;
     window.scrollTo({
       top: top,
-      behavior: 'smooth'
+      behavior: getScrollBehavior()
     });
   }
 
@@ -284,7 +314,7 @@
       const listRect = tocList.getBoundingClientRect();
 
       if (itemRect.top < listRect.top || itemRect.bottom > listRect.bottom) {
-        activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        activeItem.scrollIntoView({ block: 'nearest', behavior: getScrollBehavior() });
       }
     }
   }
