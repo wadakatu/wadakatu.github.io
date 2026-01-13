@@ -2,7 +2,7 @@
 // https://developer.chrome.com/docs/workbox
 
 // Cache version - increment this when assets change
-const CACHE_VERSION = '4';
+const CACHE_VERSION = '5';
 
 // Try to load Workbox with error handling (self-hosted for security)
 let workboxLoaded = false;
@@ -44,7 +44,6 @@ if (workboxLoaded) {
     { url: '/styles/scroll-to-top.css', revision: CACHE_VERSION },
     { url: '/scripts/common.js', revision: CACHE_VERSION },
     { url: '/scripts/scroll-to-top.js', revision: CACHE_VERSION },
-    { url: '/scripts/blog.js', revision: CACHE_VERSION },
     { url: '/scripts/toc.js', revision: CACHE_VERSION },
     { url: '/ogp.webp', revision: CACHE_VERSION },
     { url: '/images/favicon.ico', revision: CACHE_VERSION },
