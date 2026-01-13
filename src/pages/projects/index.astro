@@ -284,7 +284,8 @@ const jsonLd = {
     color: inherit;
     position: relative;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    will-change: transform, box-shadow;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -425,7 +426,7 @@ const jsonLd = {
     display: flex;
     align-items: center;
     gap: 1rem;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
     position: relative;
   }
 
