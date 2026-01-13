@@ -325,7 +325,8 @@ const jsonLd = {
     border-radius: 12px;
     padding: 1.25rem;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    will-change: transform, box-shadow;
     position: relative;
     overflow: hidden;
   }
@@ -395,7 +396,8 @@ const jsonLd = {
     background: rgba(0, 255, 65, 0.03);
     border: 1px solid var(--border);
     border-radius: 10px;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    will-change: transform, box-shadow;
   }
 
   .stack-item:hover {
@@ -452,7 +454,8 @@ const jsonLd = {
     color: inherit;
     position: relative;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
   }
 
   .oss-card::before {
