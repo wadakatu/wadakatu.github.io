@@ -39,7 +39,6 @@ function calculateReadingTime(body: string) {
 const category = getCategory(post.data.type);
 const readingTime = calculateReadingTime(post.body ?? '');
 const slug = post.id.replace(/\.md$/, '');
-const zennUrl = `https://zenn.dev/studio/articles/${slug}`;
 
 const jsonLd = [
   {
@@ -132,19 +131,6 @@ const jsonLd = [
         </div>
       </header>
 
-      <div class="zenn-bar">
-        <span class="zenn-bar-text">
-          <span class="terminal-prefix">$</span>
-          Originally published on Zenn
-        </span>
-        <a href={zennUrl} target="_blank" rel="noopener noreferrer" class="zenn-link">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-          </svg>
-          Read on Zenn
-        </a>
-      </div>
-
       <div class="article-content">
         <div class="markdown-body">
           <Content />
@@ -158,12 +144,6 @@ const jsonLd = [
               <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
             Back to Blog
-          </a>
-          <a href={zennUrl} target="_blank" rel="noopener noreferrer" class="nav-button">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-              <path d="M.264 23.771h4.984c.264 0 .498-.147.645-.352L19.614.874c.176-.293-.029-.645-.381-.645h-4.72c-.235 0-.44.117-.557.323L.03 23.361c-.088.176.029.41.234.41zM17.445 23.419l6.479-10.408c.205-.323-.029-.733-.41-.733h-4.691c-.176 0-.352.088-.44.235l-6.655 10.643c-.176.264.029.616.352.616h4.779c.234-.001.468-.118.586-.353z"/>
-            </svg>
-            View on Zenn
           </a>
         </nav>
       </footer>
@@ -306,58 +286,6 @@ const jsonLd = [
   .topic-tag:hover {
     border-color: var(--matrix-dark);
     color: var(--matrix);
-  }
-
-  /* ===== ZENN LINK BAR ===== */
-  .zenn-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, var(--card) 0%, rgba(0, 255, 65, 0.03) 100%);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    flex-wrap: wrap;
-  }
-
-  .zenn-bar-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-  }
-
-  .zenn-bar-text .terminal-prefix {
-    color: var(--matrix);
-    margin-right: 0.5rem;
-  }
-
-  .zenn-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--text);
-    background: var(--matrix-dark);
-    border: 1px solid var(--matrix-dim);
-    padding: 0.6rem 1.25rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
-  }
-
-  .zenn-link:hover {
-    background: var(--matrix);
-    color: var(--bg);
-    box-shadow: var(--glow-strong);
-    transform: translateY(-2px);
-  }
-
-  .zenn-link svg {
-    width: 16px;
-    height: 16px;
   }
 
   /* ===== ARTICLE CONTENT ===== */
@@ -624,11 +552,6 @@ const jsonLd = [
       font-size: 1.35rem;
     }
 
-    .zenn-bar {
-      flex-direction: column;
-      text-align: center;
-    }
-
     .markdown-body {
       font-size: 1rem;
     }
@@ -649,7 +572,6 @@ const jsonLd = [
 
   /* ===== ANIMATIONS ===== */
   .article-header,
-  .zenn-bar,
   .article-content,
   .article-footer {
     opacity: 0;
@@ -658,9 +580,8 @@ const jsonLd = [
   }
 
   .article-header { animation-delay: 0.1s; }
-  .zenn-bar { animation-delay: 0.2s; }
-  .article-content { animation-delay: 0.3s; }
-  .article-footer { animation-delay: 0.4s; }
+  .article-content { animation-delay: 0.2s; }
+  .article-footer { animation-delay: 0.3s; }
 
   @keyframes fadeUp {
     to {
