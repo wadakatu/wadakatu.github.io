@@ -27,10 +27,10 @@
   --astro-code-token-link: var(--tombo-code-green);
 }
 
-/* scroll to top (replaces scroll-to-top.css; keep the same #scroll-to-top id/behavior) */
-#scroll-to-top { position: fixed; right: 24px; bottom: 24px; width: 44px; height: 44px;
+/* scroll to top (replaces scroll-to-top.css; real DOM uses class="scroll-to-top", not an id) */
+.scroll-to-top { position: fixed; right: 24px; bottom: 24px; width: 44px; height: 44px;
   border: 1px solid var(--tombo-hairline); background: var(--tombo-surface); color: var(--tombo-ink-sub);
   cursor: pointer; opacity: 0; pointer-events: none;
   transition: opacity var(--tombo-dur) var(--tombo-ease), color var(--tombo-dur) var(--tombo-ease); }
-#scroll-to-top.visible { opacity: 1; pointer-events: auto; }
-#scroll-to-top:hover { color: var(--tombo-ink); border-color: var(--tombo-ink-sub); }
+.scroll-to-top.visible { opacity: 1; pointer-events: auto; }
+.scroll-to-top:hover { color: var(--tombo-ink); border-color: var(--tombo-ink-sub); }

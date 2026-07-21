@@ -31,6 +31,10 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
 <!DOCTYPE html>
 <html lang={lang}>
 <head>
+  <script is:inline>
+    (() => { const t = localStorage.getItem('tombo-theme');
+      if (t === 'tombo' || t === 'hotaru') document.documentElement.dataset.theme = t; })();
+  </script>
   <meta charset="UTF-8">
   <!-- Note: frame-ancestors CSP directive only works via HTTP header, not meta tag -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; base-uri 'self'; form-action 'self';">
@@ -63,7 +67,8 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   <link rel="canonical" href={canonicalUrl}>
 
   <!-- Theme Color -->
-  <meta name="theme-color" content="#0a0a0a">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F2F4EF" data-tombo="#F2F4EF" data-hotaru="#131714">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131714" data-tombo="#F2F4EF" data-hotaru="#131714">
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
@@ -84,14 +89,15 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   <!-- Google Fonts (Non-blocking) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@600;700&family=M+PLUS+2:wght@450;500;700&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@600;700&family=M+PLUS+2:wght@450;500;700&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@600;700&family=M+PLUS+2:wght@450;500;700&family=Martian+Mono:wdth,wght@75..112.5,400..600&display=swap" rel="stylesheet">
   </noscript>
 
-  <!-- Scroll to Top Styles -->
-  <link rel="stylesheet" href="/styles/scroll-to-top.css">
+  <!-- TOMBO design system -->
+  <link rel="stylesheet" href="/styles/tombo.css">
+  <link rel="stylesheet" href="/styles/site.css">
 
   <!-- View Transitions -->
   <ViewTransitions />
@@ -110,7 +116,7 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   </button>
 
   <!-- Common Scripts -->
-  <script is:inline src="/scripts/common.js"></script>
+  <script is:inline src="/scripts/theme.js" defer></script>
   <script is:inline src="/scripts/scroll-to-top.js"></script>
   <script is:inline src="/scripts/sw-register.js"></script>
 
