@@ -2,7 +2,7 @@
 
 日付: 2026-07-22
 Issue: #105
-状態: ドラフト(ユーザーレビュー待ち。【要確認】が 2 + 1 件)
+状態: ユーザー承認済み(2026-07-22。要確認 a/b/c も同日確定 — §12)
 前提: TOMBO v0.3.0(private repo wadakatu/tombo。タイポグラフィ v0.2 + 広幅対応 v0.3 出荷済み)
 
 ## 1. 目的と方針
@@ -19,7 +19,7 @@ Matrix テーマ(green #00ff41 / rain / CRT / JetBrains Mono + Outfit)を全撤�
 - 出所と更新手順はこの spec と CLAUDE.md に記録: 更新 = `~/tombo` の新タグから再コピーして `chore: vendor tombo.css vX.Y.Z` の単独コミット
 - vendor 理由: tombo は private のため GitHub Actions(deploy.yml)から git 依存で取得できない。PAT を積むより静的コピーが単純で、純 CSS 1 ファイルなので追随コストも低い
 - **公開露出について**: 本リポジトリは public なので vendored tombo.css は公開物になる。ただし Web サイトに適用した CSS はリポジトリが private でも配信時点で全公開であり、実適用第一号を選んだ時点で織り込み済みの露出である(tombo 本体リポジトリの公開戦略とは独立)
-- 【要確認 b】`package.json` の `"license": "MIT"` を `"license": "UNLICENSED"` + `"private": true` に変更する(サイトのコード・デザインを再利用自由と誤読させないため。npm 公開物ではないので実害はゼロ)
+- 【決定 b】`package.json` の `"license": "MIT"` を `"license": "UNLICENSED"` + `"private": true` に変更する(サイトのコード・デザインを再利用自由と誤読させないため。npm 公開物ではないので実害はゼロ)
 
 ## 3. CSS アーキテクチャ再編
 
@@ -50,9 +50,9 @@ Matrix テーマ(green #00ff41 / rain / CRT / JetBrains Mono + Outfit)を全撤�
 
 - 既定は `prefers-color-scheme` 追従(tombo.css の `light-dark()` がそのまま働く)
 - トグル UI: examples と同型(mono ラベル 2 つ + 朱下線が現在地)を全ページに設置。設置位置は docs/LP はページ右上、404/offline は盤面右上(詳細位置は plan)
-- 【要確認 a】**テーマの localStorage 永続化**を入れる: `<head>` 冒頭の同期インラインスクリプト(数行)が `localStorage.tombo-theme` を読んで `data-theme` を設定(FOUC 防止)。トグル操作で保存。※ 入れない場合はページ遷移でも OS 追従のみになる
+- 【決定 a】**テーマの localStorage 永続化**を入れる: `<head>` 冒頭の同期インラインスクリプト(数行)が `localStorage.tombo-theme` を読んで `data-theme` を設定(FOUC 防止)。トグル操作で保存
 - `<meta name="theme-color">`: `media="(prefers-color-scheme:)"` 付きで昼 `#F2F4EF` / 夜 `#131714` の 2 本 + トグル時に JS で更新
-- `manifest.json` の `theme_color` / `background_color` は単一値しか持てないため **hotaru の `#131714`** にする(PWA スプラッシュは暗背景が無難)【軽微・要確認 c】
+- `manifest.json` の `theme_color` / `background_color` は単一値しか持てないため **hotaru の `#131714`** にする(PWA スプラッシュは暗背景が無難)【決定 c】
 
 ## 6. タイポグラフィとコードハイライト
 
@@ -104,4 +104,4 @@ Matrix テーマ(green #00ff41 / rain / CRT / JetBrains Mono + Outfit)を全撤�
 - 一括移行・ロゴ維持・フッター刻印・Phase 分割はユーザー決定(2026-07-21)
 - vendor 方式は private repo × GitHub Actions の制約による(git 依存 + PAT より単純)
 - 演出コピーを「デザイン」側に分類する境界は本 spec §1 で定義(2026-07-22)
-- 【要確認 a】localStorage テーマ永続化 / 【要確認 b】package.json UNLICENSED / 【要確認 c】manifest 色 = hotaru — の 3 点はユーザーレビューで確定させる
+- (a)localStorage テーマ永続化 = 採用 / (b)package.json UNLICENSED + private = 採用 / (c)manifest 色 = hotaru #131714 — 3 点とも 2026-07-22 ユーザー確定(spec レビュー時)
