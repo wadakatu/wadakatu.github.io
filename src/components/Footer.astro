@@ -1,5 +1,6 @@
 ---
 import FooterLogo from './FooterLogo.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
   showUplink?: boolean;
@@ -14,85 +15,43 @@ const {
 } = Astro.props;
 ---
 
-<footer class="footer" transition:name={transitionName}>
-  <FooterLogo />
+<footer class="footer tombo-footer" transition:name={transitionName}>
+  <div class="footer-brand-group">
+    <span class="tombo-logo" aria-hidden="true"><i class="h"></i><i class="b"></i><i class="w1"></i><i class="w2"></i><i class="t"></i></span>
+    <FooterLogo />
+  </div>
   {(showUplink || showJstClock) && (
     <div class="footer-status">
       {showUplink && (
-        <div class="uplink">
-          <span class="uplink-dot"></span>
-          <span>UPLINK ACTIVE</span>
-        </div>
+        <span class="tombo-chip" data-status="ok">ONLINE</span>
       )}
       {showJstClock && (
         <span class="footer-time" id="jst-time">--:--:-- JST</span>
       )}
     </div>
   )}
+  <ThemeToggle />
 </footer>
 
 <style>
   .footer {
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
     gap: 1.5rem;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.6s ease-out forwards;
-    animation-delay: 0.5s;
+  }
+
+  .footer-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .footer-status {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-  }
-
-  .uplink {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--matrix-dim);
-    font-size: 0.65rem;
-  }
-
-  .uplink-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--matrix);
-    border-radius: 50%;
-    box-shadow: var(--glow);
-    animation: pulse 2s infinite;
-  }
-
-  .footer-time {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    letter-spacing: 0.05em;
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.7;
-      transform: scale(1.2);
-    }
-  }
-
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    gap: 1.25rem;
   }
 
   @media (max-width: 768px) {
