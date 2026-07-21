@@ -20,7 +20,8 @@
     "astro"
   ],
   "author": "wadakatu",
-  "license": "MIT",
+  "license": "UNLICENSED",
+  "private": true,
   "bugs": {
     "url": "https://github.com/wadakatu/wadakatu.github.io/issues"
   },
