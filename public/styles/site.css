@@ -1,8 +1,5 @@
 /* site.css — wadakatu.dev glue on top of TOMBO. Colors/sizes: tombo tokens ONLY. */
 
-/* shell */
-.site-shell { max-width: var(--tombo-shell-max, 1100px); margin: 0 auto; padding: 0 32px; }
-
 /* docs-volume page header row (PageHeader + ThemeToggle) — shared by about/projects */
 .page-header-row { display: flex; align-items: flex-start; justify-content: space-between;
   gap: 1rem; flex-wrap: wrap; }
@@ -65,14 +62,14 @@
 .markdown-body h2 { margin-top: 56px; padding-bottom: 12px; border-bottom: 1px solid var(--tombo-hairline); }
 .markdown-body h3 { margin-top: 40px; }
 .markdown-body h4 { margin-top: 32px; }
-.markdown-body p { margin-top: 20px; max-width: 62ch; }
+.markdown-body p { margin-top: 20px; max-inline-size: var(--tombo-shell-reading); }
 .markdown-body h2 + p, .markdown-body h3 + p, .markdown-body h4 + p { margin-top: 14px; }
 .markdown-body ul, .markdown-body ol { margin-top: 20px; padding-left: 1.4em; }
-.markdown-body li { margin-top: 8px; max-width: 62ch; }
+.markdown-body li { margin-top: 8px; max-inline-size: var(--tombo-shell-reading); }
 .markdown-body li:first-child { margin-top: 0; }
 .markdown-body ul li::marker { color: var(--tombo-green); }
 .markdown-body ol li::marker { color: var(--tombo-green); font-family: var(--tombo-font-mono); }
-.markdown-body blockquote { margin-top: 24px; max-width: 62ch; border: 1px solid var(--tombo-hairline);
+.markdown-body blockquote { margin-top: 24px; max-inline-size: var(--tombo-shell-reading); border: 1px solid var(--tombo-hairline);
   border-left: 2px solid var(--tombo-shu); padding: 14px 18px; }
 .markdown-body blockquote p { margin-top: 0; color: var(--tombo-ink-sub); }
 .markdown-body blockquote p + p { margin-top: 12px; }
