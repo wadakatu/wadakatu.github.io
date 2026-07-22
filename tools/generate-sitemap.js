@@ -11,7 +11,7 @@ const path = require('path');
 
 const BASE_URL = 'https://www.wadakatu.dev';
 const ARTICLES_JSON = path.join(__dirname, '..', 'data', 'articles.json');
-const OUTPUT_FILE = path.join(__dirname, '..', 'sitemap.xml');
+const OUTPUT_FILE = path.join(__dirname, '..', 'public', 'sitemap.xml');
 
 // Static pages with their priorities and change frequencies
 const STATIC_PAGES = [
