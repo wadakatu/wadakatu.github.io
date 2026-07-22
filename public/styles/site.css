@@ -39,3 +39,48 @@
   transition: opacity var(--tombo-dur) var(--tombo-ease), color var(--tombo-dur) var(--tombo-ease); }
 .scroll-to-top.visible { opacity: 1; pointer-events: auto; }
 .scroll-to-top:hover { color: var(--tombo-ink); border-color: var(--tombo-ink-sub); }
+
+/* .tombo-toc extension — blog/[...slug].astro's TOC has h2/h3/h4 hierarchy;
+   tombo.css's own component is flat, so indent sub-levels here instead of
+   inventing a new component. Markup/JS: public/scripts/toc.js. */
+.tombo-toc a[data-level="3"] { padding-left: 34px; }
+.tombo-toc a[data-level="4"] { padding-left: 46px; }
+
+/* article body typography (blog/[...slug].astro's .markdown-body, rendered
+   markdown — no classes available to attach beyond shiki's own pre.astro-code,
+   so these target bare tags the same way the page's previous Matrix skin did) */
+.markdown-body { font-size: var(--tombo-text-body); line-height: var(--tombo-lh-body); color: var(--tombo-ink);
+  overflow-wrap: anywhere; }
+.markdown-body h2 { margin-top: 56px; padding-bottom: 12px; border-bottom: 1px solid var(--tombo-hairline); }
+.markdown-body h3 { margin-top: 40px; }
+.markdown-body h4 { margin-top: 32px; }
+.markdown-body p { margin-top: 20px; max-width: 62ch; }
+.markdown-body h2 + p, .markdown-body h3 + p, .markdown-body h4 + p { margin-top: 14px; }
+.markdown-body ul, .markdown-body ol { margin-top: 20px; padding-left: 1.4em; }
+.markdown-body li { margin-top: 8px; max-width: 62ch; }
+.markdown-body li:first-child { margin-top: 0; }
+.markdown-body ul li::marker { color: var(--tombo-green); }
+.markdown-body ol li::marker { color: var(--tombo-green); font-family: var(--tombo-font-mono); }
+.markdown-body blockquote { margin-top: 24px; max-width: 62ch; border: 1px solid var(--tombo-hairline);
+  border-left: 2px solid var(--tombo-shu); padding: 14px 18px; }
+.markdown-body blockquote p { margin-top: 0; color: var(--tombo-ink-sub); }
+.markdown-body blockquote p + p { margin-top: 12px; }
+.markdown-body img { margin-top: 24px; border: 1px solid var(--tombo-hairline); border-radius: 6px;
+  max-width: 100%; height: auto; }
+.markdown-body hr { margin: 48px 0; }
+.markdown-body table { margin-top: 24px; width: 100%; border-collapse: collapse; font-size: var(--tombo-text-ui); }
+.markdown-body th { font-family: var(--tombo-font-mono); font-size: var(--tombo-text-label); letter-spacing: .12em;
+  text-transform: uppercase; color: var(--tombo-ink-sub); font-weight: 500; text-align: left;
+  padding: 11px 14px; border-bottom: 1.5px solid var(--tombo-ink); }
+.markdown-body td { padding: 10px 14px; border-bottom: 1px solid var(--tombo-hairline); }
+.markdown-body code { font-family: var(--tombo-font-mono); font-size: var(--tombo-text-code);
+  background: var(--tombo-surface); border: 1px solid var(--tombo-hairline); border-radius: 4px; padding: .15em .4em; }
+/* code block panel: "equivalent to .tombo-code" (spec §10-5, dark in both themes) applied to
+   shiki's own pre.astro-code — background/foreground already come from the --astro-code-*
+   -> --tombo-code-* mapping above; this just adds the panel chrome tombo-code itself defines */
+.markdown-body pre.astro-code { margin-top: 24px; padding: 14px 18px; border: 1px solid var(--tombo-code-border);
+  border-radius: 6px; font-size: var(--tombo-text-code); line-height: var(--tombo-lh-code);
+  font-stretch: 87.5%; overflow-x: auto; }
+.markdown-body pre.astro-code code { font-size: inherit; background: none; border: none; padding: 0; }
+.markdown-body strong { color: var(--tombo-ink); font-weight: 700; }
+.markdown-body em { font-style: italic; color: var(--tombo-ink-sub); }
