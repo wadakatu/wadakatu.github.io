@@ -94,14 +94,14 @@ const jsonLd = [
   <main id="main-content" class="page-main tombo-sections">
     <!-- Hero Section -->
     <header class="hero tombo-vol-lp tombo-corners" transition:name="hero">
-      <b class="tombo-corner-tr"></b><b class="tombo-corner-bl"></b>
+      <b class="tombo-corner-tr" aria-hidden="true"></b><b class="tombo-corner-bl" aria-hidden="true"></b>
       <div class="site-shell">
         <div class="hero-top">
           <ThemeToggle />
         </div>
         <p class="tombo-kicker">Hello, World!<span class="cursor"></span></p>
         <h1 class="tombo-display" transition:name="site-title">wadakatu<span class="highlight">_</span></h1>
-        <div class="tombo-dim hero-dim"></div>
+        <div class="tombo-dim hero-dim" aria-hidden="true"></div>
         <div class="tombo-dimlab">handle: 1 line — measured / glyphs: 9</div>
         <p class="hero-role" transition:name="site-role">Backend Developer @ Studio Inc.</p>
         <div class="hero-meta">
@@ -121,7 +121,7 @@ const jsonLd = [
     <!-- Navigation Hub -->
     <section class="nav-hub site-shell" aria-labelledby="nav-heading">
       <SectionHeader command="ls ./" srLabel="Site Navigation" id="nav-heading" />
-      <div class="tombo-dim"></div>
+      <div class="tombo-dim" aria-hidden="true"></div>
       <div class="tombo-dimlab">entries: 3 — measured</div>
       <nav class="nav-grid" aria-label="Main navigation">
         <a href="/projects" class="nav-card tombo-metric tombo-corners" transition:name="nav-projects">
@@ -163,7 +163,7 @@ const jsonLd = [
     <!-- Featured Section -->
     <section class="featured site-shell" aria-labelledby="featured-heading">
       <SectionHeader command="cat featured.txt" srLabel="Featured Projects" id="featured-heading" />
-      <div class="tombo-dim"></div>
+      <div class="tombo-dim" aria-hidden="true"></div>
       <div class="tombo-dimlab">entries: 2 — measured</div>
       <div class="featured-grid">
         <a href="https://github.com/wadakatu/w3c-hackathon" target="_blank" rel="noopener noreferrer" class="featured-card tombo-metric tombo-corners">
