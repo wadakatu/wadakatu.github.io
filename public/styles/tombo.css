@@ -1,4 +1,4 @@
-/*! TOMBO v0.3.2 — wadakatu design system. MIT. https://github.com/wadakatu/tombo */
+/*! TOMBO v0.5.0 — wadakatu design system. MIT. https://github.com/wadakatu/tombo */
 @layer tombo.reset, tombo.tokens, tombo.base, tombo.components, tombo.utilities;
 
 @layer tombo.tokens {
@@ -15,12 +15,38 @@
     --tombo-hairline:  light-dark(rgba(26,33,29,.16), rgba(229,235,230,.14));
     --tombo-grid:      light-dark(rgba(26,33,29,.07), rgba(229,235,230,.05));
     --tombo-grid-bold: light-dark(rgba(26,33,29,.13), rgba(229,235,230,.09)); /* wide-screen gutters only */
-    /* shell — content column cap shared by consumers; widens when the viewport affords real margins */
-    --tombo-shell-max: 1100px;
+    /* shell — the container scale. `--tombo-shell` is the page's active width; the
+       steps below are the values you assign to it. `reading` is font-relative because
+       it IS a measure — it has to track whatever type it wraps. `default` and `wide`
+       are structural, so they stay px to match the px type scale: a rem container
+       under a px type scale lengthens the line without enlarging the text, which is
+       backwards. If the type scale ever moves to rem, these move with it.
+       No breakpoints — max-inline-size plus a clamp()ed gutter cover every viewport. */
+    --tombo-shell-reading: 65ch;    /* 621px at the body voice — 76 latin / 41 japanese per line */
+    --tombo-shell-default: 1280px;
+    --tombo-shell-wide:    1792px;
+    --tombo-shell-gutter:  clamp(20px, 3.25vw, 64px);
+    --tombo-shell: var(--tombo-shell-default); /* the page's width — reassign to pick a step */
+    --tombo-shell-max: var(--tombo-shell);     /* DEPRECATED since 0.4 — read --tombo-shell.
+                                                  NOTE: the value moved 1100px -> 1280px and the
+                                                  1600px step is gone. Removed in 0.5. */
     /* instruments */
     --tombo-green:    light-dark(#0E5A47, #4FC2A2);
     --tombo-on-green: light-dark(#F2F4EF, #10201A);
     --tombo-shu:      light-dark(#D8442B, #E5654C);
+    /* glow — the hotaru firefly (spec §9), opt-in via .tombo-glow. Every value is
+       transparent by day, so the rules that use them need no theme selector and
+       follow the OS and data-theme alike through color-scheme. Writing them as
+       [data-theme="hotaru"] instead would miss every page that merely follows a
+       dark OS without forcing a theme. */
+    --tombo-glow-wash: light-dark(transparent, rgba(79,194,162,.16));
+    --tombo-glow-edge: light-dark(transparent, rgba(79,194,162,.14));
+    --tombo-glow-halo: light-dark(transparent, rgba(79,194,162,.30));
+    /* a lit surface sits ~1.3 contrast points brighter, which drops ink-faint to
+       3.93:1 on the wash and 3.68:1 on a lit panel — under the 4.5 floor. Inside
+       .tombo-glow the annotation ink is lifted one step. The two values mirror
+       ink-faint by day and ink-sub by night; check_contrast.py asserts that. */
+    --tombo-ink-faint-glow: light-dark(#667069, #9AA69F);
     /* status (app volume only) */
     --tombo-success: light-dark(#2C7A4B, #57B98A);
     --tombo-warn:    light-dark(#B07818, #D9A441);
@@ -56,9 +82,6 @@
   }
   :root[data-theme="tombo"]  { color-scheme: light; }
   :root[data-theme="hotaru"] { color-scheme: dark; }
-  @media (min-width: 1600px) {
-    :root { --tombo-shell-max: 1280px; }
-  }
 }
 
 @layer tombo.reset {
@@ -98,16 +121,66 @@
       repeating-linear-gradient(0deg,  var(--tombo-grid) 0 1px, transparent 1px 24px),
       repeating-linear-gradient(90deg, var(--tombo-grid) 0 1px, transparent 1px 24px);
   }
+  /* container scale — one class, four widths. The page runs at --tombo-shell-default;
+     reassign --tombo-shell on :root (only there — the deprecated --tombo-shell-max
+     alias is declared at :root and will not follow an override made lower down)
+     when a whole page wants another step. .tombo-gutters reads the same variable, so
+     the margins always meet the content edge. The modifiers rebind it per element. */
+  .tombo-shell {
+    inline-size: 100%;
+    max-inline-size: var(--tombo-shell);
+    margin-inline: auto;
+    padding-inline: var(--tombo-shell-gutter);
+  }
+  /* reading is a measure of TEXT, so the box has to carry the gutter on top of it —
+     the shell is border-box, and capping it at the bare 65ch would leave 65ch minus
+     two gutters of actual line (51.9ch at a 1920px viewport). default and wide are
+     frame widths and mean exactly what they say, so they are not compensated. */
+  .tombo-shell--reading { --tombo-shell: calc(var(--tombo-shell-reading) + 2 * var(--tombo-shell-gutter)); }
+  .tombo-shell--wide    { --tombo-shell: var(--tombo-shell-wide); }
+  /* full bleed leaves --tombo-shell untouched so a nested .tombo-shell keeps the page width */
+  .tombo-shell--full    { max-inline-size: none; padding-inline: 0; }
+
+  /* S-06 発光 — LP volume, night only, opt-in. The wash is a background layer and
+     never a pseudo-element: .tombo-corners, .tombo-dim, .tombo-ticks, .tombo-ruler,
+     .tombo-current and .tombo-kicker all own ::before/::after already, so a glow
+     built on a pseudo silently eats one of their marks the first time the classes
+     are combined. Pair it with .tombo-vol-lp on a hero and the grid rides on top. */
+  .tombo-glow {
+    --tombo-ink-faint: var(--tombo-ink-faint-glow);
+    background-image: radial-gradient(72% 88% at 26% 46%, var(--tombo-glow-wash), transparent 68%);
+    background-repeat: no-repeat;
+  }
+  .tombo-vol-lp.tombo-glow {
+    background-image:
+      radial-gradient(72% 88% at 26% 46%, var(--tombo-glow-wash), transparent 68%),
+      repeating-linear-gradient(0deg,  var(--tombo-grid) 0 1px, transparent 1px 24px),
+      repeating-linear-gradient(90deg, var(--tombo-grid) 0 1px, transparent 1px 24px);
+    background-repeat: no-repeat, repeat, repeat;
+  }
+  /* offset-zero glows only — a shadow that implies a light source is still forbidden */
+  .tombo-glow.tombo-metric { box-shadow: 0 0 0 1px var(--tombo-glow-edge), 0 0 46px -14px var(--tombo-glow-halo); }
+  .tombo-glow .tombo-display,
+  .tombo-glow.tombo-metric > .v { text-shadow: 0 0 22px var(--tombo-glow-halo); }
+  @media (forced-colors: active) {
+    .tombo-glow { background-image: none; box-shadow: none; }
+    .tombo-glow .tombo-display, .tombo-glow.tombo-metric > .v { text-shadow: none; }
+  }
+
   .tombo-gutters { position: relative; }
   .tombo-gutters::before, .tombo-gutters::after {
-    content: ""; position: absolute; top: 0; bottom: 0; pointer-events: none;
-    width: max(24px, calc((100vw - var(--tombo-shell-max)) / 2));
+    content: ""; position: absolute; inset-block: 0; pointer-events: none;
+    /* reach the content edge, not the shell's outer edge: the margin outside the
+       shell PLUS the shell's own gutter. 100% (the body box) rather than 100vw so a
+       classic scrollbar does not push the grid past the content. Below the shell
+       width the first term is 0 and the grid is exactly the gutter. */
+    inline-size: calc(max(0px, (100% - var(--tombo-shell)) / 2) + var(--tombo-shell-gutter));
     background-image:
       repeating-linear-gradient(0deg,  var(--tombo-grid) 0 1px, transparent 1px 24px),
       repeating-linear-gradient(90deg, var(--tombo-grid) 0 1px, transparent 1px 24px);
   }
-  .tombo-gutters::before { left: 0; }
-  .tombo-gutters::after  { right: 0; }
+  .tombo-gutters::before { inset-inline-start: 0; }
+  .tombo-gutters::after  { inset-inline-end: 0; }
   @media (min-width: 1600px) {
     /* wide screens: the margins become the trim area — bolder grid, and the
        registration mark moves to the window's own corners (print puts tombo
@@ -220,6 +293,13 @@
     text-transform: uppercase; color: var(--tombo-ink-sub); font-weight: 500; text-align: left;
     padding: 11px 14px; border-bottom: 1.5px solid var(--tombo-ink); }
   .tombo-table td { padding: 10px 14px; border-bottom: 1px solid var(--tombo-hairline); }
+  /* A data table is a reflow exception under WCAG 2.2 SC 1.4.10, but the scroll
+     belongs to the table, not the page. Wrap every .tombo-table that can outgrow
+     its column. The region must be focusable or a keyboard user cannot scroll it,
+     and role="region" needs an accessible name:
+     <div class="tombo-table-wrap" role="region" aria-labelledby="ID" tabindex="0">
+       <table class="tombo-table"> … */
+  .tombo-table-wrap { overflow-x: auto; }
 
   .tombo-chip { font-family: var(--tombo-font-mono); font-size: var(--tombo-text-label); font-weight: 500; letter-spacing: .08em;
     padding: 3px 10px; border: 1px solid var(--tombo-hairline); border-radius: 99px; }

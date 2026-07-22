@@ -41,7 +41,7 @@ const jsonLd = {
 <BaseLayout title={title} description={description} jsonLd={jsonLd} bodyClass="tombo-gutters">
   <SkipLink />
 
-  <div class="site-shell page-frame">
+  <div class="tombo-shell page-frame">
     <div class="page-header-row">
       <PageHeader title="Projects" />
       <ThemeToggle />
@@ -141,43 +141,45 @@ const jsonLd = {
         <div class="tombo-dim" aria-hidden="true"></div>
         <div class="tombo-dimlab">6 items</div>
 
-        <table class="tombo-table other-table">
+        <div class="tombo-table-wrap" role="region" aria-label="Other projects" tabindex="0">
+          <table class="tombo-table other-table">
           <thead>
             <tr><th>Repository</th><th>Description</th><th>Lang</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td><span aria-hidden="true">🏆</span> <a href="https://github.com/wadakatu/w3c-hackathon" target="_blank">w3c-hackathon</a></td>
+              <td><a href="https://github.com/wadakatu/w3c-hackathon" target="_blank">w3c-hackathon</a></td>
               <td>Dashboard built with vibe-coding</td>
               <td class="tombo-mono">JS</td>
             </tr>
             <tr>
-              <td><span aria-hidden="true">🔬</span> <a href="https://github.com/wadakatu/ui_lab" target="_blank">ui_lab</a></td>
+              <td><a href="https://github.com/wadakatu/ui_lab" target="_blank">ui_lab</a></td>
               <td>Frontend UI Component Laboratory</td>
               <td class="tombo-mono">HTML</td>
             </tr>
             <tr>
-              <td><span aria-hidden="true">🔧</span> <a href="https://github.com/wadakatu/laravel-factory-refactor" target="_blank">laravel-factory-refactor</a></td>
+              <td><a href="https://github.com/wadakatu/laravel-factory-refactor" target="_blank">laravel-factory-refactor</a></td>
               <td>Refactor factory call style in Laravel 8.x~10.x</td>
               <td class="tombo-mono">PHP</td>
             </tr>
             <tr>
-              <td><span aria-hidden="true">🎠</span> <a href="https://github.com/wadakatu/studio-carousel" target="_blank">studio-carousel</a></td>
+              <td><a href="https://github.com/wadakatu/studio-carousel" target="_blank">studio-carousel</a></td>
               <td>Carousel collection for Studio UI lab</td>
               <td class="tombo-mono">CSS</td>
             </tr>
             <tr>
-              <td><span aria-hidden="true">📊</span> <a href="https://github.com/wadakatu/slides" target="_blank">slides</a></td>
+              <td><a href="https://github.com/wadakatu/slides" target="_blank">slides</a></td>
               <td>Presentation slides built with Slidev</td>
               <td class="tombo-mono">Vue</td>
             </tr>
             <tr>
-              <td><span aria-hidden="true">📄</span> <a href="https://github.com/wadakatu/resume" target="_blank">resume</a></td>
+              <td><a href="https://github.com/wadakatu/resume" target="_blank">resume</a></td>
               <td>Fake it until you make it</td>
               <td class="tombo-mono">CSS</td>
             </tr>
           </tbody>
-        </table>
+          </table>
+        </div>
       </section>
 
       <!-- Terminal Output -->
@@ -199,7 +201,7 @@ const jsonLd = {
     flex-direction: column;
     min-height: 100vh;
     gap: 40px;
-    padding: 40px 0 0;
+    padding-block: 40px 0;
   }
 
   .page-frame > footer {
