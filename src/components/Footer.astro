@@ -3,13 +3,13 @@ import FooterLogo from './FooterLogo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
-  showUplink?: boolean;
+  showStatus?: boolean;
   showJstClock?: boolean;
   transitionName?: string;
 }
 
 const {
-  showUplink = true,
+  showStatus = true,
   showJstClock = true,
   transitionName = 'footer',
 } = Astro.props;
@@ -20,9 +20,9 @@ const {
     <span class="tombo-logo" aria-hidden="true"><i class="h"></i><i class="b"></i><i class="w1"></i><i class="w2"></i><i class="t"></i></span>
     <FooterLogo />
   </div>
-  {(showUplink || showJstClock) && (
+  {(showStatus || showJstClock) && (
     <div class="footer-status">
-      {showUplink && (
+      {showStatus && (
         <span class="tombo-chip" data-status="ok">ONLINE</span>
       )}
       {showJstClock && (

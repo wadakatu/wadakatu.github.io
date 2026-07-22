@@ -48,7 +48,7 @@
 
 /* article body typography (blog/[...slug].astro's .markdown-body, rendered
    markdown — no classes available to attach beyond shiki's own pre.astro-code,
-   so these target bare tags the same way the page's previous Matrix skin did) */
+   so these target bare tags the same way the page's previous skin did) */
 .markdown-body { font-size: var(--tombo-text-body); line-height: var(--tombo-lh-body); color: var(--tombo-ink);
   overflow-wrap: anywhere; }
 .markdown-body h2 { margin-top: 56px; padding-bottom: 12px; border-bottom: 1px solid var(--tombo-hairline); }

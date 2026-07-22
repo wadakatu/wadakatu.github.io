@@ -9,9 +9,9 @@
  *
  * The scroll-spy algorithm itself (updateActiveItem's scan for the last
  * heading above the scroll position, the throttled scroll listener, the
- * reduced-motion-aware smooth scroll) is unchanged from the previous
- * Matrix-styled TOC; only the generated markup/classes and insertion point
- * changed for the TOMBO docs-volume rebuild.
+ * reduced-motion-aware smooth scroll) is unchanged from the previous skin;
+ * only the generated markup/classes and insertion point changed for the
+ * TOMBO docs-volume rebuild.
  */
 (function () {
   'use strict';
