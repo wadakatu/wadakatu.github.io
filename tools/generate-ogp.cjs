@@ -1,7 +1,7 @@
 /**
  * Generates the social preview card, drawn in TOMBO.
  *
- *   node public/scripts/generate-ogp.cjs
+ *   node tools/generate-ogp.cjs
  *   cwebp -q 90 public/ogp.png -o public/ogp.webp && rm public/ogp.png
  *
  * The card is a drawing sheet: hotaru paper, a 24px grid, registration
@@ -13,7 +13,7 @@ const { createCanvas, registerFont } = require('canvas');
 const fs = require('fs');
 const path = require('path');
 
-const fontDir = path.join(__dirname, '..', 'fonts');
+const fontDir = path.join(__dirname, 'fonts');
 registerFont(path.join(fontDir, 'InstrumentSans-Bold.ttf'), { family: 'Instrument Sans', weight: 'bold' });
 registerFont(path.join(fontDir, 'MPLUS2-Regular.ttf'), { family: 'M PLUS 2', weight: 'normal' });
 registerFont(path.join(fontDir, 'MPLUS2-Bold.ttf'), { family: 'M PLUS 2', weight: 'bold' });
@@ -141,6 +141,6 @@ ctx.fillText('OSAKA, JAPAN', LEFT, footY + 38);
 const right = 'SET IN TOMBO';
 ctx.fillText(right, WIDTH - LEFT - ctx.measureText(right).width, footY + 38);
 
-const out = path.join(__dirname, '..', 'ogp.png');
+const out = path.join(__dirname, '..', 'public', 'ogp.png');
 fs.writeFileSync(out, canvas.toBuffer('image/png'));
 console.log('wrote', out);

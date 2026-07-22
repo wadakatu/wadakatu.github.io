@@ -341,7 +341,7 @@ git commit -m "feat: restyle shared components on tombo primitives"
 
 **要件:**
 
-- 404: standalone head のまま `tombo.css` / `site.css` / 新フォント `<link>` + テーマ初期化インラインスクリプト(Task 3 Step 1 と同一)+ `theme.js`。rain canvas・red/blue glow・自前トークン全削除。盤面: `.tombo-metric` の大数字 404(mono 600)+ `.tombo-chip[data-status="err"]` + 戻りリンク。`<ThemeToggle />` は使えない(コンポーネント不可)ため同一マークアップを手書き
+- 404: standalone head のまま `tombo.css` / `site.css` / 新フォント `<link>` + テーマ初期化インラインスクリプト(Task 3 Step 1 と同一)+ `theme.js`。rain canvas・red/blue glow・自前トークン全削除。盤面: `.tombo-metric` の大数字 404(mono 600)+ `.tombo-chip[data-status="err"]` + 戻りリンク。`<ThemeToggle />` / `<SkipLink />` は**そのまま import して使う**(2026-07-22 訂正: 当初「standalone だからコンポーネント不可」と書いたが誤り — 404.astro は BaseLayout を使わないだけの Astro ページなので通常どおり component を import できる。他ページと同一実装に揃える)
 - offline: **自己完結**。`<link>` なし・webfont なし(system フォールバック)。tombo v0.3.1 のトークン値(paper/surface/ink/ink-sub/ink-faint/hairline/green/shu/成功系のみ必要分)を `<style>` 内 `:root` に `light-dark()` ごと**値コピー**(唯一の色リテラル許可箇所。コメントで `/* inlined from tombo.css v0.3.1 — keep in sync */` を明記)。DOM rain・CRT 削除。盤面: OFFLINE の計器パネル(chip data-status="warn" 等)。トグルは theme.js を参照できないため、テーマ初期化 + click + localStorage 保存の最小ロジック(theme.js の meta 更新を除いた縮約版、~15 行)をインライン `<script>` で持つ
 - 両ページとも `prefers-reduced-motion` 対応は tombo の全体無効化に委ねる
 
