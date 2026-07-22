@@ -40,24 +40,24 @@ import logoImage from '@assets/images/logo-48.webp';
   }
 
   .footer-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--text);
+    font-family: var(--tombo-font-mono);
+    font-size: var(--tombo-text-ui);
+    color: var(--tombo-ink);
   }
 
   .footer-credit {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: #888888;
+    font-family: var(--tombo-font-mono);
+    font-size: var(--tombo-text-label);
+    color: var(--tombo-ink-faint);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color var(--tombo-dur) var(--tombo-ease);
   }
 
   .footer-credit:visited {
-    color: #888888;
+    color: var(--tombo-ink-faint);
   }
 
   .footer-credit:hover {
-    color: var(--matrix);
+    color: var(--tombo-green);
   }
 </style>

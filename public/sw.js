@@ -2,7 +2,7 @@
 // https://developer.chrome.com/docs/workbox
 
 // Cache version - increment this when assets change
-const CACHE_VERSION = '5';
+const CACHE_VERSION = '6';
 
 // Try to load Workbox with error handling (self-hosted for security)
 let workboxLoaded = false;
@@ -39,16 +39,19 @@ if (workboxLoaded) {
     { url: '/about/', revision: CACHE_VERSION },
     { url: '/projects/', revision: CACHE_VERSION },
     { url: '/offline/', revision: CACHE_VERSION },
-    { url: '/styles/common.css', revision: CACHE_VERSION },
-    { url: '/styles/toc.css', revision: CACHE_VERSION },
-    { url: '/styles/scroll-to-top.css', revision: CACHE_VERSION },
-    { url: '/scripts/common.js', revision: CACHE_VERSION },
+    { url: '/styles/tombo.css', revision: CACHE_VERSION },
+    { url: '/styles/site.css', revision: CACHE_VERSION },
+    { url: '/scripts/theme.js', revision: CACHE_VERSION },
     { url: '/scripts/scroll-to-top.js', revision: CACHE_VERSION },
     { url: '/scripts/toc.js', revision: CACHE_VERSION },
+    { url: '/scripts/code-copy.js', revision: CACHE_VERSION },
     { url: '/ogp.webp', revision: CACHE_VERSION },
     { url: '/images/favicon.ico', revision: CACHE_VERSION },
     { url: '/images/favicon-32.png', revision: CACHE_VERSION },
-    { url: '/images/logo-48.webp', revision: CACHE_VERSION },
+    // no logo entry: it lives in src/assets and Astro emits it hashed under
+    // /_astro, so a fixed URL can never resolve — the image route below
+    // caches it at runtime instead. A precache entry that 404s aborts the
+    // whole install, taking offline support down with it.
     { url: '/images/icon-192.png', revision: CACHE_VERSION },
     { url: '/images/icon-512.png', revision: CACHE_VERSION },
   ]);

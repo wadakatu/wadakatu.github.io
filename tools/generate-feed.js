@@ -3,7 +3,7 @@
 /**
  * Generate RSS and Atom feeds from articles
  *
- * Usage: node scripts/generate-feed.js
+ * Usage: node tools/generate-feed.js
  */
 
 const fs = require('fs');
@@ -11,8 +11,8 @@ const path = require('path');
 
 const BASE_URL = 'https://www.wadakatu.dev';
 const ARTICLES_JSON = path.join(__dirname, '..', 'data', 'articles.json');
-const RSS_OUTPUT = path.join(__dirname, '..', 'feed.xml');
-const ATOM_OUTPUT = path.join(__dirname, '..', 'atom.xml');
+const RSS_OUTPUT = path.join(__dirname, '..', 'public', 'feed.xml');
+const ATOM_OUTPUT = path.join(__dirname, '..', 'public', 'atom.xml');
 
 // Feed metadata
 const FEED_CONFIG = {

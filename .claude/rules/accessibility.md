@@ -31,6 +31,6 @@ CSS fallback:
 ## ARIA & Semantic HTML
 
 - Use `aria-label` for icon-only buttons
-- Use `aria-hidden="true"` for decorative elements (e.g., Matrix rain canvas)
+- Use `aria-hidden="true"` for decorative elements (e.g., registration marks, dimension rules)
 - Prefer native HTML elements over ARIA when possible
 - Include skip links for keyboard navigation

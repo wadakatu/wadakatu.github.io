@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Output directory
-const OUTPUT_DIR = path.join(__dirname, '..', 'images');
+const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'images');
 
 // Background color (must match the icon's background)
 const BG_COLOR = '#0a0a0a';
