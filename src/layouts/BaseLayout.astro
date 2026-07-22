@@ -11,6 +11,7 @@ interface Props {
   noIndex?: boolean;
   lang?: string;
   jsonLd?: object | object[];
+  bodyClass?: string;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   noIndex = false,
   lang = 'en',
   jsonLd,
+  bodyClass,
 } = Astro.props;
 
 const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
@@ -105,7 +107,7 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   <!-- Page-specific head elements -->
   <slot name="head" />
 </head>
-<body>
+<body class:list={[bodyClass]}>
   <slot />
 
   <!-- Scroll to Top Button -->

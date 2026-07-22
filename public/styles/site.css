@@ -3,6 +3,11 @@
 /* shell */
 .site-shell { max-width: var(--tombo-shell-max, 1100px); margin: 0 auto; padding: 0 32px; }
 
+/* docs-volume page header row (PageHeader + ThemeToggle) — shared by about/projects */
+.page-header-row { display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; }
+.page-header-row .page-header { margin-bottom: 0; }
+
 /* theme control (markup: ThemeToggle.astro) */
 .tombo-themectl { display: flex; gap: 14px; }
 .tombo-themectl button { background: none; border: 0; padding: 2px 0; cursor: pointer;
