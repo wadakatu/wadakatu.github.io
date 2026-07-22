@@ -9,7 +9,7 @@ Use descriptive branch names with issue reference:
 
 Examples:
 - `feature/issue-92-security-headers`
-- `fix/issue-96-matrix-rain-speed`
+- `fix/issue-96-toc-scroll-offset`
 
 ## Commit Messages
 

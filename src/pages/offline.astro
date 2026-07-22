@@ -18,6 +18,13 @@ const description = 'You are currently offline.';
   <title>{title} | wadakatu</title>
   <meta name="description" content={description}>
 
+  <!-- Same-origin and precached by the service worker. Without these the
+       browser asks for /favicon.ico, which this site does not serve — a
+       failed request and a console error on the one page whose whole job
+       is to work when requests fail. -->
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+
   <!-- OGP -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.wadakatu.dev/offline">
