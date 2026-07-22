@@ -310,8 +310,13 @@ const jsonLd = {
     margin-top: 20px;
   }
 
+  /* the link fills the cell's padding box so the touch target matches the row,
+     which an <a> cannot do by wrapping <tr> without breaking table semantics */
   .other-table td a {
     color: inherit;
+    display: block;
+    margin: -10px -14px;
+    padding: 10px 14px;
   }
 
   /* Terminal Output */
