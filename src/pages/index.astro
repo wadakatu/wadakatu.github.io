@@ -1,9 +1,30 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import SkipLink from '@components/SkipLink.astro';
 import SectionHeader from '@components/SectionHeader.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
 import Footer from '@components/Footer.astro';
+import { profile, ratio } from '@/data/profile';
+
+// derived at build time — the hero states numbers, so they have to be true
+const posts = await getCollection('blog', ({ data }) => data.published === true);
+const articleCount = posts.length;
+const latestPost = posts
+  .map((p) => p.data.published_at)
+  .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
+const latestDate = latestPost
+  ? new Date(latestPost).toISOString().slice(0, 10)
+  : '—';
+
+// ruler tracks: each represents a round ceiling, so the fill reads as progress
+// toward a milestone rather than as a fraction of nothing
+const RULERS = {
+  prs: ratio(profile.recentPrs, 40),
+  repos: ratio(profile.originalRepos, 20),
+  articles: ratio(articleCount, 20),
+  years: ratio(new Date().getFullYear() - profile.since, 10),
+};
 
 const jsonLd = [
   {
@@ -93,27 +114,44 @@ const jsonLd = [
 
   <main id="main-content" class="page-main tombo-sections">
     <!-- Hero Section -->
-    <header class="hero tombo-vol-lp tombo-corners" transition:name="hero">
+    <header class="hero tombo-vol-lp tombo-glow tombo-corners" transition:name="hero">
       <b class="tombo-corner-tr" aria-hidden="true"></b><b class="tombo-corner-bl" aria-hidden="true"></b>
       <div class="tombo-shell">
         <div class="hero-top">
           <ThemeToggle />
         </div>
-        <p class="tombo-kicker">Hello, World!<span class="cursor"></span></p>
-        <h1 class="tombo-display" transition:name="site-title">wadakatu<span class="highlight">_</span></h1>
-        <div class="tombo-dim hero-dim" aria-hidden="true"></div>
-        <div class="tombo-dimlab">handle: 1 line — measured / glyphs: 9</div>
-        <p class="hero-role" transition:name="site-role">Backend Developer @ Studio Inc.</p>
-        <div class="hero-meta">
-          <span class="hero-location">
-            <span>📍</span> Osaka, Japan
-          </span>
-          <nav class="social-links" aria-label="Social links">
-            <a href="https://github.com/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="GitHub">GITHUB</a>
-            <a href="https://zenn.dev/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="Zenn">ZENN</a>
-            <a href="https://x.com/koyolympus" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="X (Twitter)">X</a>
-            <a href="mailto:wadakatu.dev@gmail.com" class="tombo-chip social-link" aria-label="Email">EMAIL</a>
-          </nav>
+        <div class="hero-cols">
+          <div>
+            <p class="tombo-kicker">Hello, World!<span class="cursor"></span></p>
+            <h1 class="tombo-display" transition:name="site-title">wadakatu<span class="highlight">_</span></h1>
+            <div class="tombo-dim hero-dim" aria-hidden="true"></div>
+            <div class="tombo-dimlab">handle: 1 line — measured / glyphs: 9</div>
+            <p class="hero-role" transition:name="site-role">Backend Developer @ Studio Inc.</p>
+            <div class="hero-meta">
+              <span class="hero-location">Osaka, Japan</span>
+              <nav class="social-links" aria-label="Social links">
+                <a href="https://github.com/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="GitHub">GITHUB</a>
+                <a href="https://zenn.dev/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="Zenn">ZENN</a>
+                <a href="https://x.com/koyolympus" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="X (Twitter)">X</a>
+                <a href="mailto:wadakatu.dev@gmail.com" class="tombo-chip social-link" aria-label="Email">EMAIL</a>
+              </nav>
+            </div>
+          </div>
+
+          <figure class="hero-panel tombo-metric tombo-glow tombo-corners">
+            <b class="tombo-corner-tr" aria-hidden="true"></b><b class="tombo-corner-bl" aria-hidden="true"></b>
+            <p class="tombo-fig">FIG. 00 — ACTIVITY</p>
+            <div class="k">Pull requests merged</div>
+            <div class="v">{profile.recentPrs}<span class="unit">/ 12 MO</span></div>
+            <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.prs * 100).toFixed(0)}%`} aria-hidden="true"></div>
+            <dl class="hero-rows">
+              <div class="hero-row"><dt>Original repos</dt><dd>{profile.originalRepos}</dd></div>
+              <div class="hero-row"><dt>OSS forks</dt><dd>{profile.ossForks}</dd></div>
+              <div class="hero-row"><dt>Articles published</dt><dd>{articleCount}</dd></div>
+              <div class="hero-row"><dt>Latest entry</dt><dd class="is-now">{latestDate}</dd></div>
+            </dl>
+            <figcaption class="tombo-dimlab">github.com/wadakatu — verified {profile.verifiedOn}</figcaption>
+          </figure>
         </div>
       </div>
     </header>
@@ -126,36 +164,42 @@ const jsonLd = [
       <nav class="nav-grid" aria-label="Main navigation">
         <a href="/projects" class="nav-card tombo-metric tombo-corners" transition:name="nav-projects">
           <p class="tombo-fig">FIG. 01 — PROJECTS</p>
-          <span class="nav-icon">🚀</span>
+          <p class="nav-value">{profile.originalRepos}<span class="unit">repos</span></p>
           <h3 class="nav-title">Projects</h3>
           <p class="nav-desc">OSS contributions & personal works</p>
-          <div class="nav-arrow">
+          <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.repos * 100).toFixed(0)}%`} aria-hidden="true"></div>
+          <p class="nav-foot">
+            <span>{profile.ossForks} forks upstream</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </div>
+          </p>
         </a>
         <a href="/blog" class="nav-card tombo-metric tombo-corners" transition:name="nav-blog">
           <p class="tombo-fig">FIG. 02 — BLOG</p>
-          <span class="nav-icon">📝</span>
+          <p class="nav-value">{articleCount}<span class="unit">articles</span></p>
           <h3 class="nav-title">Blog</h3>
           <p class="nav-desc">Tech articles & learnings</p>
-          <div class="nav-arrow">
+          <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.articles * 100).toFixed(0)}%`} aria-hidden="true"></div>
+          <p class="nav-foot">
+            <span>latest {latestDate}</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </div>
+          </p>
         </a>
         <a href="/about" class="nav-card tombo-metric tombo-corners" transition:name="nav-about">
           <p class="tombo-fig">FIG. 03 — ABOUT</p>
-          <span class="nav-icon">👤</span>
+          <p class="nav-value">{profile.since}<span class="unit">since</span></p>
           <h3 class="nav-title">About</h3>
           <p class="nav-desc">Career & skills</p>
-          <div class="nav-arrow">
+          <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.years * 100).toFixed(0)}%`} aria-hidden="true"></div>
+          <p class="nav-foot">
+            <span>{profile.skillCount} skills tracked</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
-          </div>
+          </p>
         </a>
       </nav>
     </section>
@@ -251,6 +295,57 @@ const jsonLd = [
     background: var(--tombo-shu);
   }
 
+  /* the instrument sits beside the wordmark instead of leaving the right two
+     thirds of the first screen as empty graph paper */
+  .hero-cols {
+    display: grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .hero-panel {
+    padding: 24px 26px;
+    margin: 0;
+  }
+
+  .hero-panel .v {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .hero-rows {
+    margin-top: 16px;
+    border-top: 1px solid var(--tombo-hairline);
+  }
+
+  .hero-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    font-family: var(--tombo-font-mono);
+    font-size: var(--tombo-text-label);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--tombo-hairline);
+    color: var(--tombo-ink-sub);
+  }
+
+  .hero-row dd {
+    color: var(--tombo-ink);
+    font-weight: 500;
+  }
+
+  .hero-row .is-now {
+    color: var(--tombo-green);
+  }
+
+  .hero-panel figcaption {
+    margin-top: 12px;
+  }
+
   .hero-dim {
     width: 160px;
     margin-top: 20px;
@@ -303,12 +398,12 @@ const jsonLd = [
     gap: 18px;
   }
 
+  /* left-aligned, not centred: the card leads with a measured number and a ruler
+     now, and a centred instrument reads as a poster rather than as a gauge */
   .nav-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 8px;
+    gap: 6px;
     text-decoration: none;
     color: inherit;
     transition: border-color var(--tombo-dur) var(--tombo-ease), transform var(--tombo-dur) var(--tombo-ease);
@@ -320,9 +415,24 @@ const jsonLd = [
     transform: translateY(-2px);
   }
 
-  .nav-icon {
+  .nav-value {
+    font-family: var(--tombo-font-mono);
     font-size: var(--tombo-text-metric);
-    margin-top: 4px;
+    line-height: var(--tombo-lh-metric);
+    font-weight: 600;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .unit {
+    font-family: var(--tombo-font-mono);
+    font-size: var(--tombo-text-note);
+    font-weight: 400;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--tombo-ink-faint);
   }
 
   .nav-title {
@@ -331,28 +441,38 @@ const jsonLd = [
 
   .nav-desc {
     font-size: var(--tombo-text-ui);
+    line-height: var(--tombo-lh-ui);
     color: var(--tombo-ink-sub);
   }
 
-  .nav-arrow {
+  .nav-card .tombo-ruler {
     margin-top: auto;
-    width: 26px;
-    height: 26px;
+    height: 14px;
+  }
+
+  .nav-foot {
+    margin-top: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--tombo-font-mono);
+    font-size: var(--tombo-text-label);
+    letter-spacing: .1em;
+    text-transform: uppercase;
     color: var(--tombo-ink-faint);
+  }
+
+  .nav-foot svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
     transition: color var(--tombo-dur) var(--tombo-ease), transform var(--tombo-dur) var(--tombo-ease);
   }
 
-  .nav-card:hover .nav-arrow {
+  .nav-card:hover .nav-foot svg {
     color: var(--tombo-green);
     transform: rotate(-45deg);
-  }
-
-  .nav-arrow svg {
-    width: 16px;
-    height: 16px;
   }
 
   /* ===== FEATURED SECTION ===== */
@@ -415,6 +535,15 @@ const jsonLd = [
   }
 
   /* ===== RESPONSIVE ===== */
+  /* the instrument's mono rows stop fitting beside the wordmark before the
+     nav grid does, so the hero stacks at its own threshold, not a device's */
+  @media (max-width: 980px) {
+    .hero-cols {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
   @media (max-width: 768px) {
     .nav-grid,
     .featured-grid {

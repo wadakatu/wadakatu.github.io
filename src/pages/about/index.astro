@@ -6,6 +6,7 @@ import SectionHeader from '@components/SectionHeader.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
 import Footer from '@components/Footer.astro';
 import { Image } from 'astro:assets';
+import { profile } from '@/data/profile';
 import avatarImage from '@assets/images/logo-80.webp';
 
 const title = 'About';
@@ -85,19 +86,19 @@ const jsonLd = {
       <section class="stats-section">
         <div class="stat-card tombo-metric">
           <div class="k">Original Repos</div>
-          <div class="v">13</div>
+          <div class="v">{profile.originalRepos}</div>
         </div>
         <div class="stat-card tombo-metric">
           <div class="k">OSS Forks</div>
-          <div class="v">17</div>
+          <div class="v">{profile.ossForks}</div>
         </div>
         <div class="stat-card tombo-metric">
           <div class="k">Recent PRs</div>
-          <div class="v">29</div>
+          <div class="v">{profile.recentPrs}</div>
         </div>
         <div class="stat-card tombo-metric">
           <div class="k">Since</div>
-          <div class="v">2020</div>
+          <div class="v">{profile.since}</div>
         </div>
       </section>
 
