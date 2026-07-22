@@ -4,7 +4,7 @@
  * Renders a `.tombo-toc` nav (see public/styles/tombo.css §S-05/.tombo-toc,
  * and public/styles/site.css for the h3/h4 indent extension) into the
  * `#toc-rail` slot that blog/[...slug].astro provides. The current entry is
- * marked with `aria-current="page"`, which tombo.css turns into the shu
+ * marked with `aria-current="location"`, which tombo.css turns into the shu
  * tick mark — no active/blink classes involved.
  *
  * The scroll-spy algorithm itself (updateActiveItem's scan for the last
@@ -216,7 +216,7 @@
     // Mark the current entry — tombo.css turns aria-current into the shu tick
     tocLinks.forEach((link, index) => {
       if (index === activeIndex) {
-        link.setAttribute('aria-current', 'page');
+        link.setAttribute('aria-current', 'location');
       } else {
         link.removeAttribute('aria-current');
       }
