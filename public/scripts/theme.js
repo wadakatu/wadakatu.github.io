@@ -17,6 +17,8 @@
   const applyStored = () => {
     const t = localStorage.getItem(KEY);
     if (t === 'tombo' || t === 'hotaru') document.documentElement.dataset.theme = t;
+    // the markup ships hidden so the buttons never appear without this script
+    document.querySelectorAll('.tombo-themectl[hidden]').forEach((c) => { c.hidden = false; });
     syncCtl();
   };
   document.addEventListener('click', (e) => {

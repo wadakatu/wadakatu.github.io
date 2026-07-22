@@ -30,15 +30,26 @@
   --astro-code-token-parameter: var(--tombo-code-ink);
   --astro-code-token-punctuation: var(--tombo-code-faint);
   --astro-code-token-link: var(--tombo-code-green);
+  /* diff lines: an unmapped var() invalidates the declaration, which would
+     leave + and - indistinguishable except by a user-select:none glyph */
+  --astro-code-token-inserted: var(--tombo-code-green);
+  --astro-code-token-deleted: var(--tombo-code-shu);
 }
 
 /* scroll to top (replaces scroll-to-top.css; real DOM uses class="scroll-to-top", not an id) */
-.scroll-to-top { position: fixed; right: 24px; bottom: 24px; width: 44px; height: 44px;
+.scroll-to-top { position: fixed; right: 24px; bottom: 24px; z-index: 98;
+  display: flex; align-items: center; justify-content: center; width: 44px; height: 44px;
   border: 1px solid var(--tombo-hairline); background: var(--tombo-surface); color: var(--tombo-ink-sub);
-  cursor: pointer; opacity: 0; pointer-events: none;
-  transition: opacity var(--tombo-dur) var(--tombo-ease), color var(--tombo-dur) var(--tombo-ease); }
-.scroll-to-top.visible { opacity: 1; pointer-events: auto; }
+  cursor: pointer;
+  /* visibility, not opacity alone — opacity:0 leaves the button in the tab
+     order and the accessibility tree, and pointer-events does not stop a
+     keyboard activating it */
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity var(--tombo-dur) var(--tombo-ease), visibility var(--tombo-dur) var(--tombo-ease), color var(--tombo-dur) var(--tombo-ease); }
+.scroll-to-top.visible { opacity: 1; visibility: visible; pointer-events: auto; }
 .scroll-to-top:hover { color: var(--tombo-ink); border-color: var(--tombo-ink-sub); }
+/* tombo's reset makes bare svg block-level and full-width, so it needs a size */
+.scroll-to-top svg { width: 20px; height: 20px; }
 
 /* .tombo-toc extension — blog/[...slug].astro's TOC has h2/h3/h4 hierarchy;
    tombo.css's own component is flat, so indent sub-levels here instead of

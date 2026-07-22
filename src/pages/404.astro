@@ -1,7 +1,10 @@
 ---
 // 404 Page
+import { getCollection } from 'astro:content';
 import SkipLink from '@components/SkipLink.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
+
+const publishedPosts = await getCollection('blog', ({ data }) => data.published === true);
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -226,7 +229,7 @@ import ThemeToggle from '@components/ThemeToggle.astro';
 
           <a href="/blog/" class="tombo-btn tombo-btn--secondary exit-link" aria-label="Browse the blog">
             <span class="exit-label">Blog</span>
-            <span class="exit-desc">17 articles, all measured</span>
+            <span class="exit-desc">{publishedPosts.length} articles, all measured</span>
           </a>
         </nav>
       </section>

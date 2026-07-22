@@ -157,7 +157,7 @@ const description = 'You are currently offline.';
     .chip-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 28px; }
 
     .cached-section { text-align: center; margin-bottom: 32px; }
-    .cached-title::before { content: "$ "; opacity: .6; }
+    .cached-title::before { content: "— "; opacity: .6; }
     .cached-links { margin-top: 14px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
     .retry-row { text-align: center; }
@@ -173,7 +173,7 @@ const description = 'You are currently offline.';
 
   <main id="main-content" class="offline-content" role="main">
     <div class="toggle-row">
-      <div class="tombo-themectl tombo-label">
+      <div class="tombo-themectl tombo-label" hidden>
         <button type="button" data-t="tombo">tombo</button>
         <button type="button" data-t="hotaru">hotaru</button>
       </div>
@@ -229,6 +229,7 @@ const description = 'You are currently offline.';
         const t = current();
         ctl.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.t === t)));
       };
+      ctl.hidden = false; // ships hidden so the buttons never appear without this script
       syncCtl();
       ctl.addEventListener('click', (e) => {
         const btn = e.target.closest('button');

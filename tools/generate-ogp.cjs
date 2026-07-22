@@ -7,7 +7,7 @@
  * The card is a drawing sheet: hotaru paper, a 24px grid, registration
  * brackets at the trim, the name measured by a dimension line, and one shu
  * tick at the 62% mark — the proportion the TOMBO wordmark itself uses.
- * Fonts are the three voices, instanced as static TTFs under public/fonts/.
+ * Fonts are the three voices, instanced as static TTFs under tools/fonts/.
  */
 const { createCanvas, registerFont } = require('canvas');
 const fs = require('fs');
