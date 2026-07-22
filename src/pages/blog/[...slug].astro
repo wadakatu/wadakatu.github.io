@@ -135,12 +135,12 @@ const jsonLd = [
       <div class="tombo-dim" aria-hidden="true"></div>
 
       <div class="article-layout">
+        <aside class="toc-rail" id="toc-rail"></aside>
         <div class="article-content">
           <div class="markdown-body">
             <Content />
           </div>
         </div>
-        <aside class="toc-rail" id="toc-rail"></aside>
       </div>
 
       <div class="tombo-dim" aria-hidden="true"></div>
@@ -246,6 +246,12 @@ const jsonLd = [
     gap: 56px;
   }
 
+  /* the rail precedes the article in source order so it reads as a table of
+     contents on narrow screens and to assistive tech; explicit placement puts
+     it back on the right once there is room for a second column */
+  .article-layout:has(.tombo-toc) > .article-content { grid-area: 1 / 1; }
+  .article-layout:has(.tombo-toc) > .toc-rail { grid-area: 1 / 2; }
+
   /* grid items default to min-width:auto, so a single long unbroken token
      anywhere in the article (a bare URL, a long shell command in a code
      block) would otherwise force the whole track — and everything else in
@@ -266,8 +272,13 @@ const jsonLd = [
       gap: 32px;
     }
 
+    .article-layout:has(.tombo-toc) > .article-content,
+    .article-layout:has(.tombo-toc) > .toc-rail { grid-area: auto; }
+
     .toc-rail {
       position: static;
+      border-bottom: 1px solid var(--tombo-hairline);
+      padding-bottom: 16px;
     }
   }
 

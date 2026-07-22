@@ -101,6 +101,19 @@
    * Create the TOC DOM structure and insert it into the page's TOC slot
    */
   function createTOC(slot) {
+    // Narrow viewports drop the sticky rail into the flow ahead of the article,
+    // where an expanded list would push the text off screen — so the rail is a
+    // disclosure there, standing in for the old modal's "tap to open". Wide
+    // viewports have room for the rail, so it opens and the summary is hidden.
+    const details = document.createElement('details');
+    details.className = 'toc-disclosure';
+    details.open = window.matchMedia('(min-width: 901px)').matches;
+
+    const summary = document.createElement('summary');
+    summary.className = 'tombo-label';
+    summary.textContent = 'Contents';
+    details.appendChild(summary);
+
     const nav = document.createElement('nav');
     nav.className = 'tombo-toc';
     nav.setAttribute('aria-label', 'Table of contents');
@@ -124,7 +137,8 @@
       tocLinks.push(link);
     });
 
-    slot.appendChild(nav);
+    details.appendChild(nav);
+    slot.appendChild(details);
   }
 
   /**
