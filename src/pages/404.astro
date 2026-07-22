@@ -1,5 +1,5 @@
 ---
-// 404 Page - The Path Ends Here
+// 404 Page
 import SkipLink from '@components/SkipLink.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
 ---
@@ -14,15 +14,15 @@ import ThemeToggle from '@components/ThemeToggle.astro';
   <!-- Note: frame-ancestors CSP directive only works via HTTP header, not meta tag -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; base-uri 'self'; form-action 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - The Path Ends Here | wadakatu</title>
-  <meta name="description" content="The path you seek does not exist in this reality.">
+  <title>404 - Page Not Found | wadakatu</title>
+  <meta name="description" content="No route matches this path. Head back to the index.">
   <meta name="robots" content="noindex">
 
   <!-- OGP -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.wadakatu.dev/404">
   <meta property="og:title" content="404 - Page Not Found | wadakatu">
-  <meta property="og:description" content="The path you seek does not exist in this reality.">
+  <meta property="og:description" content="No route matches this path. Head back to the index.">
   <meta property="og:image" content="https://www.wadakatu.dev/ogp.webp">
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
@@ -31,7 +31,7 @@ import ThemeToggle from '@components/ThemeToggle.astro';
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@koyolympus">
   <meta name="twitter:title" content="404 - Page Not Found | wadakatu">
-  <meta name="twitter:description" content="The path you seek does not exist in this reality.">
+  <meta name="twitter:description" content="No route matches this path. Head back to the index.">
   <meta name="twitter:image" content="https://www.wadakatu.dev/ogp.webp">
 
   <!-- Theme Color -->
@@ -130,19 +130,19 @@ import ThemeToggle from '@components/ThemeToggle.astro';
       font-style: italic;
     }
 
-    .morpheus-name {
+    .quote-source {
       display: block;
       margin-top: 10px;
     }
 
-    .pills {
+    .exits {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 20px;
     }
 
-    .pill-link {
+    .exit-link {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -152,7 +152,7 @@ import ThemeToggle from '@components/ThemeToggle.astro';
       text-decoration: none;
     }
 
-    .pill-desc {
+    .exit-desc {
       font-size: var(--tombo-text-note);
     }
 
@@ -174,12 +174,12 @@ import ThemeToggle from '@components/ThemeToggle.astro';
         gap: 32px;
       }
 
-      .pills {
+      .exits {
         flex-direction: column;
         align-items: stretch;
       }
 
-      .pill-link {
+      .exit-link {
         min-width: 0;
       }
     }
@@ -206,27 +206,27 @@ import ThemeToggle from '@components/ThemeToggle.astro';
       <!-- Terminal -->
       <figure class="tombo-code error-log" role="region" aria-label="Error details">
         <figcaption><span>system — error.log</span><span>STDERR</span></figcaption>
-        <pre><span class="log-line"><span class="prompt">&gt;</span> <span class="dim">Searching for</span> <span class="tombo-mono">requested_path</span><span class="dim">...</span></span><span class="log-line"><span class="err-text">ERROR:</span> The path you seek does not exist in this reality.</span><span class="log-line"><span class="prompt">&gt;</span><span class="cursor" aria-hidden="true"></span></span></pre>
+        <pre><span class="log-line"><span class="prompt">&gt;</span> <span class="dim">Searching for</span> <span class="tombo-mono">requested_path</span><span class="dim">...</span></span><span class="log-line"><span class="err-text">ERROR:</span> No route matches this path.</span><span class="log-line"><span class="prompt">&gt;</span><span class="cursor" aria-hidden="true"></span></span></pre>
       </figure>
 
-      <!-- The Choice -->
+      <!-- Where to go instead -->
       <section class="choice-section" aria-labelledby="choice-heading">
-        <h2 id="choice-heading" class="sr-only">Make your choice</h2>
+        <h2 id="choice-heading" class="sr-only">Where to go from here</h2>
 
         <blockquote class="tombo-callout quote-panel">
-          <p>"This is your last chance. After this, there is no turning back."</p>
-          <cite class="tombo-label morpheus-name">— Morpheus</cite>
+          <p>Every page on this site was drawn against the same grid. This one was never drawn.</p>
+          <cite class="tombo-label quote-source">— off the sheet</cite>
         </blockquote>
 
-        <nav class="pills" aria-label="Navigation options">
-          <a href="/" class="tombo-btn tombo-btn--primary pill-link" aria-label="Take the red pill and return to the homepage">
-            <span class="pill-label">Red Pill</span>
-            <span class="pill-desc">Return to reality</span>
+        <nav class="exits" aria-label="Navigation options">
+          <a href="/" class="tombo-btn tombo-btn--primary exit-link" aria-label="Return to the homepage">
+            <span class="exit-label">Index</span>
+            <span class="exit-desc">Back to the front page</span>
           </a>
 
-          <a href="https://www.google.com" class="tombo-btn tombo-btn--secondary pill-link" rel="noopener noreferrer" aria-label="Take the blue pill and go to Google">
-            <span class="pill-label">Blue Pill</span>
-            <span class="pill-desc">Stay in the dream</span>
+          <a href="/blog/" class="tombo-btn tombo-btn--secondary exit-link" aria-label="Browse the blog">
+            <span class="exit-label">Blog</span>
+            <span class="exit-desc">17 articles, all measured</span>
           </a>
         </nav>
       </section>
