@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Output directory
-const OUTPUT_DIR = path.join(__dirname, '..', 'images');
+const OUTPUT_DIR = path.join(__dirname, '..', 'public', 'images');
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
@@ -26,12 +26,12 @@ const ICON_SIZES = [
 
 // Color palette
 const BG_COLOR = '#0a0a0a';
-const MATRIX_GREEN = '#00ff41';
+const LOGO_GREEN = '#00ff41';
 const TEXT_GRAY = '#e0e0e0';
 
 async function generateIcons() {
   // Load the original logo (PNG version)
-  const originalPath = path.join(__dirname, '..', 'ogp-original.png');
+  const originalPath = path.join(__dirname, '..', 'public', 'ogp-original.png');
 
   let sourceImage;
   try {
@@ -71,9 +71,9 @@ async function generateIcons() {
       ctx.textBaseline = 'middle';
 
       // Draw glow
-      ctx.shadowColor = MATRIX_GREEN;
+      ctx.shadowColor = LOGO_GREEN;
       ctx.shadowBlur = icon.size * 0.1;
-      ctx.fillStyle = MATRIX_GREEN;
+      ctx.fillStyle = LOGO_GREEN;
       ctx.fillText('W', icon.size / 2, icon.size / 2);
 
       // Draw letter

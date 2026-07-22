@@ -3,7 +3,7 @@
 /**
  * Generate RSS and Atom feeds from articles
  *
- * Usage: node scripts/generate-feed.js
+ * Usage: node tools/generate-feed.js
  */
 
 const fs = require('fs');

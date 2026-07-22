@@ -3,7 +3,7 @@
 /**
  * Generate sitemap.xml from static pages and articles
  *
- * Usage: node scripts/generate-sitemap.js
+ * Usage: node tools/generate-sitemap.js
  */
 
 const fs = require('fs');

@@ -2,7 +2,7 @@
 // https://developer.chrome.com/docs/workbox
 
 // Cache version - increment this when assets change
-const CACHE_VERSION = '5';
+const CACHE_VERSION = '6';
 
 // Try to load Workbox with error handling (self-hosted for security)
 let workboxLoaded = false;
@@ -39,12 +39,12 @@ if (workboxLoaded) {
     { url: '/about/', revision: CACHE_VERSION },
     { url: '/projects/', revision: CACHE_VERSION },
     { url: '/offline/', revision: CACHE_VERSION },
-    { url: '/styles/common.css', revision: CACHE_VERSION },
-    { url: '/styles/toc.css', revision: CACHE_VERSION },
-    { url: '/styles/scroll-to-top.css', revision: CACHE_VERSION },
-    { url: '/scripts/common.js', revision: CACHE_VERSION },
+    { url: '/styles/tombo.css', revision: CACHE_VERSION },
+    { url: '/styles/site.css', revision: CACHE_VERSION },
+    { url: '/scripts/theme.js', revision: CACHE_VERSION },
     { url: '/scripts/scroll-to-top.js', revision: CACHE_VERSION },
     { url: '/scripts/toc.js', revision: CACHE_VERSION },
+    { url: '/scripts/code-copy.js', revision: CACHE_VERSION },
     { url: '/ogp.webp', revision: CACHE_VERSION },
     { url: '/images/favicon.ico', revision: CACHE_VERSION },
     { url: '/images/favicon-32.png', revision: CACHE_VERSION },

@@ -4,8 +4,8 @@
   "description": "Backend Developer portfolio - Laravel, TypeScript, and web development",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#0a0a0a",
-  "background_color": "#0a0a0a",
+  "theme_color": "#131714",
+  "background_color": "#131714",
   "orientation": "portrait-primary",
   "icons": [
     {
