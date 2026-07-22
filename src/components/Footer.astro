@@ -33,6 +33,27 @@ const {
   <ThemeToggle />
 </footer>
 
+{showJstClock && (
+  <script is:inline>
+    (() => {
+      const tick = () => {
+        const el = document.getElementById('jst-time');
+        if (!el) return;
+        el.textContent = new Date().toLocaleTimeString('en-US', {
+          timeZone: 'Asia/Tokyo', hour12: false,
+          hour: '2-digit', minute: '2-digit', second: '2-digit',
+        }) + ' JST';
+      };
+      let timer = null;
+      const start = () => { tick(); timer ??= setInterval(tick, 1000); };
+      const stop = () => { clearInterval(timer); timer = null; };
+      document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+      document.addEventListener('astro:after-swap', start);
+      start();
+    })();
+  </script>
+)}
+
 <style>
   .footer {
     display: flex;

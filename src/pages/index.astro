@@ -239,22 +239,16 @@ const jsonLd = [
 
   .hero h1 .highlight {
     color: var(--tombo-green);
-    animation: blink 1s infinite;
   }
 
+  /* the caret is a shu rule, not a shu fill — 掟 3 forbids filling the shape */
   .cursor {
     display: inline-block;
-    width: 8px;
-    height: 16px;
-    margin-left: 4px;
+    width: 2px;
+    height: 15px;
+    margin-left: 6px;
     vertical-align: middle;
     background: var(--tombo-shu);
-    animation: blink 1s step-end infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
   }
 
   .hero-dim {
