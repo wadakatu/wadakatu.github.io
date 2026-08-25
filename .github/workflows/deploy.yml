@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+  # /projects lists the account's live GitHub Pages sites, which is data the site
+  # cannot learn about from its own commits. Rebuilding daily picks up a repo that
+  # turned Pages on (or off, or fixed a broken build) since the last deploy.
+  # Off the hour, where scheduled runs queue behind everyone else's.
+  # https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows
+  schedule:
+    - cron: "17 21 * * *"
   workflow_dispatch:
 
 permissions:
@@ -42,6 +49,10 @@ jobs:
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Build with Astro
+        # the build calls the GitHub API; anonymous callers share 60 requests/hour
+        # per IP with every other job on the runner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build \
             -- \

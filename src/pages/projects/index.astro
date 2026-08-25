@@ -9,6 +9,91 @@ import Footer from '@components/Footer.astro';
 const title = 'Projects';
 const description = 'OSS contributions and personal projects by wadakatu - Laravel, TypeScript, and frontend experiments.';
 
+/**
+ * Live project sites on this account, resolved at build time.
+ *
+ * `GET /repos/{owner}/{repo}/pages` is the authoritative source but needs the `repo`
+ * scope, so it answers 404 to an anonymous build and to the workflow's default
+ * GITHUB_TOKEN. The repo listing carries `has_pages`, which is enough: once the user
+ * site owns a custom domain, every other project site on the account is served at
+ * `<domain>/<repo>/`, and the ones that set their own CNAME redirect from there.
+ * https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/about-custom-domains-and-github-pages
+ *
+ * `has_pages` stays true after a Pages build fails, so every candidate is probed and
+ * only the ones that answer are listed. A site enabled minutes ago can miss the
+ * current build and show up on the next scheduled one.
+ */
+const GITHUB_HEADERS: HeadersInit = {
+  Accept: 'application/vnd.github+json',
+  'X-GitHub-Api-Version': '2022-11-28',
+  // Anonymous callers share 60 requests/hour per IP, which a CI runner does not own.
+  ...(import.meta.env.GITHUB_TOKEN
+    ? { Authorization: `Bearer ${import.meta.env.GITHUB_TOKEN}` }
+    : {}),
+};
+
+const PER_PAGE = 100;
+const MAX_PAGES = 10;
+
+interface Repo {
+  name: string;
+  description: string | null;
+  language: string | null;
+  has_pages: boolean;
+  fork: boolean;
+  archived: boolean;
+  private: boolean;
+}
+
+const listRepos = async (): Promise<Repo[]> => {
+  const repos: Repo[] = [];
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const res = await fetch(
+      `https://api.github.com/users/wadakatu/repos?type=owner&per_page=${PER_PAGE}&page=${page}`,
+      { headers: GITHUB_HEADERS }
+    );
+    // Fail the build rather than silently publishing an empty section: a failed
+    // deploy leaves the last good one serving.
+    if (!res.ok) {
+      throw new Error(`GitHub repo listing failed: ${res.status} ${res.statusText}`);
+    }
+    const batch: Repo[] = await res.json();
+    repos.push(...batch);
+    if (batch.length < PER_PAGE) break;
+  }
+  return repos;
+};
+
+const isLive = async (url: string): Promise<boolean> => {
+  try {
+    return (await fetch(url, { method: 'HEAD' })).ok;
+  } catch {
+    return false;
+  }
+};
+
+const candidates = (await listRepos())
+  .filter(
+    (repo) =>
+      repo.has_pages &&
+      !repo.fork &&
+      !repo.archived &&
+      !repo.private &&
+      // the site doing the linking
+      repo.name !== 'wadakatu.github.io'
+  )
+  .map((repo) => ({
+    name: repo.name,
+    description: repo.description ?? '',
+    language: repo.language ?? '—',
+    url: `https://www.wadakatu.dev/${repo.name}/`,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const sites = (
+  await Promise.all(candidates.map(async (site) => ((await isLive(site.url)) ? site : null)))
+).filter((site) => site !== null);
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -130,6 +215,34 @@ const jsonLd = {
               <span class="tombo-chip">#website-builder</span>
             </div>
           </a>
+        </div>
+      </section>
+
+      <div class="tombo-dim" aria-hidden="true"></div>
+
+      <!-- Live Sites -->
+      <section>
+        <SectionHeader command="ls sites/" srLabel="Live GitHub Pages sites" />
+        <div class="tombo-dim" aria-hidden="true"></div>
+        <div class="tombo-dimlab">{sites.length} items</div>
+
+        <div class="tombo-table-wrap" role="region" aria-label="Live sites" tabindex="0">
+          <table class="tombo-table sites-table">
+          <thead>
+            <tr><th>Site</th><th>Description</th><th>Lang</th></tr>
+          </thead>
+          <tbody>
+            {sites.map((site) => (
+              <tr>
+                {/* same origin, but each site is a standalone document with its own
+                    head - let the browser load it instead of swapping it in */}
+                <td><a href={site.url} data-astro-reload>{site.name}</a></td>
+                <td>{site.description}</td>
+                <td class="tombo-mono">{site.language}</td>
+              </tr>
+            ))}
+          </tbody>
+          </table>
         </div>
       </section>
 
@@ -307,14 +420,16 @@ const jsonLd = {
     gap: .5rem;
   }
 
-  /* Other Projects Table */
-  .other-table {
+  /* Link Tables */
+  .other-table,
+  .sites-table {
     margin-top: 20px;
   }
 
   /* the link fills the cell's padding box so the touch target matches the row,
      which an <a> cannot do by wrapping <tr> without breaking table semantics */
-  .other-table td a {
+  .other-table td a,
+  .sites-table td a {
     color: inherit;
     display: block;
     margin: -10px -14px;

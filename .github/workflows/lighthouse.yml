@@ -30,6 +30,9 @@ jobs:
         run: npm ci
 
       - name: Build site
+        # same as deploy.yml: the build calls the GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run build
 
       - name: Run Lighthouse CI
