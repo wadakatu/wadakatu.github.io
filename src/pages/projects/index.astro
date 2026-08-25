@@ -94,6 +94,13 @@ const sites = (
   await Promise.all(candidates.map(async (site) => ((await isLive(site.url)) ? site : null)))
 ).filter((site) => site !== null);
 
+// `isLive` swallows network errors so one broken site cannot take the page down,
+// which means a flaky build host would otherwise publish an empty table. The
+// account has sites; zero of them means the probe failed, not that they are gone.
+if (sites.length === 0) {
+  throw new Error('every GitHub Pages probe failed - refusing to publish an empty section');
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
