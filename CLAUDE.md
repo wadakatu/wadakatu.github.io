@@ -26,9 +26,6 @@ npm run build
 
 # Preview production build
 npm run preview
-
-# For static pages only (no Astro)
-python -m http.server 8000
 ```
 
 ## Architecture
