@@ -17,7 +17,7 @@
 
 Monitor and optimize Core Web Vitals:
 - **LCP** (Largest Contentful Paint): < 2.5s
-- **FID** (First Input Delay): < 100ms
+- **INP** (Interaction to Next Paint): < 200ms
 - **CLS** (Cumulative Layout Shift): < 0.1
 
 ## GitHub Pages Constraints
