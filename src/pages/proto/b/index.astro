@@ -1,0 +1,15 @@
+---
+import Layout from '../../../layouts/ProtoBLayout.astro';
+import { person, bio, projects, recentPosts } from '../../../data/proto-content';
+---
+<Layout title="Spectrum">
+  <section class="spectrum" aria-labelledby="name">
+    <div class="intro"><p class="eyebrow">Work, brought into view</p><h1 id="name">{person.name}<span class="prism" aria-hidden="true">△</span></h1><p>{person.role}<br />{person.location}</p></div>
+    <div class="optics" aria-hidden="true"><svg viewBox="0 0 1440 440" preserveAspectRatio="none"><path class="incident" d="M0 150 L510 150"/><path class="glass" d="M440 50 L560 250 L350 250 Z"/><path class="ray ray-one" d="M475 150 L850 36 L1440 36"/><path class="ray ray-two" d="M475 150 L850 185 L1440 185"/><path class="ray ray-three" d="M475 150 L850 334 L1440 334"/></svg></div>
+    <div class="bands" aria-label="Selected projects">
+      {projects.slice(0,3).map((project, i) => <a class={`band band-${i}`} href={project.href}><span class="band-meta">{project.lang} <span aria-hidden="true">↗</span></span><h2>{project.name}</h2><p>{project.blurb}</p></a>)}
+    </div>
+  </section>
+  <section class="below" aria-labelledby="practice"><div><p class="eyebrow">Behind the work</p><h2 id="practice">Code into something<br />you can see.</h2></div><div><p>{bio.line1}</p><p>{bio.line2}</p><a class="text-link" href="/proto/b/projects/">Follow the spectrum →</a></div></section>
+  <section class="writing" aria-labelledby="writing"><h2 id="writing">Recent writing</h2>{recentPosts.map(post => <a href={post.href}><time datetime={post.date}>{post.date}</time><span lang="ja">{post.title}</span><span aria-hidden="true">↗</span></a>)}</section>
+</Layout>

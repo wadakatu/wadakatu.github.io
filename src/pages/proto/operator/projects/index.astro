@@ -1,0 +1,43 @@
+---
+import Layout from '../../../../layouts/ProtoOperatorLayout.astro';
+import Stream from '../_Stream.astro';
+import { projects } from '../../../../data/proto-content';
+
+const source = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+const split = (s: string) => {
+  const i = s.search(/[぀-ヿ㐀-鿿]/);
+  return i < 0 ? [s, ''] : [s.slice(0, i).trim(), s.slice(i)];
+};
+---
+<Layout title="Projects" section="Projects">
+  <section class="intro" aria-labelledby="name">
+    <div>
+      <h1 id="name">Projects</h1>
+      <p class="role">{projects.length} streams, followed</p>
+    </div>
+    <div class="brief">
+      <p>Each project stream, held beside what it says. The name opens the repository or the site.</p>
+    </div>
+  </section>
+
+  <section class="wall" aria-label="Project streams">
+    <ul class="streams streams--rows">
+      {projects.map((p, i) => {
+        const [en, ja] = split(p.blurb);
+        return (
+          <Stream name={p.name} href={p.href} index={i} level="h2" strands={[p.name, p.blurb, p.lang, source(p.href)]}>
+            <p class="meta">{p.lang}</p>
+            <p class="blurb">{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+            {'note' in p && <p class="blurb">{p.note}</p>}
+            <p class="links">
+              <span>{source(p.href)}</span>
+              {'docs' in p && <a href={p.docs}>Docs</a>}
+              {'site' in p && <a href={p.site}>Live site</a>}
+            </p>
+          </Stream>
+        );
+      })}
+    </ul>
+    <p class="after"><a href="/projects/">Full project list on the current site</a></p>
+  </section>
+</Layout>

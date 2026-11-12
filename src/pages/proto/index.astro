@@ -1,0 +1,51 @@
+---
+const matrix = [
+  { id: 'construct', href: '/proto/construct/', name: 'The Construct', idea: 'A pale loading program where wadakatu’s work materializes as programs being loaded.', built: 'Claude Code' },
+  { id: 'source', href: '/proto/source/', name: 'See the source', idea: 'A choice between the constructed page and a source reading of the same facts.', built: 'Codex' },
+  { id: 'operator', href: '/proto/operator/', name: 'Operator', idea: 'An operator station whose streams are his real projects and Japanese writing.', built: 'Claude Code' },
+  { id: 'spoon', href: '/proto/spoon/', name: 'Bent measure', idea: 'A typographic page with one bend: a measured line that yields, then returns.', built: 'Codex' },
+];
+const control = {
+  href: '/proto/b/',
+  name: 'Spectrum (control)',
+  idea: 'Pre-Matrix control: undescribed work enters as one beam and splits into readable bands. Built by Codex before the world was set to The Matrix.',
+};
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design explorations | wadakatu</title>
+    <meta name="robots" content="noindex" />
+    <style>
+      :root { color-scheme: light dark; --bg: light-dark(#f4f1ea, #161714); --ink: light-dark(#1a1a16, #eceae2); --muted: light-dark(#5c5a52, #a8a69c); }
+      body { margin: 0; font: 16px/1.5 system-ui, "Hiragino Sans", sans-serif; background: var(--bg); color: var(--ink); }
+      main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem; }
+      h1, h2 { font-size: 1.25rem; font-weight: 600; }
+      h2 { margin-top: 2.5rem; }
+      p, small { color: var(--muted); }
+      li { margin: 1rem 0; }
+      a { color: inherit; }
+      small { display: block; font-size: 0.9rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Design explorations</h1>
+      <p>Four Matrix-inspired home-page prototypes for www.wadakatu.dev, plus one earlier control. This index is not part of the live site.</p>
+      <ol>
+        {matrix.map((c) => (
+          <li>
+            <a href={c.href}>{c.name}</a>
+            <small>{c.idea} Built with {c.built}.</small>
+          </li>
+        ))}
+      </ol>
+      <h2>Control</h2>
+      <p>
+        <a href={control.href}>{control.name}</a>
+        <small>{control.idea}</small>
+      </p>
+    </main>
+  </body>
+</html>

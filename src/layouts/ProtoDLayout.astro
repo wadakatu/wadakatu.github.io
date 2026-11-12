@@ -1,0 +1,58 @@
+---
+import { person } from '../data/proto-content';
+interface Props { title: string; section?: string }
+const { title, section = 'Home' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} · wadakatu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/proto/d.css" />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('proto-d-theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="wordmark" href="/proto/d/">wadakatu — personal specification</a>
+      <nav aria-label="Main navigation">
+        <a href="/proto/d/" aria-current={section === 'Home' ? 'page' : undefined}>Home</a>
+        <a href="/proto/d/projects/" aria-current={section === 'Projects' ? 'page' : undefined}>Projects</a>
+        <a href="/blog/">Blog</a>
+        <a href="/about/">About</a>
+      </nav>
+      <button id="theme-toggle" type="button" hidden aria-pressed="false">Dark theme</button>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <a href={`mailto:${person.email}`}>{person.email}</a>
+      <span>{person.location}</span>
+      <a href="/proto/">All explorations ↗</a>
+    </footer>
+    <script is:inline>
+      const control = document.getElementById('theme-toggle');
+      const preference = matchMedia('(prefers-color-scheme: dark)');
+      const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : preference.matches;
+      const sync = () => control.setAttribute('aria-pressed', String(isDark()));
+      control.hidden = false;
+      sync();
+      preference.addEventListener('change', sync);
+      control.addEventListener('click', () => {
+        const theme = isDark() ? 'light' : 'dark';
+        document.documentElement.dataset.theme = theme;
+        try { localStorage.setItem('proto-d-theme', theme); } catch {}
+        sync();
+      });
+    </script>
+  </body>
+</html>

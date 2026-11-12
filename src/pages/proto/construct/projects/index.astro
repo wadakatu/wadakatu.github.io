@@ -1,0 +1,50 @@
+---
+import Layout from '../../../../layouts/ProtoConstructLayout.astro';
+import { projects } from '../../../../data/proto-content';
+
+const source = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+const split = (s: string) => {
+  const i = s.search(/[぀-ヿ㐀-鿿]/);
+  return i < 0 ? [s, ''] : [s.slice(0, i).trim(), s.slice(i)];
+};
+---
+<Layout title="Work" section="Work">
+  <section class="room room--short" aria-labelledby="name">
+    <div class="stand">
+      <span class="horizon" aria-hidden="true"></span>
+      <h1 class="name" id="name">Work</h1>
+    </div>
+    <div class="under">
+      <p class="bio">Each program is loaded from where it lives: a repository, or the site it became.</p>
+      <p class="status"><span>{projects.length} programs loaded</span></p>
+    </div>
+  </section>
+
+  <div class="bay">
+    <ul class="programs programs--wide">
+      {projects.map((p, i) => {
+        const [en, ja] = split(p.blurb);
+        return (
+          <li class="program" style={`--i:${i}`}>
+            <div class="program-head">
+              <h2 class="program-name"><a href={p.href}>{p.name}</a></h2>
+              <span>{p.lang}</span>
+            </div>
+            <div class="program-foot">
+              <div>
+                <p>{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+                {'note' in p && <p class="note">{p.note}</p>}
+              </div>
+              <div class="links">
+                <span>{source(p.href)}</span>
+                {'docs' in p && <a href={p.docs}>Docs</a>}
+                {'site' in p && <a href={p.site}>Live site</a>}
+              </div>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+    <p class="more"><a href="/projects/">Full project list on the current site</a></p>
+  </div>
+</Layout>

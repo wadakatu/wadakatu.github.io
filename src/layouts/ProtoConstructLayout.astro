@@ -1,0 +1,68 @@
+---
+import { person } from '../data/proto-content';
+interface Props { title: string; section?: 'Home' | 'Work' }
+const { title, section = 'Home' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} | wadakatu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/proto/construct.css" />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('proto-construct-theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="top">
+      <a class="mark" href="/proto/construct/">wadakatu / construct</a>
+      <nav aria-label="Main navigation">
+        <a href="/proto/construct/" aria-current={section === 'Home' ? 'page' : undefined}>Home</a>
+        <a href="/proto/construct/projects/" aria-current={section === 'Work' ? 'page' : undefined}>Work</a>
+        <a href="/blog/">Blog</a>
+        <a href="/about/">About</a>
+      </nav>
+      <button id="theme" class="quiet" type="button" hidden>
+        <span class="to-night">Load night</span><span class="to-day">Load day</span>
+      </button>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="foot">
+      <a href={`mailto:${person.email}`}>{person.email}</a>
+      <a href={person.github}>GitHub</a>
+      <a href={person.x}>X {person.xHandle}</a>
+      <a href={person.logoCreditUrl}>{person.logoCredit}</a>
+      <button id="reload" class="quiet" type="button" hidden>Load again</button>
+      <a class="back" href="/proto/">All explorations</a>
+    </footer>
+    <script is:inline>
+      const root = document.documentElement;
+      const theme = document.getElementById('theme');
+      theme.hidden = false;
+      theme.addEventListener('click', () => {
+        const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        root.dataset.theme = dark ? 'light' : 'dark';
+        try { localStorage.setItem('proto-construct-theme', root.dataset.theme); } catch {}
+      });
+      const reload = document.getElementById('reload');
+      if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        reload.hidden = false;
+        reload.addEventListener('click', () => {
+          scrollTo(0, 0);
+          root.classList.add('still');
+          void root.offsetWidth; // reflow, so the load animations restart
+          root.classList.remove('still');
+        });
+      }
+    </script>
+  </body>
+</html>

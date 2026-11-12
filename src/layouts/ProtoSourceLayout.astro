@@ -1,0 +1,64 @@
+---
+import { person, bio, projects, recentPosts } from '../data/proto-content';
+interface Props { raw?: boolean; projectPage?: boolean }
+const { raw = false, projectPage = false } = Astro.props;
+const root = '/proto/source/';
+const suffix = projectPage ? 'projects/' : '';
+const shownProjects = projectPage ? projects : projects.slice(0, 3);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{projectPage ? 'Projects' : person.name} | See the source</title>
+    <meta name="description" content={bio.meta} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/proto/source.css" />
+  </head>
+  <body class:list={[{ raw }]}>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="shell">
+      <header>
+        <a class="identity" href={root + (raw ? 'raw/' : '')}>{person.name}</a>
+        <nav aria-label="Main"><a href={root + (raw ? 'raw/' : '') + 'projects/'} aria-current={projectPage ? 'page' : undefined}>Projects</a><a href="/blog/">Blog</a><a href="/about/">About</a></nav>
+      </header>
+      <div class="reading">
+        <p>One person. <br />Two readings.</p>
+        <nav aria-label="Reading mode" class="modes">
+          <a href={root + suffix} aria-current={!raw ? 'page' : undefined}><span>Constructed</span><small>The page as composed</small></a>
+          <a href={root + 'raw/' + suffix} aria-current={raw ? 'page' : undefined}><span>Source</span><small>The structure underneath</small></a>
+        </nav>
+      </div>
+      <main id="main" tabindex="-1">
+        <section class="intro" aria-labelledby="title">
+          {raw && <p class="syntax" aria-hidden="true">{projectPage ? 'projects: [' : 'person: {'}</p>}
+          <div class="title-block"><span class="field">{projectPage ? 'collection' : 'name'}</span><h1 id="title">{projectPage ? 'Projects' : person.name}</h1></div>
+          <div class="profile">
+            <div><span class="field">role</span><p>{person.role}</p></div>
+            <div><span class="field">location</span><p>{person.location}</p></div>
+            {!projectPage && <div class="bio"><span class="field">work</span><p>{bio.line1}<br />{bio.line2}</p></div>}
+          </div>
+          {raw && <p class="syntax" aria-hidden="true">{projectPage ? ']' : '}'}</p>}
+        </section>
+        <section class="work" aria-labelledby="work-title">
+          <div class="section-head"><h2 id="work-title">{raw ? 'projects' : 'Selected work'}</h2>{!projectPage && <a href={root + (raw ? 'raw/' : '') + 'projects/'}>View projects</a>}</div>
+          <div class="project-list">
+            {shownProjects.map((project) => <article>
+              <span class="field">name</span><h3><a href={project.href}>{project.name}</a></h3>
+              <div class="project-description"><span class="field">description</span><p>{project.blurb.split(' すべて')[0]}{project.name === 'tombo' && <> <span lang="ja">すべてを測る・銘は等幅・朱は現在地</span></>}</p></div>
+              <div class="language"><span class="field">language</span><span>{project.lang}</span></div>
+              {projectPage && 'docs' in project && <a class="extra" href={project.docs}>Documentation</a>}
+              {projectPage && 'note' in project && <p class="extra">{project.note}</p>}
+            </article>)}
+          </div>
+          {projectPage && <a class="all-projects" href="/projects/">Full project archive</a>}
+        </section>
+        {!projectPage && <section class="writing" aria-labelledby="writing-title"><div class="section-head"><h2 id="writing-title">{raw ? 'writing' : 'Writing'}</h2><a href="/blog/">All writing</a></div>{recentPosts.map(post => <article><time datetime={post.date}>{post.date}</time><h3><a href={post.href} lang="ja">{post.title}</a></h3></article>)}</section>}
+      </main>
+      <footer><a href="/proto/">Design explorations</a><a href={person.github}>GitHub</a><a href={'mailto:' + person.email}>{person.email}</a><span>See the source</span></footer>
+    </div>
+  </body>
+</html>

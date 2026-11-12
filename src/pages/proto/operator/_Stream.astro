@@ -1,0 +1,33 @@
+---
+/**
+ * One stream: strands of the item's own text falling into the readable entry they decode to.
+ * The strands repeat text that is already in the entry, so they are hidden from assistive tech.
+ */
+interface Props { name: string; href: string; strands: string[]; index: number; ja?: boolean; level?: 'h2' | 'h3' }
+const { name, href, strands, index, ja = false, level: Heading = 'h3' } = Astro.props;
+
+const hasJa = (s: string) => /[぀-ヿ㐀-鿿]/.test(s);
+// One loop copy has to be taller than the window (440px at 16px a glyph), so short text repeats.
+const copy = (s: string) => {
+  const unit = s + '　　';
+  return unit.repeat(Math.ceil(36 / unit.length));
+};
+const pace = [0.9, 1.5, 1.2, 1.8]; // seconds per glyph, so no two strands drift together
+---
+<li class="stream">
+  <div class="fall" aria-hidden="true">
+    {strands.map((s, j) => {
+      const c = copy(s);
+      const run = `animation-duration:${Math.round(c.length * pace[j % pace.length])}s;animation-delay:-${(index * 7 + j * 11) % 23}s`;
+      return (
+        <span class="strand" lang={hasJa(s) ? 'ja' : undefined} style={`--j:${j}`}>
+          <span class="run" style={run}>{c}{c}</span>
+        </span>
+      );
+    })}
+  </div>
+  <div class="read">
+    <Heading class="stream-name" lang={ja ? 'ja' : undefined}><a href={href}>{name}</a></Heading>
+    <slot />
+  </div>
+</li>

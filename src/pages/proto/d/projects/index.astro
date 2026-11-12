@@ -1,0 +1,13 @@
+---
+import Layout from '../../../../layouts/ProtoDLayout.astro';
+import { activity, projects } from '../../../../data/proto-content';
+const selected = [projects[0], projects[2], projects[4]];
+---
+<Layout title="Selected work" section="Projects">
+  <article class="manuscript">
+    <header class="document-title"><p class="running">Personal specification / Work <span><time datetime={activity.verifiedOn}>22 July 2026</time></span></p><h1>Selected<br /><em>work.</em></h1><p class="subtitle">Descriptions and source material.</p></header>
+    <nav class="contents" aria-label="Document context"><a href="/proto/d/#work">← Return to § 2. Work</a><a href="/projects/">Full project catalog ↗</a></nav>
+    {selected.map((project, i) => <section class="clause project-clause"><span class="clause-number" aria-hidden="true">2.{i+1}</span><div><p class="language">{project.lang}</p><h2>{project.name}</h2><p>{project.blurb}</p>{'note' in project && <p>{project.note}</p>}<div class="source-links"><a href={project.href}>Source repository ↗</a>{'docs' in project && <a href={project.docs}>Documentation ↗</a>}</div></div></section>)}
+    <p class="document-end">End of selected work <span aria-hidden="true">◇</span></p>
+  </article>
+</Layout>

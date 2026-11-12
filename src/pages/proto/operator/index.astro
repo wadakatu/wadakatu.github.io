@@ -1,0 +1,75 @@
+---
+import Layout from '../../../layouts/ProtoOperatorLayout.astro';
+import Stream from './_Stream.astro';
+import { person, bio, projects, recentPosts, skills, activity } from '../../../data/proto-content';
+
+const source = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+// tombo's blurb ends in Japanese; split it so that part can carry lang="ja".
+const split = (s: string) => {
+  const i = s.search(/[぀-ヿ㐀-鿿]/);
+  return i < 0 ? [s, ''] : [s.slice(0, i).trim(), s.slice(i)];
+};
+---
+<Layout title="Operator">
+  <section class="intro" aria-labelledby="name">
+    <div>
+      <h1 id="name">{person.name}</h1>
+      <p class="role">{person.role}<br />{person.location}</p>
+    </div>
+    <div class="brief">
+      <p>{bio.line1} {bio.line2}</p>
+      <p>
+        {projects.length + recentPosts.length} streams are open: {projects.length} projects and {recentPosts.length} recent posts.
+        Each one is made of its own text. Select a stream to follow it.
+      </p>
+    </div>
+  </section>
+
+  <section class="wall" aria-labelledby="streams">
+    <h2 id="streams">Streams</h2>
+    <ul class="streams">
+      {projects.map((p, i) => {
+        const [en, ja] = split(p.blurb);
+        return (
+          <Stream name={p.name} href={p.href} index={i} strands={[p.name, p.blurb, p.lang, source(p.href)]}>
+            <p class="meta">{p.lang}</p>
+            <p class="blurb">{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+          </Stream>
+        );
+      })}
+      {recentPosts.map((post, i) => (
+        <Stream name={post.title} href={post.href} ja index={i + projects.length}
+          strands={[post.title, post.date, post.category, source(person.site + post.href)]}>
+          <p class="meta"><time datetime={post.date}>{post.date}</time> {post.category}</p>
+        </Stream>
+      ))}
+    </ul>
+  </section>
+
+  <div class="station">
+    <section aria-labelledby="activity">
+      <h2 id="activity">Activity</h2>
+      <dl class="figures">
+        <div><dt>Original repos</dt><dd>{activity.originalRepos}</dd></div>
+        <div><dt>OSS forks</dt><dd>{activity.ossForks}</dd></div>
+        <div><dt>Recent PRs</dt><dd>{activity.recentPrs}</dd></div>
+        <div><dt>Shipping since</dt><dd>{activity.since}</dd></div>
+        <div><dt>Checked by hand</dt><dd><time datetime={activity.verifiedOn}>{activity.verifiedOn}</time></dd></div>
+      </dl>
+    </section>
+    <section aria-labelledby="writing">
+      <h2 id="writing">Writing</h2>
+      <dl class="figures">
+        <div><dt>Articles published</dt><dd>{activity.articlesPublished}</dd></div>
+        <div><dt>Latest entry</dt><dd><time datetime={activity.latestEntry}>{activity.latestEntry}</time></dd></div>
+      </dl>
+      <p class="after"><a href="/blog/">Read the blog</a></p>
+    </section>
+    <section aria-labelledby="skills">
+      <h2 id="skills">Skills</h2>
+      <ul class="skills">
+        {skills.map((skill) => <li>{skill}</li>)}
+      </ul>
+    </section>
+  </div>
+</Layout>

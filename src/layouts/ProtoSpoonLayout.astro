@@ -1,0 +1,44 @@
+---
+import { person, bio, projects, recentPosts } from '../data/proto-content';
+interface Props { projectPage?: boolean }
+const { projectPage = false } = Astro.props;
+const selection = projectPage ? projects : [projects[3], projects[0]];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>{projectPage ? 'Projects' : person.name} | Bent measure</title>
+  <meta name="description" content={bio.meta} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles/proto/spoon.css" />
+</head>
+<body>
+  <input class="theme-input" type="checkbox" id="theme" aria-label="Use alternate color theme" />
+  <div class="page">
+    <a class="skip" href="#main">Skip to content</a>
+    <header><a class="identity" href="/proto/spoon/">{person.name}</a><nav aria-label="Main"><a href="/proto/spoon/projects/" aria-current={projectPage ? 'page' : undefined}>Projects</a><a href="/blog/">Blog</a><a href="/about/">About</a></nav><label class="theme-toggle" for="theme"><span class="to-dark">Dark</span><span class="to-light">Light</span><span aria-hidden="true" class="theme-symbol"></span></label></header>
+    <main id="main" tabindex="-1">
+      <section class="intro" aria-labelledby="title">
+        <div class="intro-meta"><span>{person.role}</span><span>{person.location}</span></div>
+        <h1 id="title">{projectPage ? 'Selected projects.' : 'wadakatu.'}</h1>
+        <div class="measure-wrap">
+          <button class="measure" type="button" aria-label="Bend the measured line" aria-describedby="measure-help">
+            <svg viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true"><path class="ticks" d="M1 40V60 M100 46V54 M200 46V54 M300 46V54 M400 46V54 M500 40V60 M600 46V54 M700 46V54 M800 46V54 M900 46V54 M999 40V60"/><path class="bend" d="M1 50 C300 50 350 47 500 47 S700 50 999 50" /></svg>
+          </button>
+          <div class="measure-caption"><span>Bent measure</span><span id="measure-help">Hover, focus or touch the line</span></div>
+        </div>
+        {!projectPage && <div class="bio"><p>{bio.line1}<br />{bio.line2}</p><a href={person.github}>Find me on GitHub</a></div>}
+      </section>
+      <section class="work" aria-labelledby="work-title"><div class="section-title"><h2 id="work-title">{projectPage ? 'Projects' : 'Work, in practice'}</h2>{!projectPage && <a href="/proto/spoon/projects/">View projects</a>}</div>
+        {selection.map(project => <article class="project"><div class="project-name"><h3><a href={project.href}>{project.name}</a></h3><span>{project.lang}</span></div><div><p>{project.blurb.split(' すべて')[0]}</p>{project.name === 'tombo' && <p class="japanese-rule" lang="ja">すべてを測る・銘は等幅・朱は現在地</p>}{projectPage && 'docs' in project && <a class="extra" href={project.docs}>Documentation</a>}{projectPage && 'note' in project && <p class="extra">{project.note}</p>}</div></article>)}
+        {projectPage && <a class="archive" href="/projects/">Full project archive</a>}
+      </section>
+      {!projectPage && <section class="writing" aria-labelledby="writing-title"><div class="section-title"><h2 id="writing-title">Notes from Japan</h2><a href="/blog/">All writing</a></div>{recentPosts.map(post => <article><time datetime={post.date}>{post.date}</time><h3><a href={post.href} lang="ja">{post.title}</a></h3></article>)}</section>}
+    </main>
+    <footer><a href={'mailto:' + person.email}>{person.email}</a><a href="/proto/">Design explorations</a><span>Bent measure</span></footer>
+  </div>
+</body>
+</html>

@@ -22,3 +22,6 @@ blog/
 
 # agent scratch
 .superpowers/
+
+# Local design-skill copies for the explore pass (do not vendor)
+.design-skills/

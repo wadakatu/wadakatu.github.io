@@ -1,0 +1,79 @@
+---
+import Layout from '../../../layouts/ProtoConstructLayout.astro';
+import { person, bio, projects, recentPosts, skills, activity } from '../../../data/proto-content';
+
+const source = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+// tombo's blurb ends in Japanese; split it so that part can carry lang="ja".
+const split = (s: string) => {
+  const i = s.search(/[぀-ヿ㐀-鿿]/);
+  return i < 0 ? [s, ''] : [s.slice(0, i).trim(), s.slice(i)];
+};
+---
+<Layout title="The Construct">
+  <section class="room" aria-labelledby="name">
+    <div class="stand">
+      <span class="horizon" aria-hidden="true"></span>
+      <h1 class="name" id="name">{person.name}</h1>
+    </div>
+    <div class="under">
+      <p class="bio">{bio.line1}<br />{bio.line2}<br />{bio.line3}</p>
+      <p class="status"><span>{projects.length} programs loaded</span></p>
+    </div>
+  </section>
+
+  <section class="bay" aria-labelledby="work">
+    <h2 id="work">Work</h2>
+    <ul class="programs">
+      {projects.map((p, i) => {
+        const [en, ja] = split(p.blurb);
+        return (
+          <li class="program" style={`--i:${i}`}>
+            <div class="program-head">
+              <h3 class="program-name"><a href={p.href}>{p.name}</a></h3>
+              <span>{p.lang}</span>
+            </div>
+            <div class="program-foot">
+              <p>{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+              <span>{source(p.href)}</span>
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+    <p class="more"><a href="/proto/construct/projects/">Open the work page</a></p>
+  </section>
+
+  <section class="bay" aria-labelledby="writing">
+    <h2 id="writing">Writing</h2>
+    <ul class="programs">
+      {recentPosts.map((post, i) => (
+        <li class="program" style={`--i:${i + projects.length}`}>
+          <div class="program-head">
+            <h3 class="program-name" lang="ja"><a href={post.href}>{post.title}</a></h3>
+          </div>
+          <div class="program-foot">
+            <time datetime={post.date}>{post.date}</time>
+            <span>{post.category}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+    <p class="more">{activity.articlesPublished} articles published. <a href="/blog/">Read the blog</a></p>
+  </section>
+
+  <div class="bay pair">
+    <section aria-labelledby="skills">
+      <h2 id="skills">Skills</h2>
+      <ul class="skills">
+        {skills.map((skill) => <li>{skill}</li>)}
+      </ul>
+    </section>
+    <section aria-labelledby="activity">
+      <h2 id="activity">Activity</h2>
+      <p class="plain">
+        {activity.originalRepos} original repos, {activity.ossForks} OSS forks, {activity.recentPrs} recent PRs. Shipping since {activity.since}.
+      </p>
+      <p class="more">Figures checked by hand on <time datetime={activity.verifiedOn}>{activity.verifiedOn}</time>.</p>
+    </section>
+  </div>
+</Layout>

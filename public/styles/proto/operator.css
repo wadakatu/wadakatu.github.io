@@ -1,0 +1,161 @@
+/* Operator: dim screens. Day is an LCD in daylight (grey-green). Night is a warm
+   amber CRT, not the familiar green rain. Text is dimmed with colour, never opacity. */
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#cdd6cb, #100e0b);
+  --rule: light-dark(#8fa093, #3d362c);
+  --text: light-dark(#111b15, #ece4d4);
+  --muted: light-dark(#2f4236, #c2b496);
+  --stream: light-dark(#3c5244, #c3b089);
+  --lead: light-dark(#06281a, #f0e0b4);
+  --accent: light-dark(#0a4f2f, #d9b56a);
+  --px: DotGothic16, 'M PLUS 1 Code', ui-monospace, monospace;
+}
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 15px/1.7 'M PLUS 1 Code', ui-monospace, monospace;
+}
+:lang(ja) { letter-spacing: normal; }
+h1, h2, h3, p, ul, dl, dd { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+a:hover { color: var(--lead); text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+[hidden] { display: none !important; }
+
+.frame { max-width: 1440px; margin-inline: auto; padding-inline: clamp(16px, 3.4vw, 48px); }
+.skip { position: absolute; left: 16px; top: -80px; padding: 8px 12px; background: var(--text); color: var(--bg); z-index: 10; }
+.skip:focus { top: 12px; }
+
+.top {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 28px;
+  padding-block: 16px; font-size: 14px;
+}
+.mark { margin-right: auto; text-decoration: none; font: 16px/1.5 var(--px); color: var(--lead); }
+.top nav { display: flex; gap: 24px; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover, .top nav a[aria-current] { color: var(--lead); }
+.top nav a[aria-current] { text-decoration: underline; }
+.control {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; color: var(--muted); background: none; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 2px; padding: 4px 12px;
+}
+.control:hover { color: var(--lead); border-color: var(--stream); }
+.control input { accent-color: var(--accent); margin: 0; }
+.hold:has(:focus-visible) { outline: 2px solid var(--accent); outline-offset: 4px; }
+.to-day { display: none; }
+:root[data-theme='dark'] .to-day { display: inline; }
+:root[data-theme='dark'] .to-night { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .to-day { display: inline; }
+  :root:not([data-theme='light']) .to-night { display: none; }
+}
+
+.intro {
+  display: grid; gap: 20px 48px; align-items: end;
+  padding-block: 32px; border-top: 1px solid var(--rule);
+}
+.intro h1 { font: 48px/1 var(--px); color: var(--lead); }
+.role { margin-top: 12px; color: var(--muted); }
+.brief p { max-width: 58ch; }
+.brief p + p { margin-top: 8px; color: var(--muted); }
+
+.wall { border-top: 1px solid var(--rule); padding-top: 16px; }
+.wall > h2, .station h2 { font: 16px/1.5 var(--px); color: var(--muted); margin-bottom: 12px; }
+
+/* A stream, mobile first: a strip of falling text beside the entry it decodes to. */
+.streams { display: grid; }
+.stream { position: relative; display: flex; gap: 20px; min-width: 0; border-top: 1px solid var(--rule); }
+.fall {
+  position: relative; flex: none; width: 80px; min-height: 176px; margin-block: 16px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
+  mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
+}
+.strand {
+  position: absolute; top: 0; left: calc(var(--j) * 32px); width: 16px;
+  writing-mode: vertical-rl; text-orientation: upright; white-space: nowrap;
+  font: 16px/1 var(--px); color: var(--stream);
+}
+.strand:first-child { color: var(--lead); }
+.strand:nth-child(4) { display: none; }
+.run { display: inline-block; animation: fall linear infinite; }
+@keyframes fall { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+
+.read { flex: 1; min-width: 0; padding: 20px 0 28px; }
+.stream-name { font: 16px/1.5 var(--px); color: var(--lead); overflow-wrap: anywhere; }
+.stream-name a { text-decoration: none; }
+.stream-name a::after { content: ''; position: absolute; inset: 0; }
+.stream-name a:focus-visible { outline: none; }
+.stream:has(.stream-name a:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.blurb { font-size: 14px; margin-top: 8px; max-width: 62ch; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.links a { position: relative; z-index: 1; }
+
+/* The one hover detail: a stream you point at holds still and comes up to reading brightness. */
+.stream:hover .run, .stream:focus-within .run, :root:has(#hold:checked) .run { animation-play-state: paused; }
+.stream:hover .strand, .stream:focus-within .strand { color: var(--lead); }
+.stream:hover .stream-name a { text-decoration: underline; }
+
+.streams--rows .stream:first-child { border-top: 0; }
+.wall:has(> .streams--rows) { padding-top: 0; }
+.streams--rows .stream-name { font-size: 32px; line-height: 1.25; }
+.streams--rows .blurb { font-size: 15px; }
+.after { margin-top: 20px; }
+
+.station { display: grid; gap: 40px 48px; margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--rule); }
+.figures div { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-bottom: 1px dotted var(--rule); }
+.figures dt { color: var(--muted); }
+.figures dd { font-variant-numeric: tabular-nums; }
+.skills { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+
+.foot {
+  display: flex; flex-wrap: wrap; gap: 8px 28px;
+  margin-top: 72px; padding-block: 24px 40px; border-top: 1px solid var(--rule);
+  color: var(--muted); font-size: 13px;
+}
+.foot .back { margin-left: auto; }
+
+@media (min-width: 720px) {
+  .intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
+  .station { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .streams--rows .fall { width: 112px; min-height: 224px; }
+  .streams--rows .strand:nth-child(4) { display: block; }
+  .streams--rows .stream { gap: 40px; }
+  .streams--rows .read { padding-block: 32px 40px; }
+}
+
+/* Home at desk width: the rows stand up into a wall, each stream falling into its entry. */
+@media (min-width: 1000px) {
+  .streams:not(.streams--rows) { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 24px; }
+  .streams:not(.streams--rows) .stream { flex-direction: column; gap: 0; border-top: 0; }
+  .streams:not(.streams--rows) .fall {
+    width: 112px; min-height: 0; margin-block: 0; height: clamp(240px, 42vh, 440px);
+    -webkit-mask-image: linear-gradient(transparent, #000 55%);
+    mask-image: linear-gradient(transparent, #000 55%);
+  }
+  .streams:not(.streams--rows) .strand:nth-child(4) { display: block; }
+  .streams:not(.streams--rows) .read { flex: none; margin-top: 12px; padding: 12px 0 0; border-top: 1px solid var(--rule); }
+  .streams:not(.streams--rows) .stream:hover .read,
+  .streams:not(.streams--rows) .stream:focus-within .read { border-color: var(--accent); }
+}
+
+@media (max-width: 719px) {
+  .mark, .top nav { width: 100%; }
+  .intro { padding-block: 20px 24px; }
+  .foot .back { margin-left: 0; }
+}
+
+/* Reduced motion: static columns, unmasked so every strand reads from its first glyph. Nothing left to hold. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .fall { -webkit-mask-image: none !important; mask-image: none !important; }
+  .hold { display: none; }
+}
