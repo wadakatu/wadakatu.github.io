@@ -1,0 +1,88 @@
+---
+/**
+ * The source view: the data files the page is built from, printed as records.
+ * Keys are the real keys of src/data/proto-content.ts; every count is a .length.
+ */
+import { person, bio, projects, recentPosts, activity, skills } from '../../../data/proto-content';
+import { readableCommits, corpusCounts, hasJa, splitJa } from './_lib';
+interface Props { only?: 'projects' }
+const { only } = Astro.props;
+const all = !only;
+const isUrl = (v: unknown) => typeof v === 'string' && /^(https?:\/\/|\/)/.test(v);
+const rows = (o: Record<string, unknown>, skip: string[] = []) => Object.entries(o).filter(([k]) => !skip.includes(k));
+---
+<p class="file">src/data/proto-content.ts</p>
+<p class="cap">The page is built from this file. These are the same facts without the layout.</p>
+
+{all && (
+  <section aria-labelledby="s-person">
+    <h2 id="s-person">person</h2>
+    <dl class="rec">
+      {rows(person).map(([k, v]) => (
+        <div><dt>{k}</dt><dd data-d>{k === 'email' ? <a href={`mailto:${v}`}>{v}</a> : isUrl(v) ? <a href={String(v)}>{v}</a> : v}</dd></div>
+      ))}
+    </dl>
+  </section>
+  <section aria-labelledby="s-bio">
+    <h2 id="s-bio">bio</h2>
+    <dl class="rec">
+      {rows(bio).map(([k, v]) => <div><dt>{k}</dt><dd data-d>{v}</dd></div>)}
+    </dl>
+  </section>
+)}
+
+<section aria-labelledby="s-projects">
+  <h2 id="s-projects">projects [{projects.length}]</h2>
+  {projects.map((p) => {
+    const [en, ja] = splitJa(p.blurb);
+    return (
+      <article class="item">
+        <h3 data-d>{p.name}</h3>
+        <dl class="rec">
+          {rows(p, ['name', 'blurb']).map(([k, v]) => (
+            <div><dt>{k}</dt><dd data-d>{isUrl(v) ? <a href={String(v)}>{v}</a> : v}</dd></div>
+          ))}
+          <div><dt>blurb</dt><dd>{en}{ja && <> <span lang="ja">{ja}</span></>}</dd></div>
+        </dl>
+      </article>
+    );
+  })}
+</section>
+
+{all && (
+  <section aria-labelledby="s-posts">
+    <h2 id="s-posts">recentPosts [{recentPosts.length}]</h2>
+    {recentPosts.map((post) => (
+      <article class="item">
+        <h3 lang="ja" data-d>{post.title}</h3>
+        <dl class="rec">
+          <div><dt>date</dt><dd><time datetime={post.date}>{post.date}</time></dd></div>
+          <div><dt>category</dt><dd data-d>{post.category}</dd></div>
+          <div><dt>href</dt><dd><a href={post.href}>{post.href}</a></dd></div>
+        </dl>
+      </article>
+    ))}
+  </section>
+  <section aria-labelledby="s-activity">
+    <h2 id="s-activity">activity</h2>
+    <dl class="rec">
+      {rows(activity).map(([k, v]) => (
+        <div><dt>{k}</dt><dd lang={hasJa(String(v)) ? 'ja' : undefined} data-d>{isUrl(v) ? <a href={String(v)}>{v}</a> : v}</dd></div>
+      ))}
+    </dl>
+  </section>
+  <section aria-labelledby="s-skills">
+    <h2 id="s-skills">skills [{skills.length}]</h2>
+    <ul class="vals">{skills.map((s) => <li data-d>{s}</li>)}</ul>
+  </section>
+  <section aria-labelledby="s-corpus">
+    <h2 id="s-corpus">rain</h2>
+    <p class="cap">src/data/proto-matrix-corpus.ts. The falling text is cut from these, plus the records above.</p>
+    <dl class="rec">
+      {rows(corpusCounts).map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+    </dl>
+    <ol class="vals log">{readableCommits.slice(0, 6).map((c) => <li data-d>{c}</li>)}</ol>
+  </section>
+)}
+
+{only === 'projects' && <p class="after"><a href="/projects/">Full project archive</a></p>}

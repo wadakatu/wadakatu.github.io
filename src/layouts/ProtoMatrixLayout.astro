@@ -1,0 +1,151 @@
+---
+/**
+ * /proto/matrix/ shell. Each route renders both readings of the same facts (slots "page" and
+ * "source"); <html data-view> decides which one is displayed. The static /source/ routes set it
+ * in the markup, so the source view exists without JavaScript.
+ */
+import { person, bio } from '../data/proto-content';
+import { rainColumns, curtainSlabs, glyphs, etch } from '../pages/proto/matrix/_lib';
+interface Props { page: 'home' | 'projects'; view: 'page' | 'source'; h1: string; boot?: { key: string; text: string }[] }
+const { page, view, h1, boot } = Astro.props;
+
+const root = '/proto/matrix/';
+const url = (p: 'home' | 'projects', v: 'page' | 'source') => root + (p === 'projects' ? 'projects/' : '') + (v === 'source' ? 'source/' : '');
+const title = `${page === 'home' ? 'Home' : 'Projects'}${view === 'source' ? ', source view' : ''} | wadakatu`;
+const nav = [
+  { label: 'Home', p: 'home' as const },
+  { label: 'Projects', p: 'projects' as const },
+];
+const hasJa = (s: string) => /[぀-ヿ㐀-鿿]/.test(s);
+const GSAP = 'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js';
+const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc';
+---
+<!doctype html>
+<html lang="en" data-theme="night" data-page={page} data-view={view}
+  data-page-url={url(page, 'page')} data-source-url={url(page, 'source')}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>{title}</title>
+    <meta name="description" content={bio.meta} />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;700&family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/proto/matrix.css" />
+    <style set:html={`:root{--etch:${etch}}`}></style>
+    <!-- Decides theme, view, motion and boot before first paint. The boot layer fails open from here:
+         skip, Escape, click and an 8s timeout all work even if the motion script or the CDN never load. -->
+    <script is:inline>
+      (() => {
+        const d = document.documentElement, q = new URLSearchParams(location.search);
+        const get = (s, k) => { try { return window[s].getItem(k); } catch { return null; } };
+        d.classList.add('js');
+        const theme = q.get('theme') || get('localStorage', 'proto-matrix-theme');
+        if (theme === 'day' || theme === 'light') d.dataset.theme = 'day';
+        if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
+        if (q.get('source') === '1') d.dataset.view = 'source';
+
+        const boot = q.get('boot');
+        const first = !get('sessionStorage', 'proto-matrix-boot') && d.dataset.motion !== 'off';
+        const playable = d.dataset.page === 'home' && d.dataset.view === 'page';
+        if (playable && boot === 'frozen') d.dataset.boot = 'frozen';
+        else if (playable && d.dataset.motion !== 'off' && (boot === '1' || first)) d.dataset.boot = 'play';
+        addEventListener('DOMContentLoaded', () => {
+          if (d.dataset.boot) document.getElementById('boot-skip')?.focus();
+        }, { once: true });
+        if (!d.dataset.boot) return;
+
+        try { sessionStorage.setItem('proto-matrix-boot', '1'); } catch {}
+        window.mxEndBoot = () => {
+          if (!d.dataset.boot) return;
+          delete d.dataset.boot;
+          window.dispatchEvent(new Event('mx:bootend'));
+          document.getElementById('main')?.focus({ preventScroll: true });
+        };
+        addEventListener('keydown', (e) => e.key === 'Escape' && window.mxEndBoot());
+        addEventListener('click', (e) => e.target.closest?.('#boot') && window.mxEndBoot());
+        if (d.dataset.boot === 'play') setTimeout(window.mxEndBoot, 8000);
+      })();
+    </script>
+  </head>
+  <body data-wide={glyphs.wide} data-narrow={glyphs.narrow} data-gsap={GSAP} data-gsap-sri={GSAP_SRI}>
+    <!-- First in the document, so its Skip button is the first tab stop while it is up. -->
+    {boot && (
+      <div class="boot" id="boot">
+        <!-- The lines repeat facts from the page beneath, so they are hidden from assistive tech. -->
+        <div class="boot-lines" aria-hidden="true">
+          {boot.map((l) => (
+            <p><span class="k">{l.key}</span><span class="v" lang={hasJa(l.text) ? 'ja' : undefined} data-text={l.text}></span></p>
+          ))}
+        </div>
+        <button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button>
+      </div>
+    )}
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- Ambient rain. Every drop is a piece of a real phrase from the corpus; the same facts are readable below. -->
+    <div class="rain" aria-hidden="true">
+      {rainColumns().map((c) => (
+        <span class="col" style={`--x:${c.x}%`}>
+          {c.drops.map((drop) => (
+            <span class="drop" lang={drop.ja ? 'ja' : undefined} style={`--t:${drop.t}s;--d:${drop.d}s;--rest:${drop.rest}%`}>{drop.text}</span>
+          ))}
+        </span>
+      ))}
+    </div>
+
+    <div id="shell">
+      <header class="top frame">
+        <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-source-href={url('home', 'source')}>{person.heading}</a>
+        <nav aria-label="Main">
+          {nav.map((n) => (
+            <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-source-href={url(n.p, 'source')}
+              aria-current={n.p === page ? 'page' : undefined}>{n.label}</a>
+          ))}
+          <a href="/blog/">Blog</a>
+          <a href="/about/">About</a>
+        </nav>
+        <div class="controls">
+          <!-- Without JavaScript the source view is a real second URL. -->
+          <a class="control nojs" href={url(page, view === 'source' ? 'page' : 'source')}>{view === 'source' ? 'View page' : 'View source'}</a>
+          <button class="control needs-js" id="view-toggle" type="button" aria-pressed={view === 'source' ? 'true' : 'false'} aria-keyshortcuts="\">
+            View source <kbd>\</kbd>
+          </button>
+          <!-- A checkbox, so the rain can be stopped without JavaScript. -->
+          <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
+          <button class="control needs-js" id="theme-toggle" type="button" aria-pressed="false">Daylight</button>
+        </div>
+      </header>
+
+      <main id="main" class="frame" tabindex="-1">
+        <h1 class="name" id="name" data-echo={h1}>{h1}</h1>
+        <div class="view view-page"><slot name="page" /></div>
+        <div class="view view-source"><slot name="source" /></div>
+      </main>
+
+      <footer class="foot frame">
+        <div class="hint needs-js">
+          <label class="control"><input type="checkbox" id="shortcuts" checked /> Enable <kbd>\</kbd> / <kbd>¥</kbd> shortcut</label>
+          <p>Switch between the page and its source. Turn off to prevent single-key activation.</p>
+        </div>
+        <a href={`mailto:${person.email}`}>{person.email}</a>
+        <a href={person.github}>GitHub</a>
+        <a href={person.x}>X {person.xHandle}</a>
+        <a href={person.logoCreditUrl}>{person.logoCredit}</a>
+        <a class="back" href="/proto/">All explorations</a>
+      </footer>
+    </div>
+
+    <p class="vh" id="status" role="status"></p>
+
+    <!-- Covers the page while the view changes. Decorative corpus text. -->
+    <div class="curtain" id="curtain" aria-hidden="true">
+      {curtainSlabs().map((s) => <span class="slab" lang="ja">{s}</span>)}
+    </div>
+
+    <script is:inline src="/scripts/proto-matrix.js"></script>
+  </body>
+</html>

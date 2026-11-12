@@ -1,0 +1,282 @@
+/* /proto/matrix/: an operator's station at night. Phosphor green on near-black is the default
+   world whatever the OS says; "day" is the same screen read in daylight. Reading text sits on
+   solid panels, the rain only shows around them. Text is dimmed with colour, never opacity. */
+:root {
+  color-scheme: dark;
+  --bg: #020805;
+  --panel: #06120b;
+  --rule: #1d4d2f;
+  --text: #c4f2d0;
+  --muted: #7cbd90;
+  --lead: #eafff0;
+  --green: #2bf07a;
+  --rain-tail: #0b3d20;
+  --rain: #1a8f4a;
+  --rain-head: #d6ffe2;
+  --mono: 'IBM Plex Mono', 'M PLUS 1 Code', ui-monospace, Menlo, monospace;
+  --dot: DotGothic16, 'M PLUS 1 Code', ui-monospace, monospace;
+  --pad: clamp(12px, 3.4vw, 48px);
+}
+/* "light" is accepted as an alias so the shared screenshot harness can force the theme. */
+:root[data-theme='day'], :root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #ccd7c9;
+  --panel: #dee7db;
+  --rule: #7f9a86;
+  --text: #0c2115;
+  --muted: #2a4735;
+  --lead: #03130a;
+  --green: #0a5a31;
+  --rain-tail: #b9c9b8;
+  --rain: #5f8c6c;
+  --rain-head: #0a3a20;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  color: var(--text);
+  font: 400 15px/1.7 var(--mono);
+  position: relative; overflow-x: clip;
+}
+:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); letter-spacing: normal; }
+h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+a:hover { color: var(--lead); text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+main:focus { outline: none; }
+kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radius: 2px; }
+::selection { background: var(--green); color: var(--bg); }
+
+.frame { max-width: 1376px; margin-inline: auto; padding-inline: var(--pad); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; left: 16px; top: -80px; padding: 8px 12px; background: var(--green); color: var(--bg); z-index: 50; }
+.skip:focus { top: 12px; }
+.skip:hover { color: var(--bg); }
+:root:not(.enhanced) .needs-js, :root.enhanced .nojs { display: none; }
+
+/* ---------- rain: every drop is a piece of a real phrase, falling head first ---------- */
+.rain { position: fixed; inset: 0; z-index: -1; overflow: hidden; --h: 100vh; }
+.col { position: absolute; top: 0; left: var(--x); width: 16px; height: 100%; }
+.drop {
+  position: absolute; top: 0; left: 0;
+  writing-mode: vertical-rl; text-orientation: upright; white-space: nowrap;
+  font: 16px/1 var(--dot);
+  color: transparent;
+  background: linear-gradient(to bottom, transparent, var(--rain-tail) 15%, var(--rain) 80%, var(--rain-head));
+  -webkit-background-clip: text; background-clip: text;
+  animation: drop var(--t) linear var(--d) infinite;
+  will-change: transform;
+}
+.drop:lang(ja) { font-family: var(--dot); }
+@keyframes drop { from { transform: translateY(-100%); } to { transform: translateY(var(--h)); } }
+:root:has(#hold:checked) .drop { animation-play-state: paused; }
+/* The source is read with the code held still. */
+:root[data-view='source'] .rain .drop { animation-play-state: paused; }
+@media (max-width: 1099px) { .rain .col:nth-child(even) { display: none; } }
+@media (max-width: 719px) { .rain .col:not(:nth-child(4n + 1)) { display: none; } }
+
+/* ---------- header ---------- */
+.top {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 28px;
+  padding-block: 12px; font-size: 14px;
+  background: var(--bg); border-bottom: 1px solid var(--rule);
+}
+.mark { margin-right: auto; text-decoration: none; font: 500 16px/1.5 var(--mono); color: var(--green); }
+.top nav { display: flex; gap: 24px; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover, .top nav a[aria-current] { color: var(--lead); }
+.top nav a[aria-current] { text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.control {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--bg); cursor: pointer; text-decoration: none;
+  border: 1px solid var(--muted); border-radius: 2px; padding: 4px 12px;
+}
+.control:hover { color: var(--lead); border-color: var(--green); }
+.control[aria-pressed='true'] { background: var(--green); border-color: var(--green); color: var(--bg); }
+.control input { accent-color: var(--green); margin: 0; }
+.hold:has(:focus-visible) { outline: 2px solid var(--green); outline-offset: 3px; }
+
+/* ---------- the name: set as wide as the frame, with the commit log cut out of it ---------- */
+.name {
+  padding-block: clamp(40px, 10vh, 112px) 20px;
+  font: 700 min(15.5rem, calc((100vw - 2 * var(--pad)) / 4.86)) / 0.86 var(--mono);
+  letter-spacing: -0.02em;
+  color: var(--green);
+  -webkit-mask: var(--etch) 0 0 / 1000px auto; mask: var(--etch) 0 0 / 1000px auto;
+}
+/* In the source view the name is a tab on the listing, on solid ground like the rest of the reading text. */
+:root[data-view='source'] .name {
+  width: fit-content; margin-top: 32px; padding: 8px clamp(16px, 2.2vw, 28px);
+  background: var(--panel); border: 1px solid var(--rule); border-bottom: 0;
+  font: 500 clamp(28px, 4vw, 40px) / 1.2 var(--mono); letter-spacing: 0;
+  -webkit-mask: none; mask: none;
+}
+.name.double { animation: double 200ms steps(1); }
+@keyframes double {
+  0% { text-shadow: 0.07em 0.035em 0 var(--rain); transform: translateX(-0.02em); }
+  50% { text-shadow: -0.05em -0.02em 0 var(--rain); transform: none; }
+}
+
+:root[data-view='page'] .view-source, :root[data-view='source'] .view-page { display: none; }
+
+.panel { background: var(--panel); border: 1px solid var(--rule); padding: 20px clamp(16px, 2.2vw, 28px) 28px; margin-top: 24px; }
+.panel > h2, .view-source h2 { font: 500 15px/1.7 var(--mono); color: var(--green); margin-bottom: 8px; }
+.lede, .cap { max-width: 68ch; color: var(--muted); }
+.after { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
+
+.about { display: grid; gap: 12px 48px; margin-top: 0; padding-block: 20px; }
+.role { font-size: 18px; line-height: 1.6; color: var(--lead); }
+.brief { max-width: 60ch; }
+
+/* ---------- streams, mobile first: a strip of falling text beside the entry it settles as ---------- */
+.streams { display: grid; margin-top: 16px; }
+.stream { position: relative; display: flex; gap: 20px; min-width: 0; border-top: 1px solid var(--rule); }
+.fall {
+  position: relative; flex: none; width: 72px; min-height: 184px; margin-block: 12px; overflow: hidden;
+  container-type: size; --h: 100cqh;
+}
+.strand { position: absolute; top: 0; left: calc(var(--j) * 28px); width: 16px; height: 100%; }
+.strand:nth-child(n + 4) { display: none; }
+
+.read { flex: 1; min-width: 0; padding: 16px 0 24px; }
+.stream-name { position: relative; display: grid; font: 500 15px/1.5 var(--mono); color: var(--lead); overflow-wrap: anywhere; }
+.stream-name > * { grid-area: 1 / 1; }
+.stream-name a { text-decoration: none; }
+.stream-name:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); letter-spacing: normal; }
+.stream-name a:focus-visible { outline: none; }
+.stream:has(.stream-name a:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.blurb { font-size: 14px; margin-top: 8px; max-width: 62ch; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.links a { position: relative; z-index: 1; overflow-wrap: anywhere; }
+
+/* The stream you point at holds still and comes up to reading brightness. */
+.stream:hover .drop, .stream:focus-within .drop { animation-play-state: paused; --rain: var(--green); --rain-tail: var(--rain); }
+.stream:hover .stream-name a { text-decoration: underline; text-decoration-color: var(--green); }
+
+/* Déjà vu: an entry you come back to repeats its own line once. */
+.stream.deja .stream-name::after {
+  content: attr(data-echo) / ''; grid-area: 1 / 1; align-self: start;
+  white-space: nowrap; overflow: hidden; background: var(--panel);
+  color: var(--green); position: relative; z-index: 2; pointer-events: none;
+  animation: echo 480ms steps(1) forwards;
+}
+@keyframes echo { 0% { transform: translateX(6px); } 40% { transform: none; } 100% { visibility: hidden; } }
+/* Title-to-commit flicker: a decorative layer over the title that takes no room of its own. */
+.ghost { position: absolute; inset: 0; overflow: hidden; z-index: 2; pointer-events: none; }
+.ghost span { display: block; padding-bottom: 4px; background: var(--panel); color: var(--green); }
+.stream.flick .stream-name a { color: transparent; text-decoration: none; }
+
+.streams--rows .stream:first-child { border-top: 0; }
+.streams--rows { margin-top: 0; }
+.streams--rows .stream-name { font-size: clamp(22px, 3.2vw, 34px); line-height: 1.25; color: var(--green); }
+.streams--rows .blurb { font-size: 15px; }
+
+.station { display: grid; gap: 0 24px; }
+.figures div { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-bottom: 1px dotted var(--rule); }
+.figures dt { color: var(--muted); }
+.figures dd { font-variant-numeric: tabular-nums; }
+.skills { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.log { margin-top: 16px; font-size: 13px; max-width: 96ch; }
+.log li { padding: 4px 0; border-bottom: 1px dotted var(--rule); overflow-wrap: anywhere; }
+
+/* ---------- source view: the data file, printed ---------- */
+.view-source { max-width: 1040px; background: var(--panel); border: 1px solid var(--rule); padding: 20px clamp(16px, 2.2vw, 28px) 32px; }
+.file { font-weight: 500; color: var(--lead); }
+.view-source section { margin-top: 28px; }
+.rec > div { padding: 4px 0; border-bottom: 1px dotted var(--rule); }
+.rec dt { color: var(--muted); overflow-wrap: anywhere; }
+.rec dd, .vals li { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.item { margin-top: 16px; padding-left: clamp(12px, 2vw, 24px); border-left: 1px solid var(--rule); }
+.item h3 { font: 500 15px/1.7 var(--mono); color: var(--lead); }
+.item h3:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); }
+.vals:not(.log) { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+
+.foot {
+  display: flex; flex-wrap: wrap; gap: 8px 28px;
+  margin-top: 72px; padding-block: 20px 40px;
+  background: var(--bg); border-top: 1px solid var(--rule);
+  color: var(--muted); font-size: 13px;
+}
+.hint { width: 100%; }
+.foot .back { margin-left: auto; }
+
+/* ---------- boot: the data file's keys, their values decoding in ---------- */
+.boot { display: none; position: fixed; inset: 0; z-index: 30; background: var(--bg); padding: min(26vh, 160px) var(--pad) var(--pad); overflow-y: auto; align-content: start; gap: 40px; }
+:root[data-boot] .boot { display: grid; }
+:root[data-boot] :is(#shell, .skip) { visibility: hidden; }
+:root[data-boot] { overflow: hidden; }
+.boot-lines p {
+  visibility: hidden;
+  display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 0 16px;
+  font: clamp(16px, 2.6vw, 34px) / 1.6 var(--dot);
+}
+.boot-lines p.on { visibility: visible; }
+.boot .k { color: var(--muted); }
+.boot .v { color: var(--green); overflow-wrap: anywhere; font-family: var(--dot); }
+.boot .v.done { color: var(--lead); }
+.boot .control { justify-self: start; }
+
+/* ---------- curtain: slabs of corpus text that cover the page while the view changes ---------- */
+.curtain { display: none; position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.curtain.on { display: flex; }
+.slab {
+  position: relative; flex: 1 1 0; min-width: 0; height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--rain);
+  writing-mode: vertical-rl; text-orientation: upright; line-break: anywhere; word-break: break-all;
+  font: 16px/1.25 var(--dot);
+  will-change: transform;
+}
+.slab::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: var(--rain-head); }
+
+@media (min-width: 600px) {
+  .rec > div { display: grid; grid-template-columns: 18ch minmax(0, 1fr); gap: 0 16px; padding: 2px 0; }
+}
+
+@media (min-width: 720px) {
+  .about { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: end; }
+  .station { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .streams--rows .fall { width: 100px; min-height: 216px; }
+  .streams--rows .strand:nth-child(4) { display: block; }
+  .streams--rows .stream { gap: 40px; }
+  .streams--rows .read { padding-block: 28px 36px; }
+}
+
+/* Home at desk width: the rows stand up into a wall, each stream falling into its entry. */
+@media (min-width: 1360px) {
+  .streams:not(.streams--rows) { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 20px; }
+  .streams:not(.streams--rows) .stream { flex-direction: column; gap: 0; border-top: 0; }
+  .streams:not(.streams--rows) .fall { width: auto; min-height: 0; margin-block: 0; height: clamp(220px, 34vh, 360px); }
+  .streams:not(.streams--rows) .strand { left: calc(var(--j) * 25% + 6%); }
+  .streams:not(.streams--rows) .strand:nth-child(4) { display: block; }
+  .streams:not(.streams--rows) .read { flex: none; padding: 12px 0 0; border-top: 1px solid var(--rule); }
+  .streams:not(.streams--rows) .stream:hover .read,
+  .streams:not(.streams--rows) .stream:focus-within .read { border-color: var(--green); }
+}
+
+@media (max-width: 719px) {
+  .mark, .top nav { width: 100%; }
+  .top nav { justify-content: space-between; gap: 12px; }
+  .foot { margin-top: 48px; }
+  .name { -webkit-mask: none; mask: none; }
+  .boot-lines p { grid-template-columns: 7ch minmax(0, 1fr); gap: 0 12px; }
+  .foot .back { margin-left: 0; }
+}
+
+/* Motion off (?motion=0, or the OS setting seen by the head script): a still frame with every drop
+   parked at its own height down the whole document (the rain scrolls with the page instead of
+   staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
+:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after { animation: none; }
+:root[data-motion='off'] .drop { animation: none; top: var(--rest); }
+:root[data-motion='off'] .rain { position: absolute; }
+:root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .drop { top: var(--rest); }
+  .rain { position: absolute; }
+  .strand .drop + .drop, .hold { display: none; }
+}
