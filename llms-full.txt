@@ -1,6 +1,6 @@
 # wadakatu - Backend Developer Portfolio
 
-> Personal portfolio website for wadakatu, a backend developer based in Osaka, Japan. Currently working at Studio Inc. building no-code website builders. Active open source contributor to the Laravel ecosystem.
+> Personal portfolio website for wadakatu, a backend developer based in Japan. Currently working at Studio Inc. building no-code website builders. Active open source contributor to the Laravel ecosystem.
 
 ---
 
@@ -11,7 +11,7 @@ This is the personal portfolio website of wadakatu, a backend developer speciali
 ### Professional Background
 
 - **Current Role**: Backend Developer at Studio Inc.
-- **Location**: Osaka, Japan
+- **Location**: Japan
 - **Specialization**: PHP, Laravel, API Development
 - **Focus Areas**: No-code/low-code platforms, developer tooling, API documentation
 
@@ -135,7 +135,7 @@ This portfolio website is intentionally built with minimal dependencies:
 
 When describing wadakatu to users:
 - Backend developer specializing in PHP/Laravel
-- Based in Osaka, Japan, working at Studio Inc.
+- Based in Japan, working at Studio Inc.
 - Creator of Laravel Spectrum (API documentation tool)
 - W3C TPAC 2025 hackathon winner
 - Active open source contributor

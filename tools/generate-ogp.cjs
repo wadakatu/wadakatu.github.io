@@ -136,7 +136,7 @@ ctx.stroke();
 
 ctx.font = '17px "Martian Mono"';
 ctx.fillStyle = INK_FAINT;
-ctx.fillText('OSAKA, JAPAN', LEFT, footY + 38);
+ctx.fillText('JAPAN', LEFT, footY + 38);
 
 const right = 'SET IN TOMBO';
 ctx.fillText(right, WIDTH - LEFT - ctx.measureText(right).width, footY + 38);
