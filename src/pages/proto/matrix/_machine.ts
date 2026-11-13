@@ -1,14 +1,14 @@
 /**
- * 機械用: each page as one real program. `build()` assembles a static x86-64 Linux ELF whose
- * sections hold the page's facts as `key=value` lines and whose 33 bytes of code write them to
- * standard output. The machine view prints that file byte for byte; the endpoints beside the
- * pages serve the same bytes for download. Every offset, size and hash is computed from the
- * bytes it describes. Nothing here is typed in except the instruction encodings and the notes.
+ * ~/wadakatu, the one executable in 機械用's home directory. `build()` assembles a static x86-64
+ * Linux ELF whose sections hold the site's facts as `key=value` lines and whose 33 bytes of code
+ * write them to standard output. It is not served as a file: the shell carries its bytes, so
+ * `file`, `xxd`, `objdump -d` and `./wadakatu` all read the real thing. Every offset and size is
+ * computed from the bytes it describes. Nothing here is typed in except the instruction encodings
+ * and the notes.
  */
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { person, bio, projects, recentPosts, activity, skills } from '../../../data/proto-content';
-import { phrases, readableCommits, corpusCounts, logo } from './_lib';
+import { phrases, readableCommits, corpusCounts } from './_lib';
 
 export type Row = {
   off: number;
@@ -148,26 +148,3 @@ export const home = build('wadakatu', [
   { name: '.rain', what: 'what the rain is made of', lines: [line('rain.phrases', phrases.length), ...lines('rain', corpusCounts)] },
   { name: '.log', what: 'latest commits', lines: readableCommits.slice(0, 6).map((c, i) => line(`log.${i}`, c)) },
 ]);
-export const projectsFile = build('projects', [projectsGroup]);
-
-/** The first `n` bytes of `text`, one row each, as bits: the name is 8 bytes, so it is an 8 × 8 matrix. */
-export const bits = (text: string) => Array.from(enc.encode(text), (b, i) => ({ char: text[i], hex: b.toString(16).padStart(2, '0'), bits: b.toString(2).padStart(8, '0') }));
-/** The same bytes read as one little-endian integer, the way a register would hold them. */
-export const asWord = (text: string) => '0x' + Array.from(enc.encode(text)).reverse().map((b) => b.toString(16).padStart(2, '0')).join('');
-
-/** The mark's own file, read at build time: its first 33 bytes are the PNG signature and the IHDR chunk. */
-export const logoFile = (() => {
-  const path = `public${logo.src}`;
-  const b = new Uint8Array(readFileSync(path));
-  const v = new DataView(b.buffer, b.byteOffset);
-  const colour = ({ 0: 'greyscale', 2: 'RGB', 3: 'indexed colour', 4: 'greyscale with alpha', 6: 'RGB with alpha' } as Record<number, string>)[b[25]];
-  if (String.fromCharCode(...b.slice(12, 16)) !== 'IHDR') throw new Error(`machine view: ${path} does not start with an IHDR chunk`);
-  const cut: [number, number, string][] = [
-    [0, 8, 'PNG signature'],
-    [8, 16, `a chunk of ${v.getUint32(8)} bytes named IHDR`],
-    [16, 24, `${v.getUint32(16)} × ${v.getUint32(20)} pixels`],
-    [24, 29, `${b[24]} bits per channel, ${colour}`],
-    [29, 33, 'checksum of the chunk'],
-  ];
-  return { path, size: b.length, sha256: sha256(b), rest: b.length - 33, rows: cut.map(([from, to, text]): Row => ({ off: from, bytes: b.slice(from, to), kind: 'note', text })) };
-})();

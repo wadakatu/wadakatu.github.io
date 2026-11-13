@@ -1,10 +1,11 @@
 /**
  * /proto/matrix/ enhancement. The page is complete without this file: both readings (人間用, the
- * page, and 機械用, the same facts as a program listing) are in the markup, each has its own URL,
- * and the head script already ends the boot layer on Skip / Escape / click / timeout. This adds
- * the in-place change between the two, the theme and palette buttons, the backslash shortcut, the
- * prompt at the end of the machine reading, and (only when motion is allowed and GSAP loads) the
- * boot, the drop between readings and three small glitches.
+ * page, and 機械用, the same facts as a recorded shell session) are in the markup, each has its own
+ * URL, and the head script already ends the boot layer on Skip / Escape / click / timeout. This
+ * adds the in-place change between the two, the theme and palette buttons, the backslash shortcut
+ * and (only when motion is allowed and GSAP loads) the boot, the drop between readings and three
+ * small glitches. The live shell is its own module (src/pages/proto/matrix/_term.ts); the two only
+ * meet at the `mx:view` event below and at the header's 人間用 link, which `exit` presses.
  */
 (() => {
   const root = document.documentElement, body = document.body;
@@ -75,6 +76,7 @@
     history.replaceState(null, '', address(v));
     $('#status').textContent = v === 'machine' ? 'Machine reading' : 'Human reading';
     scrollTo(0, 0);
+    dispatchEvent(new CustomEvent('mx:view', { detail: v })); // the shell takes focus when it becomes the page
   }
   function decode(el, duration, allWide) {
     const text = el.dataset.text ?? el.textContent.trim(), o = { p: 0 };
@@ -105,7 +107,7 @@
       restore: () => nodes.forEach(({ n, text }) => (n.nodeValue = text)),
     };
   }
-  const PRINTED = '.view-machine :is(.byte, .word, .facts div, .about-file > .rem, .toc li, .listing h2, .row)';
+  const PRINTED = '.view-machine :is(.tty .ln, .tty .logo, .ps1, .chips, .modeline)';
   function toggle() {
     finish(); // a second press finishes the first change before starting its own
     const v = root.dataset.view === 'machine' ? 'page' : 'machine';
@@ -114,19 +116,20 @@
     main.setAttribute('aria-busy', 'true');
     // The tube collapses around the middle of the window, wherever the page is scrolled to.
     const origin = () => gsap.set(main, { transformOrigin: `50% ${innerHeight / 2 - main.getBoundingClientRect().top}px` });
-    // Into the machine: the first screenful of the listing, known before it is shown. Back: what is on screen now.
-    const lines = v === 'machine' ? $$(PRINTED).slice(0, 90) : $$(PRINTED).filter(onScreen);
+    // Into the machine: the session as it stands, known before it is shown. Back: what is on screen now.
+    const lines = v === 'machine' ? $$(PRINTED).slice(-90) : $$(PRINTED).filter(onScreen);
     const t = (tl = gsap.timeline({
       onComplete() {
         gsap.set([main, ...lines], { clearProps: 'all' });
         main.removeAttribute('aria-busy');
         tl = null;
         if (v === 'page') double();
+        else dispatchEvent(new CustomEvent('mx:view', { detail: v })); // its prompt was still unprinted when the view changed; it can take focus now
       },
     }));
     if (v === 'machine') {
       // The constructed page gives way: its text becomes its own character codes, the picture
-      // collapses to a line and goes out, and the listing prints top to bottom.
+      // collapses to a line and goes out, and the session prints top to bottom.
       const d = dissolve(0.34);
       origin();
       t.add(d.tween)
@@ -135,7 +138,7 @@
         .add(() => { d.restore(); swap(v); gsap.set(main, { clearProps: 'all' }); })
         .fromTo(lines, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: { amount: 0.55 } }, '+=0.08');
     } else {
-      // Back: the listing clears from the bottom, then the picture opens from a line.
+      // Back: the session clears from the bottom, then the picture opens from a line.
       t.to(lines, { autoAlpha: 0, duration: 0.01, stagger: { amount: 0.22, from: 'end' } })
         .add(() => { swap(v); origin(); })
         .fromTo(main, { scaleY: 0.004 }, { scaleY: 1, duration: 0.28, ease: 'power2.out', immediateRender: false })
@@ -189,53 +192,6 @@
       e.preventDefault();
       toggle();
     }
-  });
-
-  // ---------- prompt: a few real commands over the real file ----------
-  const prompt = $('#prompt'), tty = $('#tty'), cmd = $('#cmd');
-  let file = null;
-  // The bytes the listing prints, fetched once: xxd and ./file read them, not the page.
-  const load = async () => (file ??= new DataView(await (await fetch(prompt.dataset.src)).arrayBuffer()));
-  const sections = () => $$('.listing section').map((s) => ({ name: $('h2 span', s).textContent, el: s }));
-  const commands = {
-    help: () => `ls            the sections of ./${prompt.dataset.file}\ncat SECTION   print one section, for example: cat .projects\nxxd           the whole file as raw bytes\n./${prompt.dataset.file}    run it\nclear         clear this output\nexit          leave the machine reading`,
-    ls: () => $$('.toc li').map((li) => `${$('.size', li).textContent.padStart(13)}  ${$('.sec', li).textContent}`).join('\n'),
-    cat: (arg) => {
-      const s = sections().find((x) => x.name === arg || x.name === `.${arg}`);
-      if (!s) return arg ? `cat: ${arg}: no such section. Try ls.` : 'cat: which section? Try ls.';
-      return $$('.row .txt', s.el).map((t) => t.textContent.replace(/\s+/g, ' ').trim()).join('\n');
-    },
-    xxd: async () => {
-      const v = await load(), out = [];
-      for (let o = 0; o < v.byteLength; o += 16) {
-        const b = Array.from({ length: Math.min(16, v.byteLength - o) }, (_, i) => v.getUint8(o + i));
-        const hex = b.map((x, i) => x.toString(16).padStart(2, '0') + (i % 2 ? ' ' : '')).join('');
-        out.push(`${o.toString(16).padStart(8, '0')}: ${hex.padEnd(40)} ${b.map((x) => (x > 31 && x < 127 ? String.fromCharCode(x) : '.')).join('')}`);
-      }
-      return out.join('\n');
-    },
-    run: async () => {
-      // What the 33 bytes of code do, read from their own operands: write(1, rip + rel32, edx).
-      const v = await load(), text = Number(v.getBigUint64(24, true) - v.getBigUint64(0x50, true));
-      const from = text + 17 + v.getInt32(text + 13, true), size = v.getUint32(text + 18, true);
-      return new TextDecoder().decode(new Uint8Array(v.buffer, from, size)).trimEnd();
-    },
-    clear: () => (tty.replaceChildren(), ''),
-    exit: () => (toggle(), ''),
-  };
-  prompt.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const line = cmd.value.trim(), [word, arg] = line.split(/\s+/);
-    cmd.value = '';
-    if (!line) return;
-    const fn = word === `./${prompt.dataset.file}` ? commands.run : Object.hasOwn(commands, word) && word !== 'run' ? commands[word] : null;
-    let out;
-    try { out = fn ? await fn(arg) : `${word}: command not found. Try help.`; } catch { out = `${word}: could not read ./${prompt.dataset.file}`; }
-    if (word === 'clear' || word === 'exit') return;
-    const pre = document.createElement('pre');
-    pre.append(Object.assign(document.createElement('span'), { className: 'echo', textContent: `$ ${line}\n` }), out);
-    tty.append(pre);
-    cmd.scrollIntoView({ block: 'nearest' });
   });
 
   // ---------- boot ----------

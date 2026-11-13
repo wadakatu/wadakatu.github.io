@@ -1,9 +1,9 @@
 ---
 /**
  * /proto/matrix/ shell. Each route renders both readings of the same facts: 人間用 (slot "page",
- * the constructed page) and 機械用 (slot "machine", the same facts as the program they assemble to).
+ * the constructed page) and 機械用 (slot "machine", the same facts behind a shell prompt).
  * <html data-view> decides which one is displayed. The static /machine/ routes set it in the
- * markup, so the machine reading exists without JavaScript.
+ * markup, so the machine reading exists without JavaScript, as a recorded session.
  */
 import { person, bio } from '../data/proto-content';
 import { rainColumns, curtainSlabs, glyphs, etch, logo } from '../pages/proto/matrix/_lib';
@@ -52,6 +52,9 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
         // ?source=1 is the earlier name of the same switch.
         if (q.get('mode') === 'machine' || q.get('source') === '1') d.dataset.view = 'machine';
+        // 機械用 locks to one viewport as soon as scripts run at all. If the live shell has not
+        // arrived shortly after, give the recorded session its ordinary scrolling page back.
+        setTimeout(() => d.classList.contains('term') || d.classList.add('term-off'), 4000);
 
         const boot = q.get('boot');
         const first = !get('sessionStorage', 'proto-matrix-boot') && d.dataset.motion !== 'off';

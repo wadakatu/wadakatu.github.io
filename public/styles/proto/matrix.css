@@ -1,8 +1,8 @@
 /* /proto/matrix/: an operator's station at night. Phosphor green on near-black is the default
    world whatever the OS says; "day" is the same screen read in daylight. Reading text sits on
    solid panels, the rain only shows around them. Text is dimmed with colour, never opacity.
-   Two readings share these tokens: 人間用 (the page) and 機械用 (the same facts as a terminal
-   listing of the program they assemble to; see "machine" below). */
+   Two readings share these tokens: 人間用 (the page) and 機械用 (the same facts behind a shell
+   prompt, in one viewport; see "machine" below). */
 :root {
   color-scheme: dark;
   --bg: #020805;
@@ -21,7 +21,7 @@
   /* The two sides of the choice. Used only for the dots on the capsule, never for text. */
   --pill-human: #58b7ff;
   --pill-machine: #ff5d4f;
-  /* Phosphor bloom on the machine reading's headings and lit bits. A lit tube at night; none in daylight. */
+  /* Phosphor bloom on the machine reading's name line. A lit tube at night; none in daylight. */
   --glow: 0 0 12px color-mix(in srgb, var(--green) 45%, transparent);
 }
 /* "light" is accepted as an alias so the shared screenshot harness can force the theme. */
@@ -246,7 +246,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .pill--big .half::before { width: 12px; height: 12px; }
 .pill--big small { grid-column: 2; font-size: 13px; }
 
-/* ---------- 機械用: the page dropped out of its layout, as a terminal listing of one program ---------- */
+/* ---------- 機械用: the page dropped out of its layout, as one shell ---------- */
 :root[data-view='machine'] { scroll-padding-bottom: 56px; }
 :root[data-view='machine'] :is(.rain, .hold) { display: none; }
 :root[data-view='machine'] .frame { max-width: none; }
@@ -274,74 +274,109 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   background: var(--green); animation: blink 1s steps(1) 5;
 }
 @keyframes blink { 50% { opacity: 0; } }
-.view-machine { font-size: 14px; }
-.view-machine code { font: inherit; color: var(--lead); }
-.rem { color: var(--muted); }
+.view-machine { font-size: 14px; line-height: 1.6; }
+:root:not(.term) .live { display: none; }
 
-/* The name as bits: one row per byte, most significant bit first. */
-.mhead { display: grid; gap: 24px clamp(24px, 4vw, 56px); margin-top: 20px; }
-.bits { display: grid; gap: 3px; width: fit-content; --cell: clamp(18px, 2.2vw, 28px); font-size: 13px; color: var(--muted); }
-.byte { display: grid; grid-template-columns: 2ch 3ch repeat(8, var(--cell)); gap: 3px; align-items: center; }
-.byte i { height: var(--cell); border: 1px solid var(--rule); }
-.byte i.on { background: var(--green); border-color: var(--green); box-shadow: var(--glow); }
-.word { color: var(--lead); max-width: 62ch; overflow-wrap: anywhere; }
-.facts { margin-top: 12px; }
-.facts div { display: grid; grid-template-columns: 7ch minmax(0, 1fr); gap: 0 2ch; }
-.facts dt { color: var(--muted); }
-.facts dd { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.about-file > .rem { margin-top: 12px; max-width: 62ch; }
-
-/* The section table doubles as the way around the file. */
-.toc { margin-top: 32px; max-width: 96ch; }
-.toc a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 2ch; padding: 2px 0; text-decoration: none; }
-.toc :is(.off, .rem) { display: none; }
-.toc .off, .row .off, .row .hex { color: var(--muted); }
-.toc .sec { color: var(--green); overflow-wrap: anywhere; }
-.toc a:hover .sec { text-decoration: underline; }
-.toc .size { text-align: right; font-variant-numeric: tabular-nums; }
-
-/* One row per field: where it is, the bytes it is, and what they say. Narrow screens read the
-   line first and its bytes under it; wide ones read offset, 16 bytes a line, then the line. */
-.listing { margin-top: 28px; line-height: 1.65; }
-.listing section { margin-top: 28px; }
-.listing h2 { display: flex; align-items: center; gap: 2ch; font: 500 15px/1.7 var(--mono); color: var(--green); text-shadow: var(--glow); scroll-margin-top: 16px; }
-.listing h2::after { content: ''; flex: 1; order: 1; min-width: 2ch; border-top: 1px dashed var(--rule); }
-.listing h2 span { overflow-wrap: anywhere; min-width: 0; }
-.listing h2 small { order: 2; font: 400 13px/1.7 var(--mono); color: var(--muted); text-shadow: none; white-space: nowrap; }
-.row { display: grid; grid-template-columns: 8ch minmax(0, 1fr); gap: 0 2ch; padding: 6px 0; font: inherit; }
-.row .txt { grid-column: 1 / -1; order: -1; overflow-wrap: anywhere; }
-.row :is(.off, .hex) { font-size: 12px; }
-.row .hex b { font-weight: 400; color: var(--green); }
-.row:is(:hover, :focus-within) :is(.off, .hex) { color: var(--text); }
-.row .key { color: var(--muted); }
-.row.asm .val, h3.row .val { color: var(--lead); font-weight: 500; }
-.cols { display: none; }
-.listing .logo { width: min(100%, 400px); margin-top: 12px; }
-
-/* The prompt: a real text field, its output a log. */
-.prompt { margin-top: 40px; max-width: 120ch; }
-.tty pre { margin: 0 0 12px; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
-.tty .echo { color: var(--muted); }
-.tty :lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); }
-.ps1 { display: flex; align-items: baseline; gap: 1ch; color: var(--green); }
-.ps1 label { white-space: nowrap; }
-.ps1 input {
-  flex: 1; min-width: 0; padding: 2px 0; font: inherit; font-size: 16px; color: var(--lead);
-  background: none; border: 0; border-bottom: 1px solid var(--muted); border-radius: 0; caret-color: var(--green);
+/* The session. One .ln per line, wrapping the way a terminal wraps. Without the script this is a
+   recorded session in an ordinary scrolling page; with it, the live shell prints the same markup. */
+.screen { padding-block: 16px 24px; }
+.screen:focus-visible { outline-offset: -2px; }
+.term .ln { min-height: 1.6em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.term .dim { color: var(--muted); }
+.term .hi { color: var(--green); }
+.term .dir { color: var(--lead); font-weight: 500; }
+.term .note { margin-left: 2ch; }
+.tty a { color: var(--lead); }
+.ps { color: var(--green); }
+.echo { margin-top: 6px; color: var(--lead); }
+/* A command you can tap: a file name in a listing, a suggestion in a message. */
+.run {
+  max-width: 100%; margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; color: var(--green); text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; vertical-align: top;
 }
-.prompt > .rem { margin-top: 8px; font-size: 13px; }
+.run:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-/* The mode line: always on screen in 機械用, with the way back. */
+/* neofetch: the mark beside the facts. The image is the real file at its own proportions. */
+.fetch { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 3ch; align-items: center; margin-block: 6px; }
+.fetch .logo { width: 112px; }
+/* Values that wrap stay in their own column, under themselves. */
+.fetch .side .ln { padding-left: 10ch; text-indent: -10ch; }
+.sw { display: inline-block; width: 3ch; height: 1.2em; vertical-align: middle; }
+.sw0 { background: var(--panel); } .sw1 { background: var(--rule); } .sw2 { background: var(--rain-tail); } .sw3 { background: var(--rain); }
+.sw4 { background: var(--muted); } .sw5 { background: var(--text); } .sw6 { background: var(--lead); } .sw7 { background: var(--green); }
+
+/* The command line: a real text field. Its caret is drawn as a block that shows the character
+   under it in reverse, lit while the field has focus and hollow when it does not, which is also
+   the focus indicator. It blinks five times after a keystroke, then rests lit. */
+.ps1 { display: flex; flex-wrap: wrap; align-items: baseline; margin-top: 6px; }
+.ps1 label, .ps1 .ps { display: contents; }
+.ps1 .ps[hidden] { display: none; }
+.ps-who, .ps-sym { color: var(--green); white-space: nowrap; }
+.ps-who { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ps-sym { margin-right: 1ch; }
+.field { position: relative; flex: 1 1 10ch; min-width: 0; }
+.field input {
+  display: block; width: 100%; height: 1.6em; margin: 0; padding: 0; border: 0; border-radius: 0; outline: none;
+  font: inherit; color: var(--lead); background: none; caret-color: transparent;
+}
+.mirror, .cur { position: absolute; left: 0; top: 0.15em; height: 1.3em; line-height: 1.3em; white-space: pre; pointer-events: none; }
+.mirror { visibility: hidden; }
+.cur { min-width: 1ch; color: var(--bg); background: var(--green); }
+.cur.blink { animation: blink 1s steps(1) 5; }
+.field:not(:focus-within) .cur { color: transparent; background: none; box-shadow: inset 0 0 0 1px var(--green); animation: none; }
+
+/* vim takes the screen; the field below it becomes its command line. */
+.vim { display: flex; flex-direction: column; flex: 1; min-height: 40vh; }
+.vim[hidden], .screen.vim-on .tty { display: none; }
+.vim pre { flex: 1 1 0; min-height: 0; margin: 0; overflow: hidden; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+#vim-msg { min-height: 1.6em; color: var(--lead); white-space: pre-wrap; }
+
+/* Keys a phone keyboard does not have, then commands worth trying. One row; it scrolls sideways in itself. */
+.chips { display: flex; gap: 6px; padding: 8px var(--pad); overflow-x: auto; scrollbar-width: none; border-top: 1px dashed var(--rule); }
+.chip {
+  flex: none; padding: 2px 10px; border: 1px solid var(--rule); border-radius: 2px; background: var(--bg); cursor: pointer;
+  font: inherit; font-size: 13px; color: var(--muted); white-space: nowrap;
+}
+.chip:hover { color: var(--lead); border-color: var(--green); }
+.chip.key { display: none; color: var(--green); border-color: var(--muted); }
+
+/* The status line: always on screen in 機械用, with the way back. */
 .modeline {
   position: fixed; inset: auto 0 0; z-index: 25; display: flex; align-items: center; gap: 2ch;
-  padding: 4px var(--pad); background: var(--green); color: var(--bg); font-size: 13px;
+  margin: 0; padding: 4px var(--pad); background: var(--green); color: var(--bg); font-size: 13px;
 }
 .modeline .mode { flex: none; white-space: nowrap; }
 .modeline .where { margin-right: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.modeline .jst { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .modeline a { padding: 0 4px; color: inherit; font-weight: 500; white-space: nowrap; }
 .modeline a::before { content: '\2190\00a0' / ''; }
 .modeline a:hover { color: inherit; }
 .modeline a:focus-visible { outline-color: var(--bg); outline-offset: 0; }
+
+/* With scripts running, 機械用 is one viewport: the header, the screen, the keys, the status line.
+   The session scrolls inside the screen and the window does not scroll at all. --vvh is the
+   visible height, which the live shell keeps in step with a phone's on-screen keyboard. If the
+   live shell never arrives, the head script sets .term-off and this block lets go. */
+:root.js:not(.term-off)[data-view='machine'] {
+  overflow: hidden;
+  & body { height: var(--vvh, 100dvh); overflow: hidden; }
+  /* Every grid here has one column that may shrink: wide output must wrap or scroll inside the screen, never widen the page. */
+  & #shell { display: grid; grid-template: auto minmax(0, 1fr) / minmax(0, 1fr); height: 100%; padding-bottom: 0; }
+  & .frame { margin-inline: 0; } /* an auto margin would shrink a grid item to its content */
+  & main, & .view-machine { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); min-height: 0; padding-inline: 0; }
+  & .term { display: grid; grid-template: minmax(0, 1fr) auto auto / minmax(0, 1fr); min-height: 0; }
+  & .screen {
+    display: flex; flex-direction: column; min-height: 0; padding: 12px var(--pad) 16px;
+    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--rule) transparent;
+  }
+  & .tty, & .ps1 { flex: none; }
+  & .vim { min-height: 0; }
+  & .name { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  & .foot { display: none; }
+  & .modeline { position: relative; }
+}
+/* cmatrix: the page's own rain, over the whole tube, under the status line that says how to stop it. */
+:root.cmatrix[data-view='machine'] .rain { display: block; z-index: 22; background: var(--bg); }
 
 .foot {
   display: flex; flex-wrap: wrap; gap: 8px 28px;
@@ -385,17 +420,8 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .slab::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: var(--rain-head); }
 
 @media (min-width: 600px) {
-  .toc a { grid-template-columns: 8ch minmax(14ch, 22ch) 14ch minmax(0, 1fr); }
-  .toc :is(.off, .rem) { display: inline; }
-}
-
-@media (min-width: 960px) {
-  .mhead { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
-  .row { grid-template-columns: 8ch 48ch minmax(0, 1fr); padding: 0; }
-  .row .txt { grid-column: auto; order: 0; max-width: 100ch; }
-  .row :is(.off, .hex) { font-size: inherit; }
-  .cols { display: grid; margin-bottom: 4px; border-bottom: 1px dashed var(--rule); color: var(--muted); }
-  .listing .logo { margin-left: 60ch; }
+  .fetch { grid-template-columns: auto minmax(0, 1fr); }
+  .fetch .logo { width: clamp(132px, 26vmin, 224px); }
 }
 
 @media (min-width: 720px) {
@@ -428,10 +454,32 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   .foot .back { margin-left: 0; }
 }
 
+/* On a phone the shell needs the height: the header folds to two short rows and the two colour
+   buttons give way to the commands that do the same (theme, palette). Long notes take their own line. */
+@media (max-width: 719px) {
+  .term .note { display: block; margin-left: 4ch; }
+  .ps-who { flex-basis: 100%; }
+  :root.js:not(.term-off)[data-view='machine'] {
+    & .top { gap: 6px 16px; padding-block: 8px; }
+    & .mark { width: auto; }
+    & .mark .logo { width: 32px; }
+    & .top nav { order: 1; }
+    & .controls .control { display: none; }
+  }
+}
+/* The on-screen keyboard is up: every row counts. The capsule in the header is still the way back. */
+:root.kb.js:not(.term-off)[data-view='machine'] :is(.top nav, .modeline) { display: none; }
+/* Fingers: bigger keys, the extra key row, and 16px in the field so iOS does not zoom into it. */
+@media (pointer: coarse) {
+  .ps1 { font-size: 16px; }
+  .chip { padding: 8px 12px; }
+  .chip.key { display: inline-block; }
+}
+
 /* Motion off (?motion=0, or the OS setting seen by the head script): a still frame with every drop
    parked at its own height down the whole document (the rain scrolls with the page instead of
    staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
-:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after { animation: none; }
+:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after, :root[data-motion='off'] .cur { animation: none; }
 :root[data-motion='off'] .drop { animation: none; top: var(--rest); }
 :root[data-motion='off'] .rain { position: absolute; }
 :root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }

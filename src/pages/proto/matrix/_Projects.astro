@@ -1,10 +1,9 @@
 ---
 import Layout from '../../../layouts/ProtoMatrixLayout.astro';
 import Stream from './_Stream.astro';
-import Machine from './_Machine.astro';
+import Terminal from './_Terminal.astro';
 import { projects } from '../../../data/proto-content';
 import { commitFor, host, splitJa } from './_lib';
-import { projectsFile } from './_machine';
 interface Props { view: 'page' | 'machine' }
 const { view } = Astro.props;
 ---
@@ -32,5 +31,5 @@ const { view } = Astro.props;
     </section>
   </Fragment>
 
-  <Fragment slot="machine"><Machine machine={projectsFile} h1="Projects" page="projects" /></Fragment>
+  <Fragment slot="machine"><Terminal page="projects" /></Fragment>
 </Layout>

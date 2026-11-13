@@ -2,9 +2,10 @@
 
 Built with Claude Code on 13 November 2026, on `design/explore`, in this worktree only. Reviewed and tightened with Codex on the same date; see `MATRIX-CRITIQUE.md`. A palette and logo pass followed, also with Claude Code; see the last section, which is current where it differs from the ones above. Nothing is committed.
 
-**Current state: the last section, "人間用 / 機械用".** That pass replaced the source view described below with the
-machine reading. Where the two disagree ("See the source", the `/source/` routes, the View source button, the
-curtain on a view change, `_Records.astro`), the last section is right.
+**Current state: the last section, "機械用 as a shell".** The "人間用 / 機械用" section before it introduced the two
+readings and is still right about 人間用, the capsule and the change between readings; its machine reading (the
+byte listing, the bit grid, the downloadable executables) was replaced by a terminal in the last section. Older
+sections describe the source view that came before both. Where sections disagree, the later one is right.
 
 Direction: the Operator prototype, plus the See-the-source mechanic switching in place, pushed into a
 night-time operator's station. Evokes the film; copies nothing from it (no logo, title treatment, film font,
@@ -691,3 +692,333 @@ video is about 2.7s at the true capture rate (~14.7 fps), 1440×900, human page 
 | `docs/design-explore/shots/matrix-machine-operator-1440.png` | 機械用 with `?palette=operator` |
 | `docs/design-explore/shots/matrix-boot-choice-1440.png` | `?boot=frozen` with the capsule (see the Japanese caveat above) |
 | `docs/design-explore/shots/matrix-human-machine-switch-1440.mp4` | Switch video (not committed; on the box) |
+
+## 機械用 as a shell (Fable terminal pass)
+
+Built with Fable (Claude Code `--model fable`) on 13 November 2026, in this worktree only, on `design/explore`
+(do not merge). This section is current where it differs from everything above. It
+replaces the machine reading of the previous section: the 9,700px byte listing, the bit grid, the section table,
+the seven-command prompt at the foot of it, and the two downloadable executables are gone.
+
+機械用 is now one shell in one viewport. The header, the screen, a row of keys and a status line fill the window
+exactly; the session scrolls inside the screen and the window itself does not scroll. You type commands and get
+this site's real data back. 人間用 is unchanged apart from the wording of the "Two readings" panel.
+
+One terminal, not several. The Projects routes are the same terminal started in `~/projects`.
+
+### Routes and flags
+
+| Address | What |
+| --- | --- |
+| `/proto/matrix/machine/` | The shell, in `~`, after `neofetch`. Shareable |
+| `/proto/matrix/projects/machine/` | The same shell, in `~/projects`, after `ls -l` |
+| `/proto/matrix/source/`, `/proto/matrix/projects/source/` | Earlier addresses, kept: the same two shells |
+| `/proto/matrix/`, `/proto/matrix/projects/` | 人間用 |
+
+| Flag | Effect |
+| --- | --- |
+| `?mode=machine`, `?source=1` | Kept. Land in the shell on either main URL |
+| `?run=COMMAND` | New. The first command is this one instead of `neofetch` (for example `?run=git%20log%20--oneline`). It is not added to the history, and `open` run this way prints its link without opening a window |
+| `?palette=operator`, `?theme=day\|night`, `?motion=0` | Unchanged, and all apply to the shell |
+| `?boot=1`, `?boot=frozen` | Unchanged (they belong to 人間用) |
+
+The executables at `/proto/matrix/machine/wadakatu` and `/proto/matrix/projects/machine/projects` no longer exist.
+
+### What it is like
+
+- **Prompt** `wadakatu@japan:~$` (`person.name` and `person.location`, as before), with the working directory in
+  it. Below 720px it takes two lines, path above and `$` below, so there is room to type.
+- **Block cursor.** The field is a real `<input>`; its native caret is hidden and a block is drawn where the
+  caret is, showing the character under it in reverse. It is lit while the field has focus and hollow when it
+  does not. It blinks five times after each keystroke and then rests lit.
+- **Keys.** Up/Down recall (the draft you were typing comes back), Tab completes commands, paths, `man` topics,
+  `git` subcommands and `open` names and lists the candidates when ambiguous, Ctrl+L clears, Ctrl+C cancels the
+  line or stops a running command, Ctrl+U cuts to the start, Ctrl+A / Ctrl+E jump, Ctrl+D on an empty line exits,
+  PageUp/PageDown scroll the session.
+- **Login.** Two lines, then the first command already run: `Last login:` is the reader's own previous visit
+  (kept in `localStorage`; "never" the first time), and `neofetch` is there because `~/.zshrc` ends with it.
+- **Status line**, tmux style: `[機械用] 0:zsh* ~/projects`, the time in Japan, and `人間用` as the way back. The
+  process name changes while `vim`, `ping` or `cmatrix` runs.
+- **Taps.** A row of suggested commands sits above the status line. On touch devices it starts with the keys a
+  phone keyboard lacks: `tab`, `↑`, `↓`, `^C`. File names in `ls` output and commands mentioned in messages can
+  be tapped to run. None of this moves focus, so a phone's keyboard stays as it was.
+- Scan lines, phosphor green by default, the numbered window list in the header, and the capsule are as before.
+
+### Commands
+
+`help` lists these 19. All of them run, and each has a `man` page.
+
+| Command | Returns |
+| --- | --- |
+| `whoami` | Name, role, Japan |
+| `about` | `cat ~/about.txt`: name, role, the three bio lines |
+| `ls [-la] [DIR]`, `cd`, `pwd`, `tree` | The file tree below |
+| `cat FILE...`, `head`, `tail`, `grep [-cinrv]`, `wc [-lwc]`, `sort`, `uniq` | File contents and filters |
+| `projects` | `ls -l ~/projects`: the five projects with language and blurb |
+| `posts` (also `blog`) | `ls -l ~/posts`: the 17 published posts with date and title; the title links to the post |
+| `open NAME` | Opens a real link in a new tab: `github`, `x`, `email`, `site`, `blog`, `about`, `docs`, `credit`, a project name, or a file (`open posts/b7c1f2a8d3e4f5.md`) |
+| `contact` (also `links`) | Email, GitHub, X, site, as links |
+| `skills` | The eight skills, one per line |
+| `neofetch` | The real logo beside the facts: role, location, since 2020, repos and forks, PRs, posts, stack, projects, logo credit, and the eight theme colours |
+| `logo` | The real logo and its credit |
+| `git log [--oneline] [-n N]` | This repository's real commits |
+| `xxd [-l N] FILE` | Hex dump of any file, or of piped text |
+| `theme day\|night`, `palette operator\|phosphor` | The header's own two buttons, by name |
+| `history`, `man COMMAND`, `clear`, `exit` | As named. `exit` returns to 人間用 |
+
+Shell behaviour that also works: pipes (`git log --oneline | grep fix | wc -l`), `;` and `&&`, `*` globs,
+quotes, `$USER` `$HOME` `$PWD` `$SHELL` `$EDITOR` `$HOSTNAME`, `!!`, aliases (`alias` prints the table), and
+`which`, `echo`, `date` (Japan time), `uptime` (minutes this tab has been open), `uname -a` (your browser's
+user agent), `hostname`, `file`, `reboot` (the boot sequence again).
+
+**The file tree** is generated at build time from the two data files:
+
+```
+~
+├── projects/   laravel-spectrum.md  screenbook.md  gitlyte.md  tombo.md  w3c-hackathon.md
+├── posts/      17 files, one per entry in blogExcerpts, named by slug
+├── README.md  about.txt  contact.txt  skills.txt  activity.txt
+├── logo.png    public/images/logo-400.png
+├── wadakatu*   the ELF program (see below)
+└── .zshrc  .zsh_history      hidden; .zsh_history is the session's real history
+```
+
+A post file is front matter (title, date, URL), the excerpt from the corpus and a line saying the rest is at the
+URL. Sizes in `ls -l` are the real byte lengths of what `cat` prints.
+
+**Not listed in `help`** (the last line of `help` says so):
+
+| Typed | Answer |
+| --- | --- |
+| `sudo ...` | `wadakatu is not in the sudoers file. This incident will be reported.` |
+| `rm -rf /` | GNU's own refusal. With `--no-preserve-root`, `Read-only file system` for each file, and everything is still there |
+| `rm`, `touch`, `mkdir`, `mv`, `cp`, `chmod`, `>` | `Read-only file system` |
+| `vim [FILE]` (`vi`, `nvim`) | Opens. See below |
+| `:q`, `:wq`, `:q!` at the shell | "You are not in vim. Good reflex, though." |
+| `emacs`, `nano` | Not found; vim is installed; read `man vim` first |
+| `man vim`, `man sudo`, `man rm`, `man man`, `man`, `man woman` | Short pages, and man's real replies |
+| `ping HOST` | Four timed HTTP HEAD requests to this origin, with real round-trip times and statistics. Ctrl+C stops it. Other hosts are refused: a tab only reaches its own site |
+| `cmatrix` (`matrix`) | The page's own rain over the whole window until any key |
+| `follow the white rabbit` | A rabbit, and a real post picked at random with a way to open it |
+| `knock knock` | `Race condition.` / `Who's there?`, and where the rabbit went |
+| `make me a sandwich`, `sudo make me a sandwich` | `What? Make it yourself.` / `Okay.` |
+| `php artisan inspire` | tombo's three rules, in his words. Other `php` is not found: static files only |
+| `git status`, `git push [--force]`, `git blame`, `git commit` | Clean; a 403 for `visitor`; "It was like that when I got here."; read-only |
+| `ssh`, `curl`, `wget`, `top`, `htop`, `docker`, `make`, `sl` | One line each |
+| `cat /etc/passwd`, `cd ..`, `cd /` | `Permission denied` |
+| An unknown command | `zsh: command not found`, with "Did you mean" when one is close |
+
+**vim.** `vim` takes the screen: the file (read-only) or a splash, tildes, a message line. Keys act at once
+outside the command line (`i` gives `-- INSERT --`, typing then gives E21, `ZZ` leaves). `:w` gives E45, `:w!`
+E212, anything else E492, Ctrl+C gives vim's own "Type :qa! and press <Enter>" line. After three failed tries
+the message adds a hint. `:q`, `:q!`, `:wq`, `:x` leave, and the shell says how many attempts it took.
+`/proto/matrix/machine/?run=vim` drops a reader straight into it.
+
+### Where the facts come from
+
+- Every fact is from `src/data/proto-content.ts` and `src/data/proto-matrix-corpus.ts`, imported and not
+  changed. Location is `Japan` only. "Kobe" appears only inside real post titles.
+- **`git log`**: subjects are the 60 in the corpus, in its order. Hashes and dates are looked up at build time
+  with `git log` (`%h`, `%H`, `%ad`, `%s` only; the author's address is never read). In this build all 60 of 60
+  matched. In a checkout without history the subjects print without hashes (checked once by building with
+  `GIT_DIR=/nonexistent`: 0 of 60 matched, `git log --oneline` printed subjects only). `Author:` is `person.name`.
+- **Numbers that are not in the data files are computed, not typed**: file sizes, `wc` counts, `ping` times
+  (measured), `date`, `uptime`, the vim attempt count, "Last login". There are no PIDs, load averages, kernel
+  versions or packages counts. neofetch's keys are the tool's (`Uptime`, `Packages`); their values are
+  `activity.since`, `activity.originalRepos` and `activity.ossForks`, labelled.
+- The jokes refuse, warn or riff. `git push` names the real repository (`wadakatu/wadakatu.github.io`, from
+  `package.json`); "GitHub Pages serves static files" is from `CLAUDE.md`. `git status` says `On branch main`.
+- Film nods are the two the brief named plus `cmatrix`, which is the name of a real program. No speeches.
+- The logo is always the real `<img>` of `logo-400.png`, square, with the palette filter only. It is never
+  drawn out of characters.
+
+### The ELF and the hex view: what was decided
+
+- **Downloads dropped.** No executable is served. The two endpoints are deleted.
+- **The hex view is a command.** `xxd FILE` dumps any file; `cat about.txt | xxd` works too. The 9,700px listing
+  is gone.
+- **The program is kept as one file inside the shell**, `~/wadakatu`. `_machine.ts` still assembles it at build
+  time (the same 4,208 bytes as the previous pass: SHA-256 `82c2bb9f…c373`, unchanged) and the page carries its
+  bytes as base64 inside the JSON the shell reads. So `file wadakatu`, `xxd wadakatu | head`,
+  `objdump -d wadakatu` (the eight instructions with notes) and `./wadakatu` (which reads the address and length
+  from the instructions' operands and prints those bytes) all work on the real thing, and nothing can be saved
+  and run by accident. The Projects program is deleted.
+- `logo.png` carries its first 256 bytes for `xxd`; `file logo.png` is read from its IHDR chunk. `cat logo.png`
+  shows the picture.
+
+### No JavaScript, reduced motion, failures
+
+- **No JavaScript.** `/machine/` is a recorded session in an ordinary scrolling page: the build runs the same
+  shell and prints `neofetch`, `cat about.txt`, `ls -l projects`, each project file, `ls -l posts`,
+  `cat contact.txt` and `git log --oneline -n 8` (Projects: `ls -l`, each project file, the contact file). All
+  links are real links. The second line says it is a recording; the status line says `recorded session`; there is
+  no prompt and no dead button. The header capsule and the status line link lead back, and the footer is there.
+- **The shell module fails to load.** The viewport lock is applied as soon as any script runs. If the live
+  shell has not started after 4 seconds, the head script sets `.term-off` and the recorded session becomes the
+  same scrolling page as without JavaScript. If the shell then arrives late, it takes the one viewport back.
+- **`proto-matrix.js` fails to load.** The shell still works. `exit` is then a plain navigation to 人間用.
+  `theme` and `palette` do nothing, because the buttons they press are not wired.
+- **Reduced motion** (`prefers-reduced-motion`, or `?motion=0`): the cursor does not blink, the change between
+  readings is instant, `cmatrix` shows the rain parked still and says so in the status line, and nothing else in the shell moves
+  anyway (output is printed at once, never typed out).
+- **With motion**: the change from 人間用 is the previous pass's (text to hex, the tube collapses), then the
+  session prints line by line and the prompt takes focus. `exit` plays the way back.
+- Storage blocked: the shell runs, history does not survive a reload, and "Last login" always says never.
+
+### Accessibility
+
+- A real, labelled text field (`Command`), described by a hint that names `help`, `exit` and the Tab rule.
+- **Tab is not a trap.** It completes only when the line has text and the caret is at its end. On an empty
+  line, with Shift, or after Escape, it moves focus as usual.
+- Output is `role="log"` (set after the first screen is printed, so arriving does not read the whole card out).
+  Prompts in the scrollback are `aria-hidden`; the commands after them are text.
+- The screen is a labelled, focusable region, so the scrollback can be scrolled with the keyboard; PageUp and
+  PageDown also work from the field.
+- Tappable file names are buttons outside the tab order (otherwise every listing would add tab stops). Links in
+  output are ordinary links. Chips are buttons in a labelled group; the four key chips have names.
+- `vim` announces how to leave when it opens; its message line is a status. `cmatrix` announces how to stop.
+- Ctrl+C is left to the browser when text is selected, so copying still works on Windows and Linux.
+- Keys are ignored while an IME is composing. Japanese output is marked `lang="ja"` run by run.
+- Arriving focuses the field on devices with a fine pointer only. On touch devices nothing is focused, so the
+  keyboard does not cover the first screen.
+- The `\` / `¥` shortcut still works from the header and the status line. Inside the field it is a character.
+  Its off switch is in the footer, which 機械用 no longer shows; the setting is stored, so switch it off from 人間用.
+
+### Phone
+
+- The shell's height follows `visualViewport`, so when the on-screen keyboard opens the prompt stays above it.
+  While it is open the header's nav row and the status line are hidden to give the session the room.
+- The header folds to two short rows; the two colour buttons are hidden there because `theme` and `palette` do
+  the same.
+- The field is 16px on touch devices, so iOS does not zoom into it.
+
+### Files
+
+| File | Change |
+| --- | --- |
+| `src/pages/proto/matrix/_shell.ts` | New. The shell: file system, commands, pipes, completion, vim. Pure, no DOM and no Node |
+| `src/pages/proto/matrix/_world.ts` | New. Build-time data for the shell from the data files, git, the ELF and the logo. Ends with a self-check that fails the build |
+| `src/pages/proto/matrix/_term.ts` | New. The live prompt: printing, keys, cursor, history, and the effects (open, vim screen, ping, rain, viewport) |
+| `src/pages/proto/matrix/_Terminal.astro`, `_Out.astro` | New. Markup, the recorded session, the JSON island |
+| `src/pages/proto/matrix/_Machine.astro`, `machine/wadakatu.ts`, `projects/machine/projects.ts` | Deleted |
+| `src/pages/proto/matrix/_machine.ts` | Trimmed to the assembler and the one program |
+| `src/pages/proto/matrix/_Home.astro`, `_Projects.astro` | Use the terminal; "Two readings" wording |
+| `src/layouts/ProtoMatrixLayout.astro` | The 4-second fallback timer; one comment |
+| `public/styles/proto/matrix.css` | Listing rules out, shell rules in. No new colours: tokens only |
+| `public/scripts/proto-matrix.js` | Old prompt removed; `mx:view` event so the shell can take focus |
+
+`_shell.ts` is shared: the build imports it to print the recorded session and to run the self-check, and Astro
+bundles it with `_term.ts` for the browser (29,237 bytes, 12,773 gzipped). So the no-JS reading and the live
+shell cannot disagree. Home's HTML is 100,377 bytes (26,950 gzipped), about the same as before: the listing's
+hex went out and the shell's data (30,690 bytes of JSON) came in.
+
+Not touched: production routes, `tombo.css`, `site.css`, `BaseLayout.astro`, `FooterLogo.astro`, the other
+`/proto/*` concepts, `src/data/*`, `package.json`. No dependency added. `package-lock.json` was already
+modified before this pass.
+
+### Checks
+
+`npm run build` passes (44 pages). The build itself runs a self-check of the shell (`_world.ts`): counts
+against the data files, a path escape, the ELF's first output line, completion, vim, and 25 awkward inputs.
+
+Scripts and stills are in `/tmp/mx-term/` on the build machine, outside the repo because the brief limits which
+files may be added. All figures below were printed by those scripts on the final build, served from `dist/` by
+a short-lived static server, in Chrome through Playwright.
+
+**`term.mjs`, 82 checks, all passing.**
+
+- One viewport at 1440×900, 960×700, 390×844, 320×568 and 390×420 (standing in for a phone with its keyboard
+  up), on both routes: the document is no taller than the window, the session scrolls inside, the prompt and
+  status line are on screen, nothing passes the right edge.
+- All 19 listed commands run and have man pages. The data commands return the data file's values.
+- `git log --oneline -n 5` lines are each found in the repository's real `git log`. The full form has a
+  40-character hash, `Author: wadakatu`, a date and no `@`.
+- `xxd -l 32 logo.png` equals `/usr/bin/xxd -l 32` on the real file. `file` gives the ELF and PNG lines.
+  No executable exists in `dist/`.
+- `open github` opens `https://github.com/wadakatu` in a new tab; `open` on a post goes to `/blog/<slug>/`.
+- History, completion, Tab leaving the field in the three ways, Ctrl+C with and without a selection,
+  Ctrl+A/E/U/L/D, PageUp, the block cursor's position, keys during composition.
+- `exit`, Ctrl+D and the status link lead back; returning finds the session intact.
+- vim: eight replies checked against the expected messages, `:q!` and `ZZ`.
+- `ping`: another origin refused; two real replies then Ctrl+C gives `2 requests sent, 2 answered`; left alone
+  it sends four. `cmatrix` starts and any key stops it without typing that key.
+- 38 answers from the unlisted commands and the shell features. Typed markup (`<img onerror>`, `<script>`) is
+  printed as text.
+- `theme` / `palette` commands; all seven addresses and flag combinations; `?run=`; reload keeps history and
+  shows the last login; blocked storage.
+- No JavaScript on both routes; the shell module blocked (falls back after 4 seconds); the shell module five
+  seconds late (falls back, then locks to one viewport again).
+- The keyboard branch, with a stand-in `visualViewport` of 420 out of 844: the shell is 420 tall, the nav row
+  and status line give way, the prompt and keys are above the line, the capsule stays. A pinch zoom (half the
+  height at twice the scale) is not taken for a keyboard.
+- What was typed never becomes a link: `?run=cat .zsh_history https://…` and `echo https://…` followed by
+  `cat`, `head`, `grep` and `history` produce no anchor.
+- `reboot` goes to `/proto/matrix/?boot=1` and keeps the palette.
+- Touch: no autofocus, key row, 16px field, chips and file names run without focusing.
+- Cursor: `blink` × 5 with motion, none with reduced motion or `?motion=0`, no other animation.
+- The animated change in and `exit` back leave nothing styled.
+- Lowest text contrast in the session, chips and status line: 9.18 (phosphor night), 5.61 (phosphor day),
+  9.42 (operator night), 6.48 (operator day).
+
+**The four earlier suites, ported** (`port.py` rewrites selectors and the expectations this pass changed on
+purpose; each change is commented there): 40 of 40, 69 of 69, 24 of 24 and 64 of 64. They cover the boot and its
+skips, the frozen still, blocked CDN, `?motion=0`, the glitches, the palette and its addresses, the logo's
+geometry on every route, rapid changes, reduced motion switched on mid-change, the shortcut's off switch, the
+blocked enhancement script, Japanese faces, and overflow, one `h1` and contrast for 64 route × size × colouring
+combinations. Run unported first, they found one real fault, since fixed: on a phone the shell's grid let wide
+content widen the header past the viewport.
+
+The changed expectations: in 機械用 the prompt has focus, so a backslash typed there is text (the suites press
+the shortcut from outside the field); arriving puts focus in the prompt, not on the capsule; the footer is not
+shown in 機械用.
+
+The running dev server (PID 88553, port 4321) was left alone and serves the new routes.
+
+### Still weak
+
+- **Not tried on a real phone.** The keyboard handling (`visualViewport`, hiding rows while it is up) was only
+  run against a stand-in viewport object. iOS Safari and Android Chrome with a real on-screen keyboard are untested.
+- **No screen reader run.** The roles and labels are checked by script; how the log reads aloud in VoiceOver or
+  NVDA, and how vim's takeover feels there, is untested. Chrome only: no Safari or Firefox run.
+- **Ctrl+L, Ctrl+U, Ctrl+A, Ctrl+D are browser shortcuts on Windows and Linux.** The page takes them while the
+  field has focus. Ctrl+W and Ctrl+N cannot be taken and are not used.
+- **The cursor replaces the field's focus outline.** Lit block for focus, hollow for none. It is a visible
+  change, but it is not the 2px outline every other control has.
+- **`cat` on a post prints an excerpt**, because the brief limits the data to the two files. One excerpt in the
+  corpus stops mid-word. `open` goes to the full post.
+- **`open` and links in output use a new tab**, so the session is not lost. That is a choice a reader does not
+  get to make per link. `open` only opens a window where the browser reports a user gesture
+  (`navigator.userActivation`); in browsers without it, it prints the link and you click it.
+- **`?run=` puts someone else's words on the page.** The command and anything it echoes are shown as text, never
+  as markup or links, but a link to `/machine/?run=echo …` does display the sender's sentence in his terminal.
+- **The suggested commands are fixed.** They do not change with the directory or with what was just printed.
+- **`ls` does not align columns**; names are separated by two spaces and wrap. `posts/` holds slug file names,
+  which only mean something in `ls -l`.
+- **`git log` needs the repository's history at build time** for hashes and dates. A shallow CI checkout gives
+  subjects only.
+- **Pipes are line-based.** Links survive `head` and `tail` but not `grep`, which re-prints matching text with
+  the match lit. There is no `less`; long output scrolls in the session.
+- **The shortcut's off switch is not reachable from inside 機械用** (see Accessibility).
+- **vim is a set of replies, not an editor.** There is no cursor movement in the buffer.
+- **The earlier stills in `docs/design-explore/shots/` named `matrix-machine-*` and the switch videos show the
+  byte listing**, which no longer exists. New stills are in `/tmp/mx-term/shots/` (`final-*.png`) and were not
+  added to the repo.
+
+### Official stills (terminal pass)
+
+Playwright, Chrome, 1440×900 and 390×844, against the running dev server at `http://127.0.0.1:4321`.
+Window overflow was 0 on every still. The session video is about 7.6s at the true capture rate (~11.9 fps).
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-term-neofetch-1440.png` | Login + `neofetch` with the real logo |
+| `docs/design-explore/shots/matrix-term-neofetch-390.png` | Same, phone, with tappable keys |
+| `docs/design-explore/shots/matrix-term-help-1440.png` | `?run=help` |
+| `docs/design-explore/shots/matrix-term-help-390.png` | `?run=help`, phone |
+| `docs/design-explore/shots/matrix-term-jokes-1440.png` | `sudo rm -rf /`, `knock knock`, `php artisan inspire`, `make me a sandwich` |
+| `docs/design-explore/shots/matrix-term-git-1440.png` | `git log --oneline -n 8` |
+| `docs/design-explore/shots/matrix-term-vim-1440.png` | `?run=vim` |
+| `docs/design-explore/shots/matrix-term-operator-1440.png` | `?palette=operator` |
+| `docs/design-explore/shots/matrix-term-session-1440.mp4` | Typing `help`, `ls ~/projects`, `knock knock`, `git log` (not committed; on the box) |
+
+Also copied to `/workspace/wadakatu-dev/design-protos/`.
