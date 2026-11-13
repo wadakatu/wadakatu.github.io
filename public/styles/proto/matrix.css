@@ -31,6 +31,38 @@
   --rain: #5f8c6c;
   --rain-head: #0a3a20;
 }
+/* ?palette=operator: the same station in the earlier Operator palette. Night is a warm amber CRT,
+   day its grey-green LCD. Every token is restated so nothing leaks from the phosphor blocks above.
+   --panel and --rain-tail are steps between that palette's ground and rule. --rain is Operator's
+   stream colour stepped towards the ground: there it filled narrow strips, here it fills the viewport. */
+:root[data-palette='operator'] {
+  color-scheme: dark;
+  --bg: #100e0b;
+  --panel: #17140f;
+  --rule: #3d362c;
+  --text: #ece4d4;
+  --muted: #c2b496;
+  --lead: #f0e0b4;
+  --green: #d9b56a;
+  --rain-tail: #2a251d;
+  --rain: #8a7b5e;
+  --rain-head: #f0e0b4;
+  --logo-filter: hue-rotate(-80deg) saturate(1.15);
+}
+:root[data-palette='operator']:is([data-theme='day'], [data-theme='light']) {
+  color-scheme: light;
+  --bg: #cdd6cb;
+  --panel: #dbe2d9;
+  --rule: #8fa093;
+  --text: #111b15;
+  --muted: #2f4236;
+  --lead: #06281a;
+  --green: #0a4f2f;
+  --rain-tail: #b7c3b6;
+  --rain: #6f8073;
+  --rain-head: #06281a;
+  --logo-filter: none;
+}
 
 * { box-sizing: border-box; }
 html { background: var(--bg); }
@@ -84,7 +116,11 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   padding-block: 12px; font-size: 14px;
   background: var(--bg); border-bottom: 1px solid var(--rule);
 }
-.mark { margin-right: auto; text-decoration: none; font: 500 16px/1.5 var(--mono); color: var(--green); }
+.mark { display: inline-flex; align-items: center; gap: 14px; margin-right: auto; text-decoration: none; font: 500 16px/1.5 var(--mono); color: var(--green); }
+/* The mark is the designer's file, whole: square, never cropped, rounded or redrawn. Its black
+   field is part of it. Only the operator night palette tints it, with a filter that moves no pixel. */
+.logo { display: block; flex: none; aspect-ratio: 1; height: auto; object-fit: contain; filter: var(--logo-filter, none); }
+.mark .logo { width: 44px; }
 .top nav { display: flex; gap: 24px; }
 .top nav a { text-decoration: none; color: var(--muted); }
 .top nav a:hover, .top nav a[aria-current] { color: var(--lead); }
@@ -195,6 +231,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .item h3 { font: 500 15px/1.7 var(--mono); color: var(--lead); }
 .item h3:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); }
 .vals:not(.log) { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.logo-rec .logo { width: min(100%, 400px); margin-top: 24px; }
 
 .foot {
   display: flex; flex-wrap: wrap; gap: 8px 28px;
@@ -220,6 +257,10 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .boot .v { color: var(--green); overflow-wrap: anywhere; font-family: var(--dot); }
 .boot .v.done { color: var(--lead); }
 .boot .control { justify-self: start; }
+/* The last record is the mark. A still (?boot=frozen) shows it without the script or the motion library. */
+.boot-lines .boot-logo { align-items: start; margin-top: 1em; }
+.boot-logo .logo { width: clamp(120px, 24vh, 220px); }
+:root[data-boot='frozen'] .boot-logo { visibility: visible; }
 
 /* ---------- curtain: slabs of corpus text that cover the page while the view changes ---------- */
 .curtain { display: none; position: fixed; inset: 0; z-index: 40; pointer-events: none; }

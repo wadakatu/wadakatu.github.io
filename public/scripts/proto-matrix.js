@@ -1,8 +1,8 @@
 /**
  * /proto/matrix/ enhancement. The page is complete without this file: both views are in the
  * markup, the source view has its own URL, and the head script already ends the boot layer on
- * Skip / Escape / click / timeout. This adds the in-place view change, the theme button, the
- * backslash shortcut, and (only when motion is allowed and GSAP loads) the boot, the curtain
+ * Skip / Escape / click / timeout. This adds the in-place view change, the theme and palette
+ * buttons, the backslash shortcut, and (only when motion is allowed and GSAP loads) the boot, the curtain
  * and three small glitches.
  */
 (() => {
@@ -42,18 +42,28 @@
   const stagger = { amount: 0.26, from: 'random' };
   let tl = null;
 
+  // The flags that describe how the page is being read, rebuilt from live state so a spent
+  // ?source=1 or ?boot=1 never rides along. The theme is the reader's stored choice, not an address.
+  function flags() {
+    const q = new URLSearchParams();
+    if (root.dataset.palette === 'operator') q.set('palette', 'operator');
+    if (forcedStill) q.set('motion', '0');
+    const s = q.toString();
+    return s ? `?${s}` : '';
+  }
+  // The static twin is the shareable address of each view, and it also works without JavaScript.
+  const address = (v) => (v === 'source' ? root.dataset.sourceUrl : root.dataset.pageUrl) + flags();
   function sync(v) {
     root.dataset.view = v;
     document.title = `${root.dataset.page === 'home' ? 'Home' : 'Projects'}${v === 'source' ? ', source view' : ''} | wadakatu`;
     viewBtn.setAttribute('aria-pressed', v === 'source');
-    $$('[data-source-href]').forEach((a) => (a.href = v === 'source' ? a.dataset.sourceHref : a.dataset.pageHref));
+    $$('[data-source-href]').forEach((a) => (a.href = (v === 'source' ? a.dataset.sourceHref : a.dataset.pageHref) + flags()));
   }
   function swap(v) {
     // Focus inside the view that is about to be hidden would be lost; hand it to the control instead.
     if (document.activeElement.closest('.view')) viewBtn.focus();
     sync(v);
-    // The static twin is the shareable address of each view, and it also works without JavaScript.
-    history.replaceState(null, '', v === 'source' ? root.dataset.sourceUrl : root.dataset.pageUrl);
+    history.replaceState(null, '', address(v));
     $('#status').textContent = v === 'source' ? 'Source view' : 'Page view';
     scrollTo(0, 0);
   }
@@ -94,6 +104,18 @@
   }
   sync(root.dataset.view);
   viewBtn.addEventListener('click', toggle);
+
+  // ---------- palette: phosphor unless the address says operator. Never stored, so it can be shared. ----------
+  const paletteBtn = $('#palette-toggle');
+  paletteBtn.setAttribute('aria-pressed', root.dataset.palette === 'operator');
+  paletteBtn.addEventListener('click', () => {
+    const on = root.dataset.palette !== 'operator';
+    if (on) root.dataset.palette = 'operator';
+    else delete root.dataset.palette;
+    paletteBtn.setAttribute('aria-pressed', on);
+    history.replaceState(null, '', address(root.dataset.view));
+    sync(root.dataset.view);
+  });
   const shortcuts = $('#shortcuts');
   try { shortcuts.checked = localStorage.getItem('proto-matrix-shortcuts') !== 'off'; } catch {}
   function syncShortcut() {
@@ -120,7 +142,8 @@
   });
 
   // ---------- boot ----------
-  const rows = $$('.boot-lines p').map((p) => ({ p, v: $('.v', p), text: $('.v', p).dataset.text }));
+  const bootLogo = $('.boot-logo');
+  const rows = $$('.boot-lines p:not(.boot-logo)').map((p) => ({ p, v: $('.v', p), text: $('.v', p).dataset.text }));
   let bootTl = null, washing = false;
   if (root.dataset.boot) $('#boot-skip').focus(); // Enter or Space skips, as well as Escape
   if (root.dataset.boot === 'frozen') {
@@ -146,7 +169,10 @@
         .add(() => v.classList.add('done'))
         .to({}, { duration: 0.08 });
     });
-    bootTl.to({}, { duration: 0.4 })
+    // The mark is wiped in whole, top to bottom. The image itself is never scrambled.
+    bootTl.add(() => bootLogo.classList.add('on'))
+      .fromTo($('img', bootLogo), { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 0.5, ease: 'steps(10)' })
+      .to({}, { duration: 0.5 })
       .add(() => curtain.classList.add('on'))
       .fromTo(slabs, { yPercent: -100 }, { yPercent: 0, duration: 0.45, ease: 'power2.in', stagger })
       .add(() => { washing = true; window.mxEndBoot(); })

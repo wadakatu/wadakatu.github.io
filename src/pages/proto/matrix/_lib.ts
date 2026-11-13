@@ -105,3 +105,6 @@ export const etch = (() => {
     `</g></mask><rect width="100%" height="100%" mask="url(#m)"/></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 })();
+
+/** The mark, by Chisato Satoh: the real public file at its real size. Shown whole wherever it appears. */
+export const logo = { src: '/images/logo-400.png', size: 400 };

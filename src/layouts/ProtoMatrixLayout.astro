@@ -5,7 +5,7 @@
  * in the markup, so the source view exists without JavaScript.
  */
 import { person, bio } from '../data/proto-content';
-import { rainColumns, curtainSlabs, glyphs, etch } from '../pages/proto/matrix/_lib';
+import { rainColumns, curtainSlabs, glyphs, etch, logo } from '../pages/proto/matrix/_lib';
 interface Props { page: 'home' | 'projects'; view: 'page' | 'source'; h1: string; boot?: { key: string; text: string }[] }
 const { page, view, h1, boot } = Astro.props;
 
@@ -36,7 +36,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;700&family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles/proto/matrix.css" />
     <style set:html={`:root{--etch:${etch}}`}></style>
-    <!-- Decides theme, view, motion and boot before first paint. The boot layer fails open from here:
+    <!-- Decides theme, palette, view, motion and boot before first paint. The boot layer fails open from here:
          skip, Escape, click and an 8s timeout all work even if the motion script or the CDN never load. -->
     <script is:inline>
       (() => {
@@ -45,6 +45,8 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         d.classList.add('js');
         const theme = q.get('theme') || get('localStorage', 'proto-matrix-theme');
         if (theme === 'day' || theme === 'light') d.dataset.theme = 'day';
+        // Phosphor unless the address says otherwise. The palette is never stored, so a link carries it.
+        if (q.get('palette') === 'operator') d.dataset.palette = 'operator';
         if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
         if (q.get('source') === '1') d.dataset.view = 'source';
 
@@ -54,6 +56,21 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         if (playable && boot === 'frozen') d.dataset.boot = 'frozen';
         else if (playable && d.dataset.motion !== 'off' && (boot === '1' || first)) d.dataset.boot = 'play';
         addEventListener('DOMContentLoaded', () => {
+          // The head applies query flags even when the enhancement fails. Keep its plain-link
+          // fallback in the same view and palette, without needing another set of static routes.
+          if (!d.classList.contains('enhanced')) {
+            const flags = new URLSearchParams();
+            if (d.dataset.palette === 'operator') flags.set('palette', 'operator');
+            if (q.get('motion') === '0') flags.set('motion', '0');
+            const suffix = flags.size ? `?${flags}` : '';
+            const source = d.dataset.view === 'source';
+            document.querySelectorAll('[data-source-href]').forEach((a) => {
+              a.href = (source ? a.dataset.sourceHref : a.dataset.pageHref) + suffix;
+            });
+            const twin = document.querySelector('.nojs');
+            twin.href = (source ? d.dataset.pageUrl : d.dataset.sourceUrl) + suffix;
+            twin.textContent = source ? 'View page' : 'View source';
+          }
           if (d.dataset.boot) document.getElementById('boot-skip')?.focus();
         }, { once: true });
         if (!d.dataset.boot) return;
@@ -80,6 +97,8 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           {boot.map((l) => (
             <p><span class="k">{l.key}</span><span class="v" lang={hasJa(l.text) ? 'ja' : undefined} data-text={l.text}></span></p>
           ))}
+          <!-- The last record resolves to the mark itself: the real file, whole, wiped in and never decoded. -->
+          <p class="boot-logo"><span class="k">logo</span><img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" /></p>
         </div>
         <button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button>
       </div>
@@ -99,7 +118,10 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
 
     <div id="shell">
       <header class="top frame">
-        <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-source-href={url('home', 'source')}>{person.heading}</a>
+        <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-source-href={url('home', 'source')}>
+          <!-- The wordmark names the link, so the mark beside it is decorative here. -->
+          <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" />{person.heading}
+        </a>
         <nav aria-label="Main">
           {nav.map((n) => (
             <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-source-href={url(n.p, 'source')}
@@ -116,6 +138,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           </button>
           <!-- A checkbox, so the rain can be stopped without JavaScript. -->
           <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
+          <button class="control needs-js" id="palette-toggle" type="button" aria-pressed="false">Operator colours</button>
           <button class="control needs-js" id="theme-toggle" type="button" aria-pressed="false">Daylight</button>
         </div>
       </header>

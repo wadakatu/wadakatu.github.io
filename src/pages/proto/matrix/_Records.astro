@@ -4,7 +4,7 @@
  * Keys are the real keys of src/data/proto-content.ts; every count is a .length.
  */
 import { person, bio, projects, recentPosts, activity, skills } from '../../../data/proto-content';
-import { readableCommits, corpusCounts, hasJa, splitJa } from './_lib';
+import { readableCommits, corpusCounts, hasJa, splitJa, logo } from './_lib';
 interface Props { only?: 'projects' }
 const { only } = Astro.props;
 const all = !only;
@@ -22,6 +22,17 @@ const rows = (o: Record<string, unknown>, skip: string[] = []) => Object.entries
         <div><dt>{k}</dt><dd data-d>{k === 'email' ? <a href={`mailto:${v}`}>{v}</a> : isUrl(v) ? <a href={String(v)}>{v}</a> : v}</dd></div>
       ))}
     </dl>
+  </section>
+  <section class="logo-rec" aria-labelledby="s-logo">
+    <h2 id="s-logo">logo</h2>
+    <p class="cap">public{logo.src}. The mark in the header is this file, shown whole. The credit is the one recorded under person.</p>
+    <dl class="rec">
+      <div><dt>src</dt><dd data-d><a href={logo.src}>{logo.src}</a></dd></div>
+      <div><dt>logoCredit</dt><dd data-d>{person.logoCredit}</dd></div>
+      <div><dt>logoCreditUrl</dt><dd data-d><a href={person.logoCreditUrl}>{person.logoCreditUrl}</a></dd></div>
+    </dl>
+    <!-- Outside every [data-d] node: the view change decodes text, never the mark. -->
+    <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="wadakatu logo" loading="lazy" />
   </section>
   <section aria-labelledby="s-bio">
     <h2 id="s-bio">bio</h2>

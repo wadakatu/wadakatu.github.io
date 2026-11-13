@@ -1,6 +1,6 @@
 # /proto/matrix/ build notes
 
-Built with Claude Code on 13 November 2026, on `design/explore`, in this worktree only. Reviewed and tightened with Codex on the same date; see `MATRIX-CRITIQUE.md`. Nothing is committed.
+Built with Claude Code on 13 November 2026, on `design/explore`, in this worktree only. Reviewed and tightened with Codex on the same date; see `MATRIX-CRITIQUE.md`. A palette and logo pass followed, also with Claude Code; see the last section, which is current where it differs from the ones above. Nothing is committed.
 
 Direction: the Operator prototype, plus the See-the-source mechanic switching in place, pushed into a
 night-time operator's station. Evokes the film; copies nothing from it (no logo, title treatment, film font,
@@ -76,9 +76,10 @@ Pointing at or focusing a stream holds that stream still and brightens it.
 ## Boot
 
 First Home visit in a tab session: five labels appear one by one (`name`, `role`, `location`, which are real keys
-of the data file, then `project` and `post`, which are plain labels) and their real values decode out of corpus glyphs, then the curtain falls and lifts on the page. The
+of the data file, then `project` and `post`, which are plain labels) and their real values decode out of corpus glyphs. A sixth
+line, `logo` (also a plain label), then resolves to the logo image itself, wiped in whole; then the curtain falls and lifts on the page. The
 values are `person.heading`, `person.role`, `person.location`, the first project's name and the latest post's title.
-No other text is typeset.
+No other text is typeset. See "Palette and logo pass" for the logo line.
 
 - **Skip**: the visible "Skip intro" button (focused when the boot starts, so Enter or Space work), Escape, or a
   click or tap anywhere on the layer. The head script focuses Skip even if the enhancement script fails. The boot is scrollable on short screens, with narrower key columns on mobile.
@@ -109,6 +110,8 @@ Each route contains both readings; `<html data-view="page|source">` decides whic
 - **Shareable state**: after an in-place change the address is replaced with the static twin
   (`/proto/matrix/source/`, `/proto/matrix/projects/source/`), which also works without JavaScript. `?source=1` on
   either main URL lands directly in source view with no transition. Home and Projects links follow the current view.
+  The address and those links keep `palette=operator` and `motion=0` when they are in effect; `source`, `boot` and
+  `theme` are not written back.
 - **Reduced motion**: instant swap.
 - **No JavaScript or missing enhancement script**: the button is replaced by a plain link to the static twin ("View source" / "View page"). Enhancement controls appear only after their handlers are installed. Storage denial does not stop initialization.
 
@@ -120,10 +123,12 @@ The source view prints `src/data/proto-content.ts` with its real keys, then the 
 | Flag | Effect |
 | --- | --- |
 | `?boot=1` | Play the boot even if this session has seen it. A reduced-motion preference (or `?motion=0`) still wins |
-| `?boot=frozen` | A still of the boot mid-sequence: three values settled, one half decoded, one raw. Needs no motion and no library, never times out, and is the same on every load |
-| `?motion=0` | Treat as reduced motion: no boot, static rain, instant view change, GSAP not requested |
-| `?source=1` | Land in source view |
-| `?theme=day` / `?theme=night` | Force the theme for this load |
+| `?boot=frozen` | A still of the boot: three values settled, one half decoded, one raw, and the logo shown whole (a composite; in playback the logo comes after the last value). Needs no motion and no library, never times out, and is the same on every load |
+| `?motion=0` | Treat as reduced motion: no boot, static rain, instant view change, GSAP not requested. Kept in the address and the links |
+| `?source=1` | Land in source view. Replaced by the static twin's path on the next in-place change |
+| `?theme=day` / `?theme=night` | Force the theme for this load. Not written back to the address |
+| `?palette=operator` | Operator palette. Kept in the address and the links. Never stored |
+| `?palette=matrix` (or none) | Phosphor, the default |
 
 ## Small rewards
 
@@ -218,3 +223,178 @@ Temporary scripts, logs and screenshots are under `/tmp/mx-check/` and are not r
 Chrome DevTools MCP could not connect (missing DevToolsActivePort). Playwright Chrome was used for browser
 verification; the skill’s specific MCP step remains unverified. Screen-reader, Safari/Firefox and low-end-device
 performance testing remain unverified. The missing impeccable launcher/reference files were not installed.
+
+## Palette and logo pass
+
+Built with Claude Code on 13 November 2026, in this worktree only, after the build and the Codex review
+above. Reviewed by Codex; see `PALETTE-LOGO-CRITIQUE.md` and the follow-up below. Nothing is committed. Where this section and an older one
+disagree (the flags, the address after a view change, the boot's length), this section is current.
+
+### Files touched
+
+| File | Change |
+| --- | --- |
+| `src/layouts/ProtoMatrixLayout.astro` | Head script reads `?palette`; the mark in the header link; the "Operator colours" button; the `logo` line in the boot |
+| `public/styles/proto/matrix.css` | Operator night and day token blocks; `.logo` and its three sizes; the frozen-boot rule |
+| `public/scripts/proto-matrix.js` | `flags()`; palette button; the address and the links keep the flags; the boot's logo wipe |
+| `src/pages/proto/matrix/_Records.astro` | The `logo` record in the source view |
+| `src/pages/proto/matrix/_lib.ts` | `logo = { src, size }`, the one place the file is named |
+| `docs/design-explore/MATRIX-NOTES.md` | This section |
+
+Not touched: production pages, `tombo.css`, `site.css`, `BaseLayout.astro`, `FooterLogo.astro`, the other
+`/proto/*` concepts, `src/data/*`, `/proto/index.astro`, `package.json`. No route was added.
+`package-lock.json` was already modified before this pass.
+
+### `?palette=operator`
+
+Phosphor green is still the default world. `?palette=operator` shows the same prototype in the palette of
+`/proto/operator/`; `?palette=matrix`, any other value, or no flag is phosphor.
+
+- The inline head script sets `data-palette="operator"` on `<html>` before first paint, next to theme, view and boot.
+- **Control**: "Operator colours" in the header, a button with `aria-pressed`, after Hold rain. Pressing it
+  changes the palette in place and rewrites the address (`history.replaceState`), so the address bar is always
+  the shareable state.
+- **Never stored.** No `localStorage` or `sessionStorage` key. A visit without the flag is phosphor.
+- **Carried**: Home, Projects, "All projects" and the address after a view change all keep the flag.
+- **Tokens** (`operator.css` names on the left):
+
+  | Matrix token | Operator night | Operator day | From |
+  | --- | --- | --- | --- |
+  | `--bg` | `#100e0b` | `#cdd6cb` | bg |
+  | `--panel` | `#17140f` | `#dbe2d9` | derived: a step off bg |
+  | `--rule` | `#3d362c` | `#8fa093` | rule |
+  | `--text` | `#ece4d4` | `#111b15` | text |
+  | `--muted` | `#c2b496` | `#2f4236` | muted |
+  | `--lead`, `--rain-head` | `#f0e0b4` | `#06281a` | lead |
+  | `--green` | `#d9b56a` | `#0a4f2f` | accent |
+  | `--rain` | `#8a7b5e` | `#6f8073` | derived: stream (`#c3b089` / `#3c5244`) stepped towards bg |
+  | `--rain-tail` | `#2a251d` | `#b7c3b6` | derived: between bg and rule |
+
+  `--rain` is not the literal stream colour. I tried the literal first: in Operator it fills narrow strips,
+  here it fills the viewport, and at full strength the rain read at text brightness around the name and
+  the nav. The stepped value puts it at about the weight the phosphor rain has.
+
+**The address after a view change** used to lose its whole query string. `swap()` now rebuilds it from live
+state: `palette=operator` if the palette is on, and `motion=0` if the page was loaded with it. `source=1` and
+`boot` are deliberately not kept (they are spent, and `source=1` would contradict `/proto/matrix/` on reload).
+`theme` is not kept either: the theme is the reader's stored choice, and the Daylight button does not write to
+the address. The links carry the same two flags.
+
+### The logo
+
+One file everywhere: `/images/logo-400.png` (`public/images/logo-400.png`, 400×400, by Chisato Satoh), in a
+plain `<img width="400" height="400">`. It is never redrawn, cropped, rounded, rotated or masked: every instance
+is `aspect-ratio: 1`, `object-fit: contain`, no `border-radius`, and its black field is treated as part of the mark.
+
+**Colour.** Phosphor night and both day themes show the file exactly as designed (`filter: none`). Operator
+night applies `filter: hue-rotate(-80deg) saturate(1.15)`, which moves the green to amber and moves no pixel.
+Chosen by eye over two rounds of candidates rendered beside an accent swatch, then eased from
+`saturate(1.3)` to `1.15`: `hue-rotate(-98deg)` came out salmon, and the `sepia()` chains flattened the white
+numerals into the burst. Black stays black and the numerals stay white.
+Operator day is left untinted: on the grey-green LCD the green-on-black badge already belongs.
+
+Three treatments, meant as one system:
+
+1. **Header.** The mark sits left of `wadakatu_` inside the home link, 44px square, 14px from the wordmark and
+   at least 12px from everything else. `alt=""`, because the wordmark is the link's name. Persistent identity.
+2. **Boot.** After the five values decode, a sixth line, `logo`, resolves to the image itself, wiped in from
+   the top in ten steps over 0.5s (a `clip-path` wipe; the image is never scrambled or glyph-decoded), held
+   0.5s, then the curtain falls. `logo` is a plain label like `project` and `post`, not a key of the data file.
+   `?boot=frozen` shows the logo whole, by CSS alone, without the script or the motion library. That frame is a
+   composite: in playback the logo only appears after the last two values have settled.
+   Reduced motion or `?motion=0`: no boot, and the mark is simply in the header.
+3. **Source view.** A `logo` record after `person`: `src` (`/images/logo-400.png`, a link to the file), then
+   `logoCredit` and `logoCreditUrl` (the same values printed under `person`), then the image at
+   `min(100%, 400px)`, `alt="wadakatu logo"`, on the solid panel. It sits outside every `[data-d]` node, so the
+   view change's text decode cannot touch it. Not shown on `/projects/source/`, which prints projects only.
+
+The footer credit link to Chisato Satoh is unchanged.
+
+**Recommendation.** Keep all three, as one system with one job each: the header carries the mark, the boot
+introduces it once per session as the last fact about him, the source view shows the file it came from. If one
+has to go, drop the boot line first: it is seen once and the header already shows the mark the moment the
+curtain lifts. Keep phosphor as the default. The operator palette is worth keeping at night, where it is a
+different room; in daylight it is close to a no-op (see below).
+
+The "Query flags" table above lists every flag, including these.
+
+### Checks
+
+`npm run build` passes (42 pages). Two scripts ran against `dist/` in Chrome through Playwright; both are
+outside the repo because the brief limits which files may be added. Stills are in `/tmp/mx-palette/shots/`.
+Neither the scripts nor the stills are preserved with the branch.
+
+`/tmp/mx-palette/check.mjs`, 69 checks, all passing on the final build:
+
+- Load: no flag, `?palette=matrix` and `?palette=nonsense` paint `rgb(2, 8, 5)`; `?palette=operator` paints
+  `rgb(16, 14, 11)`, and with `&theme=day` `rgb(205, 214, 203)`. The button's pressed state matches.
+- With motion and the curtain, on Projects: `…/projects/source/?palette=operator`, then back to
+  `…/projects/?palette=operator`; the three in-page links carried the flag in both views; following Home
+  landed on `/proto/matrix/?palette=operator`, still operator.
+- `?source=1&palette=operator&motion=0&theme=day`: toggling gave `/proto/matrix/?palette=operator&motion=0`,
+  then `/proto/matrix/source/?palette=operator&motion=0`. In phosphor no palette flag appears by itself.
+- `?source=1&motion=0`, then the palette button: `/proto/matrix/source/?palette=operator&motion=0`, and a reload
+  came back in source view and operator. This case failed on an earlier build of this pass (the button wrote
+  the page path while the source view was showing) and is why the button and the view change now share one
+  `address()` helper.
+- The button, by keyboard (Enter, then Space): address, `aria-pressed` and links flipped both ways; focus stayed
+  on the button; storage stayed empty; a later visit without the flag was phosphor.
+- JavaScript disabled with `?palette=operator`: phosphor, no palette button, logo unfiltered.
+- Enhancement script blocked with `?palette=operator&boot=frozen`: the palette painted, the logo was visible in
+  the boot, Escape ended it.
+- The mark, 4 palette/theme combinations × 1440 and 390: `naturalWidth` 400×400, rendered square (44×44 in the
+  header; 400×400 or 329.5×329.5 in the source view), `object-fit: contain`, `border-radius: 0px`, no clip, no
+  transform; the filter is `none` except in operator night.
+- Header clearspace at 1440, 390 and 320 with all four controls showing: at least 12px on every side. Only the
+  header was measured; the boot and source placements were judged from stills.
+- Boot with motion: the logo line was hidden until its turn, the wipe was seen from `inset(0 0 100%)` to
+  `inset(0 0 0%)`, and the boot ended by itself after 6184ms. The original suite measured 6102ms on the same
+  build; earlier builds of this pass measured between 5959ms and 6242ms. The failsafe is 8000ms.
+- `?boot=frozen` at 1440×900, 390×844 and 390×600, in phosphor, operator and with `?motion=0`: logo visible, no
+  GSAP request, Skip intro focused and inside the viewport, no horizontal overflow.
+- Reduced motion with `?boot=1`: no boot, header mark present, nothing animating.
+- After an animated view change all three `img` elements were intact.
+- Operator palette, motion on (so Hold rain is in the header), 4 routes × 1440, 1200, 390, 320 × night and day
+  (32 runs): overflow 0, one visible `h1`. Lowest text contrast from rendered colours: **8.98** night, **6.48**
+  day. Control border on the ground: 9.42 night, 6.48 day. Focus ring: 9.88 on ground and 9.42 on panel at
+  night, 6.48 and 7.32 in day. As before these are solid-colour measurements; the masked name is not a
+  pixel-level guarantee.
+
+`/tmp/mx-check/check.mjs` (the original suite, unchanged), 40 checks, all still passing on this build:
+phosphor contrast minima still 8.68 night / 5.61 day, no-JS, blocked CDN, boot skips, rapid toggles, rewards.
+
+### Still weak
+
+- **The tint has not been seen by the designer.** Operator night recolours a friend's mark. The geometry is
+  untouched and the default shows it as designed, but Chisato Satoh should see the amber version before it
+  goes anywhere public.
+- **Operator day barely differs from phosphor day.** The two grounds are `#cdd6cb` and `#ccd7c9`. In daylight
+  the palette button changes the accent by a shade and little else.
+- **The file is 240,877 bytes**, loaded on every page for a 44px header image. Right for a prototype that must
+  use the mark as designed; a shipped version would want a smaller derivative for the header.
+- **At 44px the mark is a burst.** The numerals and the rain texture inside it are not legible at header size;
+  they are in the boot and the source view.
+- **On the day themes the mark is a black square on a light header.** It reads as a badge. That is the mark as
+  designed, and it is the hardest edge on the page.
+- **No operator palette without JavaScript.** No static `/operator/` routes were added; the flag works the way
+  `?theme=day` does. If the enhancement script fails to load, the palette still paints from the head script but
+  there is no button. The Codex follow-up below preserves the flags in fallback links.
+- **`?theme=` falls out of the address** on an in-place view change or a press of the palette button (the page
+  keeps the theme until reload). Before this pass the view change dropped the whole query.
+- **The boot is about half a second longer**, roughly 1.8s inside the failsafe. On a slow CDN the failsafe can
+  end the boot before the logo line.
+- Chrome only, as before. `filter` on the image in Safari and Firefox, and a screen reader, are unverified.
+- The `impeccable` launcher and its reference files are still absent from `.design-skills/`; only its
+  `SKILL.md` and `frontend-design/SKILL.md` were followed.
+
+### Codex palette/logo follow-up — 13 November 2026
+
+The head script now synchronizes plain fallback links at DOM readiness if the enhancement did not initialize.
+Home, Projects, All projects and the static view-twin link keep `palette=operator` and `motion=0`.
+They also follow the actual `data-view`, including a view selected by `?source=1`; the twin reads "View page"
+when source is already showing. Previously the head selected the palette/view but only the external script
+updated links, so blocking that file lost flags and could leave the twin pointing at the current view.
+The fallback does not rewrite the current address, persist the palette, or carry spent boot/source flags.
+Fully disabled JavaScript still uses the original static phosphor pages. No routes or visual tokens changed.
+
+Review findings and verification are recorded in `PALETTE-LOGO-CRITIQUE.md`.
