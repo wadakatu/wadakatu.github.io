@@ -49,6 +49,10 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         if (theme === 'day' || theme === 'light') d.dataset.theme = 'day';
         // Phosphor unless the address says otherwise. The palette is never stored, so a link carries it.
         if (q.get('palette') === 'operator') d.dataset.palette = 'operator';
+        // How the 人間用 / 機械用 switch is drawn. No flag is the default drawing; like the palette, a link carries it.
+        const want = q.get('switch') === 'current' ? 'capsule' : q.get('switch');
+        const sw = ['brace', 'bits', 'capsule'].includes(want) && want;
+        if (sw) d.dataset.switch = sw;
         if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
         // ?source=1 is the earlier name of the same switch.
         if (q.get('mode') === 'machine' || q.get('source') === '1') d.dataset.view = 'machine';
@@ -63,10 +67,11 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         else if (playable && d.dataset.motion !== 'off' && (boot === '1' || first)) d.dataset.boot = 'play';
         addEventListener('DOMContentLoaded', () => {
           // The head applies query flags even when the enhancement fails. Keep its plain-link
-          // fallback in the same view and palette, without needing another set of static routes.
+          // fallback in the same view, palette and switch, without needing another set of static routes.
           if (!d.classList.contains('enhanced')) {
             const flags = new URLSearchParams();
             if (d.dataset.palette === 'operator') flags.set('palette', 'operator');
+            if (sw) flags.set('switch', sw);
             if (q.get('motion') === '0') flags.set('motion', '0');
             const suffix = flags.size ? `?${flags}` : '';
             const view = d.dataset.view;
@@ -109,7 +114,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           <!-- The last record resolves to the mark itself: the real file, whole, wiped in and never decoded. -->
           <p class="boot-logo"><span class="k">logo</span><img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" /></p>
         </div>
-        <!-- The choice is already here: either half ends the intro, one on each side. -->
+        <!-- The choice is already here: either side of the switch ends the intro. -->
         <p class="boot-exit"><button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button><Pill page={page} /></p>
       </div>
     )}

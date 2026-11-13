@@ -1022,3 +1022,165 @@ Window overflow was 0 on every still. The session video is about 7.6s at the tru
 | `docs/design-explore/shots/matrix-term-session-1440.mp4` | Typing `help`, `ls ~/projects`, `knock knock`, `git log` (not committed; on the box) |
 
 Also copied to `/workspace/wadakatu-dev/design-protos/`.
+
+## The header switch (Fable switch pass)
+
+Built with Fable (Claude Code `--model fable`) on 13 November 2026, in this worktree only, on `design/explore`
+(do not merge, nothing committed). This section is current where it differs from everything above.
+
+Only the control that chooses 人間用 / 機械用 changed. The terminal, its commands, its layout and the human page
+are as they were. The switch is still two real links to the two static routes; what changed is how the pair is
+drawn. There are three new drawings and the old capsule, chosen by one flag.
+
+### Variants and flags
+
+| Flag | Name | What it is |
+| --- | --- | --- |
+| none (default) | **rain** | Each name is a strand of the rain: three glyphs set top to bottom in the rain's own face (DotGothic16, upright vertical text). The strand you are reading has settled and is filled. Down the other one a drop still falls, one glyph at a time (a lit head with a tail one glyph behind it), about once every three seconds |
+| `?switch=brace` | **brace** | One shell word, `{人間,機械}用`, which is the brace expansion that produces both names. 用 is set once, after the brace. The side you are on is a solid block, the terminal's caret; the side you point at gets the hollow caret |
+| `?switch=bits` | **bits** | A two-line listing with permission bits: `r--  人間用` and `r-x  機械用`. One reading can only be read; the other can be run. `▸` marks the row you are on. Below 720px the two rows sit side by side |
+| `?switch=capsule` (alias `?switch=current`) | **capsule** | The previous capsule with the blue and red dots, unchanged |
+
+Addresses to compare (each also works on `/machine/`, `/projects/` and `/projects/machine/`):
+
+- `/proto/matrix/` and `/proto/matrix/machine/`
+- `/proto/matrix/?switch=brace`
+- `/proto/matrix/?switch=bits`
+- `/proto/matrix/?switch=capsule`
+
+**The default is rain.** It is the only one of the three that is made of the film's own picture rather than of
+terminal wit: the choice is two strands of the rain that happen to spell the two readings, and vertical Japanese
+is native, not a trick. It is also the smallest (71×50px against the capsule's 175×34px), and in 機械用, where
+the page's rain is switched off, it is the one piece of rain left on screen, which is the way back. Brace is the
+quietest and the one a shell user will smile at; bits carries the 実行権限 joke but is the widest on a phone.
+
+Wording was reconsidered and kept. All three still say 人間用 and 機械用: they are his words, the mode line in
+the shell uses them, and an English pair in the header would sit in the same window as the Japanese pair in the
+mode line. The tokens that were added (`{ , }`, `r--`, `r-x`, `▸`) are not translations of anything. None of
+the new drawings uses the pill colours or any film wording; the pill homage now lives only in the capsule.
+
+### What stayed a capsule
+
+- **The large "Two readings" capsule at the foot of Home is still the old capsule**, in every variant. It is
+  where the choice is offered as a choice, with a note under each side, and the capsule suits that.
+- **The switch on the boot layer follows the flag**, like the header. Neither side is chosen there, so in rain
+  both strands drip (half a cycle apart), and in brace and bits neither side is filled.
+- With `?switch=capsule` the header and boot are the old capsule. Its rules were moved under one selector and
+  no declaration changed: the header stills at 1440 (人間用) and 390 (機械用) are pixel-identical to the ones
+  taken before this pass.
+
+### How it is built
+
+- One markup for all four. `_Pill.astro` renders the same two `<a class="half" data-mode>` links as before; the
+  header and boot pair has the class `switch`, the foot pair `pill--big`. The label is now
+  `<span class="lab" lang="ja"><span data-text="人間">人間</span><span class="yo" data-text="用">用</span></span>`,
+  so brace can set 用 once (the per-link 用 gets `font-size: 0` there and stays in the link's name).
+- The head script reads `?switch=` against a whitelist and sets `<html data-switch>` for `brace`, `bits` and
+  `capsule`. No attribute is rain. Everything else is CSS in `matrix.css` under "the switch".
+- `switch` is carried exactly as `palette` is: by `flags()` in `proto-matrix.js` (every header link, the address
+  after an in-place change) and by the head script's fallback when the enhancement never arrives. Like the
+  palette it is never stored.
+- The selected side is the same idiom in every drawing and every palette: `--green` under `--bg`, plus
+  `aria-current="true"` on the link, as before. `exit`, `\`, the boot switch and the mode line's link were not
+  touched; they still act on the same two links.
+- The header keeps its height in every variant: 69px at 1440 in both readings, 80.6px at 390 in 機械用,
+  192.4px at 390 in 人間用, the same as before this pass. Rain and bits stand 6px taller than the row and take
+  it back with a negative margin, so the shell loses no height. Window overflow was false on every still.
+- `.controls` gained `align-items: center` so the other three controls do not stretch to the taller switch.
+- Tap targets at 390: rain 31×39 and 32×39, brace 38×32 each, bits 102×32 each.
+
+### Motion, reduced motion, no JavaScript
+
+- **CSS**: the drop falling through the unselected rain strand (`drip`), and a short stepped wipe when a side
+  becomes the current one (top to bottom for rain, left to right for brace and bits). Pointing at the other
+  strand stops its drop and brings it up to reading brightness, as the streams on the page do.
+- **Script** (only with motion allowed and GSAP loaded, and never for the capsule): on a change, the name just
+  taken settles out of raw corpus glyphs over 0.45s, using the page's existing `decode()`. The tweens are in
+  `effects`, so leaving the page or turning motion off finishes them.
+- **`prefers-reduced-motion` and `?motion=0`**: no animation on the switch at all (checked for rain, brace and
+  bits: zero running animations before and after a change, in both). The resting state is the whole label in
+  `--muted`, and the change is immediate. `?boot=frozen` also parks the drop, so that layer is still a still.
+- **Enhancement missing** (`proto-matrix.js` blocked): the head script still applies the flag and rewrites the
+  links, so the two links navigate between the static routes carrying `switch`, `palette` and `motion=0`.
+- **No JavaScript at all**: two plain links with their static `href`s and `aria-current` from the markup. The
+  flag cannot be read, so the drawing is always the default (rain).
+- **Forced colours**: the strand's text colour is restored and the current side uses `Highlight`.
+
+### Accessibility
+
+- Two links in a `role="group"` labelled "Reading", in tab order, each named by its whole word (`人間用`,
+  `機械用`) in all three drawings (checked with an accessibility snapshot). The braces, comma, bits and `▸` are
+  generated content with empty alternative text.
+- `aria-current="true"` marks the side you are on; `aria-keyshortcuts` is unchanged.
+- Focus is the page's 2px `--green` outline with a 2px `--bg` gap inside it, so it shows on the filled side too
+  and is drawn above the neighbouring link.
+
+### Files
+
+| File | Change |
+| --- | --- |
+| `src/pages/proto/matrix/_Pill.astro` | Class `switch` on the header/boot pair; label split into stem and 用 with `data-text` |
+| `src/layouts/ProtoMatrixLayout.astro` | Head script: read `?switch=`, set `data-switch`, carry it in the fallback links. One comment |
+| `public/styles/proto/matrix.css` | "the switch" block (rain, brace, bits, forced colours); the capsule rules scoped to the foot capsule and `?switch=capsule`; `.controls` alignment; `?motion=0` line |
+| `public/scripts/proto-matrix.js` | `flags()` carries `switch`; the settle on change; two comments |
+| `docs/design-explore/shots/matrix-switch-variants-1440.png` | Header at 1440, top to bottom: rain, brace, bits, capsule (人間用), rain (機械用) |
+| `docs/design-explore/shots/matrix-switch-variants-390.png` | Header at 390: rain, brace, bits, capsule in 機械用, then rain, brace, bits in 人間用 |
+| `docs/design-explore/shots/matrix-switch-rain-states.png` | Rain at 4x: at rest, four frames of the drop, hover, focus, 機械用, day, operator, operator day, `?motion=0` |
+
+### Checks
+
+`npm run build` completes (44 pages). One Playwright script (Chrome, against the dev server on
+`127.0.0.1:4321`, kept in `/tmp/mx-switch/behave.mjs`, not in the repo), all passing:
+
+- For rain, brace, bits and capsule, starting at `/proto/matrix/?palette=operator[&switch=x]`: every header
+  link carries the flags; a click goes to `/proto/matrix/machine/?palette=operator[&switch=x]` in place and
+  moves `aria-current`; `\` goes back; `exit` in the shell goes back; the names read `人間用` / `機械用` once
+  the change has settled; no page errors.
+- Five `\` presses 120ms apart end with whole names and `aria-current` on the side shown.
+- With `proto-matrix.js` blocked, and with JavaScript off: as described above.
+- At 390: both links are at least 24×24px and tabbable in all three drawings.
+- The boot layer, played with `?boot=1` (rain, brace, bits): neither side is `aria-current` while it is up; a
+  click on 機械用 ends it in the shell at `/machine/` with the flag carried, a click on 人間用 ends it on the
+  page, and the header then marks the side shown.
+
+Stills were looked at at 1440 and 390 and on `?boot=frozen`: rain in night, day, operator and operator day;
+brace and bits in night, day and operator (not operator day). Hover and focus were looked at at 1440 only.
+
+### Still weak
+
+- **`boot` typed in the shell drops the flag.** `_term.ts` builds that address with `palette` only, and that
+  file was off limits in this pass. Everything else carries it.
+- **The drop is faint in daylight.** There the head is a darker green on an already dark `--muted`, so the
+  motion reads as a slight pulse rather than a light. The filled side does not depend on it.
+- **Rain on a phone is set at 13px** to keep the shell's header at its old height. DotGothic16 is drawn for
+  16px; it is sharp on a phone's screen but would be soft at 13px on a 1x display narrower than 720px.
+- **Rain is a small target next to the capsule**: about a third of the width. It is above the 24px minimum, not
+  generous.
+- **Bits may not read to someone who has never run `ls -l`.** The names still do; the joke is lost. Its bits
+  and cursor are not exposed to assistive technology.
+- **During the 0.45s settle the link's text is raw glyphs**, as the page's headings are when they decode.
+- **The header and the foot of Home now draw the same choice two ways** (switch above, capsule below), by
+  decision; see "What stayed a capsule".
+- **Checked in Chrome only.** The drawings rely on CSS nesting, `background-clip: text` and alternative text on
+  generated content (`content: '…' / ''`), which the file already used; Firefox and Safari were not opened (no WebKit build is installed for Playwright
+  here). The one to look at first on an iPhone is the default: its drop is an animated `background-clip: text`.
+- **No video.** The drop and the settle were judged from paused frames, not a recording.
+
+### Official stills (switch pass)
+
+Playwright, Chrome, against the running dev server at `http://127.0.0.1:4321`. Human pages use the default (rain) switch. Close-ups are padded crops at 2×.
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-human-now-home-1440.png` | 人間用 Home, night phosphor, 1440 |
+| `docs/design-explore/shots/matrix-human-now-home-390.png` | 人間用 Home, 390 |
+| `docs/design-explore/shots/matrix-human-now-projects-1440.png` | 人間用 Projects, 1440 |
+| `docs/design-explore/shots/matrix-human-now-projects-390.png` | 人間用 Projects, 390 |
+| `docs/design-explore/shots/matrix-human-now-home-operator-1440.png` | 人間用 Home, `?palette=operator` |
+| `docs/design-explore/shots/matrix-switch-variants-1440.png` | All four header variants in one sheet |
+| `docs/design-explore/shots/matrix-switch-rain-human-close-1440.png` | rain, 人間用 close-up |
+| `docs/design-explore/shots/matrix-switch-brace-human-close-1440.png` | brace, 人間用 close-up |
+| `docs/design-explore/shots/matrix-switch-bits-human-close-1440.png` | bits, 人間用 close-up |
+| `docs/design-explore/shots/matrix-switch-capsule-human-close-1440.png` | capsule (current), 人間用 close-up |
+
+Matching `*-machine-close-1440.png` and 390 crops live in the same folder. Also copied to `/workspace/wadakatu-dev/design-protos/`.

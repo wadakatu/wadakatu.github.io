@@ -52,6 +52,7 @@
   function flags() {
     const q = new URLSearchParams();
     if (root.dataset.palette === 'operator') q.set('palette', 'operator');
+    if (root.dataset.switch) q.set('switch', root.dataset.switch);
     if (forcedStill) q.set('motion', '0');
     const s = q.toString();
     return s ? `?${s}` : '';
@@ -70,9 +71,15 @@
     });
   }
   function swap(v) {
-    // Focus inside the reading that is about to be hidden would be lost; hand it to the capsule in the header.
+    // Focus inside the reading that is about to be hidden would be lost; hand it to the switch in the header.
     if (document.activeElement.closest('.view')) $(`.top a[data-mode="${v}"]`).focus();
     sync(v);
+    // The side just taken settles out of raw glyphs, as the page's own headings do. The old capsule stays as it was.
+    if (motion && window.gsap && root.dataset.switch !== 'capsule') $$(`.top a[data-mode="${v}"] [data-text]`).forEach((el) => {
+      const t = decode(el, 0.45, true);
+      effects.add(t);
+      t.then(() => effects.delete(t));
+    });
     history.replaceState(null, '', address(v));
     $('#status').textContent = v === 'machine' ? 'Machine reading' : 'Human reading';
     scrollTo(0, 0);
@@ -151,7 +158,7 @@
     }
   }
   sync(root.dataset.view);
-  // The capsule's halves are links to the two static routes; here the same choice happens in place.
+  // The switch is two links to the two static routes; here the same choice happens in place.
   addEventListener('click', (e) => {
     const a = e.target.closest?.('a[data-mode]');
     if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;

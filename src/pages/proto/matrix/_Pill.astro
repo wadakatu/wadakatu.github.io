@@ -1,20 +1,23 @@
 ---
 /**
- * The choice between the two readings: one capsule, two halves. Each half is a real link to a
- * static route, so the choice works without JavaScript; the script only makes it happen in place.
+ * The choice between the two readings: two real links to two static routes, so it works without
+ * JavaScript; the script only makes it happen in place. In the header and on the boot layer the
+ * pair is the switch (`.switch`), drawn one of four ways by <html data-switch> (see "the switch" in
+ * matrix.css). With `notes` it is the large capsule at the foot of Home, which is always a capsule.
+ * 用 is a span of its own because one drawing sets it once, after both names.
  */
 interface Props { page: 'home' | 'projects'; view?: 'page' | 'machine'; notes?: [string, string] }
 const { page, view, notes } = Astro.props;
 const root = '/proto/matrix/' + (page === 'projects' ? 'projects/' : '');
 const halves = [
-  { mode: 'page', label: '人間用', href: root },
-  { mode: 'machine', label: '機械用', href: root + 'machine/' },
+  { mode: 'page', stem: '人間', href: root },
+  { mode: 'machine', stem: '機械', href: root + 'machine/' },
 ];
 ---
-<span class:list={['pill', { 'pill--big': notes }]} role="group" aria-label="Reading">
+<span class:list={['pill', notes ? 'pill--big' : 'switch']} role="group" aria-label="Reading">
   {halves.map((h, i) => (
     <a class="half" data-mode={h.mode} href={h.href} aria-current={h.mode === view ? 'true' : undefined}>
-      <span lang="ja">{h.label}</span>{notes && <small>{notes[i]}</small>}
+      <span class="lab" lang="ja"><span data-text={h.stem}>{h.stem}</span><span class="yo" data-text="用">用</span></span>{notes && <small>{notes[i]}</small>}
     </a>
   ))}
 </span>

@@ -221,21 +221,95 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .log { margin-top: 16px; font-size: 13px; max-width: 96ch; }
 .log li { padding: 4px 0; border-bottom: 1px dotted var(--rule); overflow-wrap: anywhere; }
 
-/* ---------- the choice: one capsule, two halves, each a link to its own reading ---------- */
-.pill { display: inline-flex; border: 1px solid var(--muted); border-radius: 999px; background: var(--bg); }
-.half {
-  display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px;
-  color: var(--text); text-decoration: none; line-height: 1.7; white-space: nowrap;
-  border-radius: 999px 0 0 999px;
+/* ---------- the switch: two links, 人間用 and 機械用, drawn one of four ways ----------
+   <html data-switch> picks the drawing (?switch=brace|bits|capsule; none is "rain"). The markup is
+   the same for all four, and the side you are on is always the filled one: --green under --bg. */
+.controls { align-items: center; }
+:where(:root:not([data-switch='capsule'])) .switch {
+  display: inline-flex; background: var(--bg); border: 1px solid var(--muted); border-radius: 2px;
+  & .half { position: relative; color: var(--muted); text-decoration: none; white-space: nowrap; }
+  & .half:hover { color: var(--lead); background: var(--panel); }
+  & .half[aria-current], & .half[aria-current]:hover { background: var(--green); color: var(--bg); }
+  & .half:focus-visible { z-index: 1; outline-offset: 2px; box-shadow: 0 0 0 2px var(--bg); }
 }
-.half + .half { border-left: 1px solid var(--muted); border-radius: 0 999px 999px 0; }
-.half::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pill-human); }
-.half[data-mode='machine']::before { background: var(--pill-machine); }
-.half:hover { color: var(--lead); background: var(--panel); }
-.half:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-human); }
-.half[data-mode='machine']:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-machine); }
-.half[aria-current], .half[aria-current]:hover { background: var(--green); color: var(--bg); }
-.half[aria-current]::before { background: var(--bg); box-shadow: none; }
+@keyframes wipe-down { from { clip-path: inset(0 0 100% 0); } }
+@keyframes wipe-right { from { clip-path: inset(0 100% 0 0); } }
+
+/* rain (the default): each name is a strand of the rain, set top to bottom in the rain's own face.
+   The strand you are reading has settled. Down the other one a drop still falls, a glyph at a time. */
+:root:not([data-switch]) .switch {
+  margin-block: -3px; /* three 16px glyphs stand 6px taller than the row; the header keeps its height */
+  & .half { padding: 0 9px; font: 16px/1 var(--dot); writing-mode: vertical-rl; text-orientation: upright; }
+  & .half + .half { border-left: 1px solid var(--muted); }
+  & .lab, & .lab span { font-family: var(--dot); }
+  & .half[aria-current] { animation: wipe-down 240ms steps(3); }
+  /* Eight cells: three at rest, the tail, the head, three at rest. The strand is a window three cells tall. */
+  & .half:not([aria-current], :hover) .lab {
+    color: transparent;
+    background: linear-gradient(to bottom, var(--muted) 0 3em, var(--green) 3em 4em, var(--rain-head) 4em 5em, var(--muted) 5em) 0 0 / 100% 8em no-repeat;
+    -webkit-background-clip: text; background-clip: text;
+    animation: drip 3.2s infinite;
+  }
+  & .half[data-mode='machine'] .lab { animation-delay: -1.6s; }
+}
+@keyframes drip {
+  0% { background-position-y: -5em; animation-timing-function: steps(5); }
+  24%, 100% { background-position-y: 0; }
+}
+
+/* brace: one shell word that expands to both names. The block is the terminal's caret. */
+:root[data-switch='brace'] .switch {
+  padding-inline: 8px; font-size: 15px; line-height: 25.8px; color: var(--green);
+  &::before { content: '{' / ''; align-self: center; }
+  &::after { content: '}\7528' / ''; align-self: center; }
+  & .half { padding: 3px 4px; }
+  & .half + .half { margin-left: 1ch; }
+  & .half + .half::before { content: ',' / ''; position: absolute; right: 100%; width: 1ch; text-align: center; color: var(--green); font-family: var(--mono); }
+  & .yo { font-size: 0; line-height: 0; } /* set once after the brace; still inline, so each link is still named by its whole word */
+  & .half:hover { background: none; box-shadow: inset 0 0 0 1px var(--green); }
+  & .half[aria-current] { box-shadow: none; animation: wipe-right 160ms steps(2); }
+}
+
+/* bits: a two-line listing. One reading can only be read; the other can be run. */
+:root[data-switch='bits'] .switch {
+  flex-direction: column; margin-block: -3px; font-size: 13px;
+  & .half { display: flex; align-items: center; height: 24px; padding-inline: 8px 12px; }
+  & .half::before { content: '  r--' / ''; margin-right: 2ch; white-space: pre; font-family: var(--mono); }
+  & .half[data-mode='machine']::before { content: '  r-x' / ''; }
+  & .half[aria-current]::before { content: '▸ r--' / ''; }
+  & .half[data-mode='machine'][aria-current]::before { content: '▸ r-x' / ''; }
+  & .half[aria-current] { animation: wipe-right 200ms steps(4); }
+}
+@media (max-width: 719px) {
+  :root:not([data-switch]) .switch { margin-block: -3.6px; }
+  :root:not([data-switch]) .switch .half { font-size: 13px; }
+  :root[data-switch='bits'] .switch { flex-direction: row; margin-block: 0; }
+  :root[data-switch='bits'] .switch .half { height: 31.8px; padding-inline: 6px 10px; }
+  :root[data-switch='bits'] .switch .half::before { margin-right: 1ch; }
+}
+/* Forced colours drop backgrounds: give the falling strand its text colour back and keep the filled side filled. */
+@media (forced-colors: active) {
+  .switch .half .lab { color: inherit !important; background: none !important; }
+  .switch .half[aria-current] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+}
+
+/* ---------- the capsule: one capsule, two halves. The foot of Home, and ?switch=capsule ---------- */
+:where(.pill--big, :root[data-switch='capsule'] .pill) {
+  display: inline-flex; border: 1px solid var(--muted); border-radius: 999px; background: var(--bg);
+  & .half {
+    display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px;
+    color: var(--text); text-decoration: none; line-height: 1.7; white-space: nowrap;
+    border-radius: 999px 0 0 999px;
+  }
+  & .half + .half { border-left: 1px solid var(--muted); border-radius: 0 999px 999px 0; }
+  & .half::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pill-human); }
+  & .half[data-mode='machine']::before { background: var(--pill-machine); }
+  & .half:hover { color: var(--lead); background: var(--panel); }
+  & .half:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-human); }
+  & .half[data-mode='machine']:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-machine); }
+  & .half[aria-current], & .half[aria-current]:hover { background: var(--green); color: var(--bg); }
+  & .half[aria-current]::before { background: var(--bg); box-shadow: none; }
+}
 /* The same capsule at the foot of the page, large, each half saying what is on its side. */
 .pill--big { display: flex; width: fit-content; max-width: 100%; margin-top: 20px; }
 .pill--big .half {
@@ -480,6 +554,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
    parked at its own height down the whole document (the rain scrolls with the page instead of
    staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
 :root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after, :root[data-motion='off'] .cur { animation: none; }
+:root:is([data-motion='off'], [data-boot='frozen']) .switch :is(.half, .lab) { animation: none !important; } /* ?boot=frozen stays a still */
 :root[data-motion='off'] .drop { animation: none; top: var(--rest); }
 :root[data-motion='off'] .rain { position: absolute; }
 :root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }
