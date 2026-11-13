@@ -1,0 +1,117 @@
+---
+/**
+ * 機械用: the page as the program it assembles to, printed byte for byte. Offsets and bytes are
+ * decoration for the eye (aria-hidden); the right-hand column is the same facts as real text and links.
+ */
+import { person } from '../../../data/proto-content';
+import { hasJa, splitJa, logo } from './_lib';
+import { bits, asWord, num, logoFile, type Machine, type Row } from './_machine';
+interface Props { machine: Machine; h1: string; page: 'home' | 'projects' }
+const { machine: m, h1, page } = Astro.props;
+
+const off = (n: number) => n.toString(16).padStart(8, '0');
+/** Bytes as hex pairs. Runs of bytes above 0x7f (UTF-8 beyond ASCII: here, the Japanese) are lit. */
+const hex = (b: Uint8Array) => {
+  let out = '', lit = false;
+  b.forEach((v, i) => {
+    const hi = v > 0x7f;
+    out += (hi && !lit ? '<b>' : '') + (!hi && lit ? '</b>' : '') + (i ? ' ' : '') + v.toString(16).padStart(2, '0');
+    lit = hi;
+  });
+  return out + (lit ? '</b>' : '');
+};
+const value = (w: Row) => (w.key!.endsWith('.blurb') ? splitJa(w.text) : hasJa(w.text) ? ['', w.text] : [w.text, '']);
+const name = bits(h1);
+const download = `${Astro.url.pathname.replace(/(source|machine)\/$/, '')}machine/${m.file}`;
+---
+<section class="mhead" aria-label="The file">
+  <div class="bits" aria-hidden="true">
+    {name.map((b) => (
+      <span class="byte"><span>{b.char}</span><span>{b.hex}</span>{Array.from(b.bits).map((v) => <i class={v === '1' ? 'on' : undefined}></i>)}</span>
+    ))}
+  </div>
+  <div class="about-file">
+    <p class="word">
+      {h1} is {name.length} bytes, {name.length * 8} bits.{name.length === 8 && <> One register holds it: <code>{asWord(h1)}</code></>}
+    </p>
+    <dl class="facts">
+      <div><dt>file</dt><dd><a href={download} download={m.file}>./{m.file}</a></dd></div>
+      <div><dt>kind</dt><dd>ELF 64-bit executable, x86-64, Linux</dd></div>
+      <div><dt>size</dt><dd>{num(m.size)} bytes</dd></div>
+      <div><dt>entry</dt><dd>{m.entry}</dd></div>
+      <div><dt>sha256</dt><dd class="hash">{m.sha256}</dd></div>
+      <div><dt>run</dt><dd><code>chmod +x {m.file} && ./{m.file}</code></dd></div>
+    </dl>
+    <p class="rem">Everything below is that file, byte for byte. Run on Linux, it prints its bytes {num(m.stdout.off)} to {num(m.stdout.off + m.stdout.size - 1)}.</p>
+  </div>
+</section>
+
+<nav class="toc" aria-label="Sections of the file">
+  <ol>
+    {m.regions.map((r) => (
+      <li><a href={`#m-${r.id}`}><span class="off" aria-hidden="true">{off(r.off)}</span><span class="sec">{r.name}</span><span class="size">{num(r.size)} bytes</span><span class="rem">{r.what}</span></a></li>
+    ))}
+    {page === 'home' && <li><a href="#m-logo"><span class="off" aria-hidden="true">--------</span><span class="sec">{logo.src.split('/').pop()}</span><span class="size">{num(logoFile.size)} bytes</span><span class="rem">the mark, a second file</span></a></li>}
+  </ol>
+</nav>
+
+<div class="listing">
+  <p class="row cols" aria-hidden="true"><span class="off">offset</span><span class="hex">bytes</span><span class="txt">reading</span></p>
+  {m.regions.map((r) => (
+    <section aria-labelledby={`m-${r.id}`}>
+      <h2 id={`m-${r.id}`}><span>{r.name}</span><small>{num(r.size)} bytes from {num(r.off)}</small></h2>
+      {r.rows.map((w) => {
+        const Tag = w.head ? 'h3' : 'p';
+        const [en, ja] = w.kind === 'kv' ? value(w) : ['', ''];
+        const Val = w.href ? 'a' : 'span';
+        return (
+          <Tag class={`row ${w.kind}`}>
+            <span class="off" aria-hidden="true">{off(w.off)}</span>
+            <span class="hex" aria-hidden="true" set:html={hex(w.bytes)} />
+            <span class="txt">
+              {w.kind === 'kv' && <><span class="key">{w.key}=</span><Val class="val" href={w.href}>{en}{en && ja && ' '}{ja && <span lang="ja">{ja}</span>}</Val></>}
+              {w.kind === 'asm' && <><span class="val">{w.text}</span> <span class="rem">; {w.note}</span></>}
+              {w.kind === 'note' && <span class="rem">{w.text}</span>}
+            </span>
+          </Tag>
+        );
+      })}
+    </section>
+  ))}
+
+  {page === 'home' && (
+    <section class="logo-rec" aria-labelledby="m-logo">
+      <h2 id="m-logo"><span>{logoFile.path}</span><small>{num(logoFile.size)} bytes</small></h2>
+      {logoFile.rows.map((w) => (
+        <p class="row note">
+          <span class="off" aria-hidden="true">{off(w.off)}</span>
+          <span class="hex" aria-hidden="true" set:html={hex(w.bytes)} />
+          <span class="txt"><span class="rem">{w.text}</span></span>
+        </p>
+      ))}
+      <!-- The mark is never set in glyphs: after its header the machine reading is the file itself, whole. -->
+      <p class="row note">
+        <span class="off" aria-hidden="true">{off(33)}</span>
+        <span class="hex" aria-hidden="true">…</span>
+        <span class="txt"><span class="rem">{num(logoFile.rest)} more bytes, the picture: </span><a href={person.logoCreditUrl}>{person.logoCredit}</a></span>
+      </p>
+      <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="wadakatu logo" loading="lazy" />
+    </section>
+  )}
+</div>
+
+<!-- A working prompt. It needs the script; without it every fact above is already on the page. -->
+<form class="prompt needs-js" id="prompt" autocomplete="off" data-file={m.file} data-src={download}>
+  <div class="tty" id="tty" role="log" aria-label="Terminal output"></div>
+  <p class="ps1">
+    <label for="cmd"><span aria-hidden="true">{person.name}@{person.location.toLowerCase()}:~$</span><span class="vh">Command</span></label>
+    <input id="cmd" name="cmd" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-describedby="cmd-hint" />
+  </p>
+  <p class="rem" id="cmd-hint">Type <kbd>help</kbd> and press Enter.</p>
+</form>
+
+<p class="modeline">
+  <span class="mode" lang="ja">-- 機械用 --</span>
+  <span class="where">./{m.file} · {num(m.size)} bytes</span>
+  <a data-mode="page" href={Astro.url.pathname.replace(/(source|machine)\/$/, '')}><span lang="ja">人間用</span></a>
+</p>

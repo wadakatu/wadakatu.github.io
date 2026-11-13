@@ -1,6 +1,8 @@
 /* /proto/matrix/: an operator's station at night. Phosphor green on near-black is the default
    world whatever the OS says; "day" is the same screen read in daylight. Reading text sits on
-   solid panels, the rain only shows around them. Text is dimmed with colour, never opacity. */
+   solid panels, the rain only shows around them. Text is dimmed with colour, never opacity.
+   Two readings share these tokens: 人間用 (the page) and 機械用 (the same facts as a terminal
+   listing of the program they assemble to; see "machine" below). */
 :root {
   color-scheme: dark;
   --bg: #020805;
@@ -16,6 +18,11 @@
   --mono: 'IBM Plex Mono', 'M PLUS 1 Code', ui-monospace, Menlo, monospace;
   --dot: DotGothic16, 'M PLUS 1 Code', ui-monospace, monospace;
   --pad: clamp(12px, 3.4vw, 48px);
+  /* The two sides of the choice. Used only for the dots on the capsule, never for text. */
+  --pill-human: #58b7ff;
+  --pill-machine: #ff5d4f;
+  /* Phosphor bloom on the machine reading's headings and lit bits. A lit tube at night; none in daylight. */
+  --glow: 0 0 12px color-mix(in srgb, var(--green) 45%, transparent);
 }
 /* "light" is accepted as an alias so the shared screenshot harness can force the theme. */
 :root[data-theme='day'], :root[data-theme='light'] {
@@ -30,6 +37,9 @@
   --rain-tail: #b9c9b8;
   --rain: #5f8c6c;
   --rain-head: #0a3a20;
+  --pill-human: #0b5cad;
+  --pill-machine: #b3261e;
+  --glow: none;
 }
 /* ?palette=operator: the same station in the earlier Operator palette. Night is a warm amber CRT,
    day its grey-green LCD. Every token is restated so nothing leaks from the phosphor blocks above.
@@ -105,8 +115,6 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .drop:lang(ja) { font-family: var(--dot); }
 @keyframes drop { from { transform: translateY(-100%); } to { transform: translateY(var(--h)); } }
 :root:has(#hold:checked) .drop { animation-play-state: paused; }
-/* The source is read with the code held still. */
-:root[data-view='source'] .rain .drop { animation-play-state: paused; }
 @media (max-width: 1099px) { .rain .col:nth-child(even) { display: none; } }
 @media (max-width: 719px) { .rain .col:not(:nth-child(4n + 1)) { display: none; } }
 
@@ -144,23 +152,16 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   color: var(--green);
   -webkit-mask: var(--etch) 0 0 / 1000px auto; mask: var(--etch) 0 0 / 1000px auto;
 }
-/* In the source view the name is a tab on the listing, on solid ground like the rest of the reading text. */
-:root[data-view='source'] .name {
-  width: fit-content; margin-top: 32px; padding: 8px clamp(16px, 2.2vw, 28px);
-  background: var(--panel); border: 1px solid var(--rule); border-bottom: 0;
-  font: 500 clamp(28px, 4vw, 40px) / 1.2 var(--mono); letter-spacing: 0;
-  -webkit-mask: none; mask: none;
-}
 .name.double { animation: double 200ms steps(1); }
 @keyframes double {
   0% { text-shadow: 0.07em 0.035em 0 var(--rain); transform: translateX(-0.02em); }
   50% { text-shadow: -0.05em -0.02em 0 var(--rain); transform: none; }
 }
 
-:root[data-view='page'] .view-source, :root[data-view='source'] .view-page { display: none; }
+:root[data-view='page'] .view-machine, :root[data-view='machine'] .view-page { display: none; }
 
 .panel { background: var(--panel); border: 1px solid var(--rule); padding: 20px clamp(16px, 2.2vw, 28px) 28px; margin-top: 24px; }
-.panel > h2, .view-source h2 { font: 500 15px/1.7 var(--mono); color: var(--green); margin-bottom: 8px; }
+.panel > h2 { font: 500 15px/1.7 var(--mono); color: var(--green); margin-bottom: 8px; }
 .lede, .cap { max-width: 68ch; color: var(--muted); }
 .after { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
 
@@ -220,18 +221,127 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .log { margin-top: 16px; font-size: 13px; max-width: 96ch; }
 .log li { padding: 4px 0; border-bottom: 1px dotted var(--rule); overflow-wrap: anywhere; }
 
-/* ---------- source view: the data file, printed ---------- */
-.view-source { max-width: 1040px; background: var(--panel); border: 1px solid var(--rule); padding: 20px clamp(16px, 2.2vw, 28px) 32px; }
-.file { font-weight: 500; color: var(--lead); }
-.view-source section { margin-top: 28px; }
-.rec > div { padding: 4px 0; border-bottom: 1px dotted var(--rule); }
-.rec dt { color: var(--muted); overflow-wrap: anywhere; }
-.rec dd, .vals li { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.item { margin-top: 16px; padding-left: clamp(12px, 2vw, 24px); border-left: 1px solid var(--rule); }
-.item h3 { font: 500 15px/1.7 var(--mono); color: var(--lead); }
-.item h3:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); }
-.vals:not(.log) { display: flex; flex-wrap: wrap; gap: 4px 20px; }
-.logo-rec .logo { width: min(100%, 400px); margin-top: 24px; }
+/* ---------- the choice: one capsule, two halves, each a link to its own reading ---------- */
+.pill { display: inline-flex; border: 1px solid var(--muted); border-radius: 999px; background: var(--bg); }
+.half {
+  display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px;
+  color: var(--text); text-decoration: none; line-height: 1.7; white-space: nowrap;
+  border-radius: 999px 0 0 999px;
+}
+.half + .half { border-left: 1px solid var(--muted); border-radius: 0 999px 999px 0; }
+.half::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pill-human); }
+.half[data-mode='machine']::before { background: var(--pill-machine); }
+.half:hover { color: var(--lead); background: var(--panel); }
+.half:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-human); }
+.half[data-mode='machine']:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-machine); }
+.half[aria-current], .half[aria-current]:hover { background: var(--green); color: var(--bg); }
+.half[aria-current]::before { background: var(--bg); box-shadow: none; }
+/* The same capsule at the foot of the page, large, each half saying what is on its side. */
+.pill--big { display: flex; width: fit-content; max-width: 100%; margin-top: 20px; }
+.pill--big .half {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 12px; align-items: center;
+  align-content: start; flex: 1 1 0; min-width: 0; padding: 12px clamp(16px, 4vw, 40px) 14px clamp(16px, 3vw, 28px);
+  font-size: clamp(18px, 2.6vw, 24px); white-space: normal;
+}
+.pill--big .half::before { width: 12px; height: 12px; }
+.pill--big small { grid-column: 2; font-size: 13px; }
+
+/* ---------- 機械用: the page dropped out of its layout, as a terminal listing of one program ---------- */
+:root[data-view='machine'] { scroll-padding-bottom: 56px; }
+:root[data-view='machine'] :is(.rain, .hold) { display: none; }
+:root[data-view='machine'] .frame { max-width: none; }
+:root[data-view='machine'] #shell { padding-bottom: 36px; }
+/* Scan lines over the whole tube. They take no pointer events and sit under the boot and the mode line.
+   The mark is lifted above them: it is shown as designed, with nothing drawn across it. */
+:root[data-view='machine'] .logo { position: relative; z-index: 21; }
+:root[data-view='machine'] body::after {
+  content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, color-mix(in srgb, var(--bg) 28%, transparent) 2px 3px);
+}
+/* The header becomes a window list: numbered, the current one starred. */
+:root[data-view='machine'] .top { border-bottom-style: dashed; }
+:root[data-view='machine'] .top nav { counter-reset: win -1; gap: 2ch; }
+:root[data-view='machine'] .top nav a::before { counter-increment: win; content: counter(win) ':' / ''; }
+:root[data-view='machine'] .top nav a[aria-current] { text-decoration: none; }
+:root[data-view='machine'] .top nav a[aria-current]::after { content: '*' / ''; color: var(--green); }
+/* The name is a line of terminal text with a cursor that settles after five blinks. */
+:root[data-view='machine'] .name {
+  padding-block: 28px 0; font: 500 clamp(28px, 4vw, 44px) / 1.2 var(--mono); letter-spacing: 0;
+  -webkit-mask: none; mask: none; text-shadow: var(--glow);
+}
+:root[data-view='machine'] .name::after {
+  content: ''; display: inline-block; width: 0.56em; height: 1em; margin-left: 0.14em; vertical-align: -0.14em;
+  background: var(--green); animation: blink 1s steps(1) 5;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.view-machine { font-size: 14px; }
+.view-machine code { font: inherit; color: var(--lead); }
+.rem { color: var(--muted); }
+
+/* The name as bits: one row per byte, most significant bit first. */
+.mhead { display: grid; gap: 24px clamp(24px, 4vw, 56px); margin-top: 20px; }
+.bits { display: grid; gap: 3px; width: fit-content; --cell: clamp(18px, 2.2vw, 28px); font-size: 13px; color: var(--muted); }
+.byte { display: grid; grid-template-columns: 2ch 3ch repeat(8, var(--cell)); gap: 3px; align-items: center; }
+.byte i { height: var(--cell); border: 1px solid var(--rule); }
+.byte i.on { background: var(--green); border-color: var(--green); box-shadow: var(--glow); }
+.word { color: var(--lead); max-width: 62ch; overflow-wrap: anywhere; }
+.facts { margin-top: 12px; }
+.facts div { display: grid; grid-template-columns: 7ch minmax(0, 1fr); gap: 0 2ch; }
+.facts dt { color: var(--muted); }
+.facts dd { overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.about-file > .rem { margin-top: 12px; max-width: 62ch; }
+
+/* The section table doubles as the way around the file. */
+.toc { margin-top: 32px; max-width: 96ch; }
+.toc a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 2ch; padding: 2px 0; text-decoration: none; }
+.toc :is(.off, .rem) { display: none; }
+.toc .off, .row .off, .row .hex { color: var(--muted); }
+.toc .sec { color: var(--green); overflow-wrap: anywhere; }
+.toc a:hover .sec { text-decoration: underline; }
+.toc .size { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* One row per field: where it is, the bytes it is, and what they say. Narrow screens read the
+   line first and its bytes under it; wide ones read offset, 16 bytes a line, then the line. */
+.listing { margin-top: 28px; line-height: 1.65; }
+.listing section { margin-top: 28px; }
+.listing h2 { display: flex; align-items: center; gap: 2ch; font: 500 15px/1.7 var(--mono); color: var(--green); text-shadow: var(--glow); scroll-margin-top: 16px; }
+.listing h2::after { content: ''; flex: 1; order: 1; min-width: 2ch; border-top: 1px dashed var(--rule); }
+.listing h2 span { overflow-wrap: anywhere; min-width: 0; }
+.listing h2 small { order: 2; font: 400 13px/1.7 var(--mono); color: var(--muted); text-shadow: none; white-space: nowrap; }
+.row { display: grid; grid-template-columns: 8ch minmax(0, 1fr); gap: 0 2ch; padding: 6px 0; font: inherit; }
+.row .txt { grid-column: 1 / -1; order: -1; overflow-wrap: anywhere; }
+.row :is(.off, .hex) { font-size: 12px; }
+.row .hex b { font-weight: 400; color: var(--green); }
+.row:is(:hover, :focus-within) :is(.off, .hex) { color: var(--text); }
+.row .key { color: var(--muted); }
+.row.asm .val, h3.row .val { color: var(--lead); font-weight: 500; }
+.cols { display: none; }
+.listing .logo { width: min(100%, 400px); margin-top: 12px; }
+
+/* The prompt: a real text field, its output a log. */
+.prompt { margin-top: 40px; max-width: 120ch; }
+.tty pre { margin: 0 0 12px; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tty .echo { color: var(--muted); }
+.tty :lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); }
+.ps1 { display: flex; align-items: baseline; gap: 1ch; color: var(--green); }
+.ps1 label { white-space: nowrap; }
+.ps1 input {
+  flex: 1; min-width: 0; padding: 2px 0; font: inherit; font-size: 16px; color: var(--lead);
+  background: none; border: 0; border-bottom: 1px solid var(--muted); border-radius: 0; caret-color: var(--green);
+}
+.prompt > .rem { margin-top: 8px; font-size: 13px; }
+
+/* The mode line: always on screen in 機械用, with the way back. */
+.modeline {
+  position: fixed; inset: auto 0 0; z-index: 25; display: flex; align-items: center; gap: 2ch;
+  padding: 4px var(--pad); background: var(--green); color: var(--bg); font-size: 13px;
+}
+.modeline .mode { flex: none; white-space: nowrap; }
+.modeline .where { margin-right: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.modeline a { padding: 0 4px; color: inherit; font-weight: 500; white-space: nowrap; }
+.modeline a::before { content: '\2190\00a0' / ''; }
+.modeline a:hover { color: inherit; }
+.modeline a:focus-visible { outline-color: var(--bg); outline-offset: 0; }
 
 .foot {
   display: flex; flex-wrap: wrap; gap: 8px 28px;
@@ -256,13 +366,13 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .boot .k { color: var(--muted); }
 .boot .v { color: var(--green); overflow-wrap: anywhere; font-family: var(--dot); }
 .boot .v.done { color: var(--lead); }
-.boot .control { justify-self: start; }
+.boot-exit { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 /* The last record is the mark. A still (?boot=frozen) shows it without the script or the motion library. */
 .boot-lines .boot-logo { align-items: start; margin-top: 1em; }
 .boot-logo .logo { width: clamp(120px, 24vh, 220px); }
 :root[data-boot='frozen'] .boot-logo { visibility: visible; }
 
-/* ---------- curtain: slabs of corpus text that cover the page while the view changes ---------- */
+/* ---------- curtain: slabs of corpus text that cover the page as the boot ends ---------- */
 .curtain { display: none; position: fixed; inset: 0; z-index: 40; pointer-events: none; }
 .curtain.on { display: flex; }
 .slab {
@@ -275,7 +385,17 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .slab::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: var(--rain-head); }
 
 @media (min-width: 600px) {
-  .rec > div { display: grid; grid-template-columns: 18ch minmax(0, 1fr); gap: 0 16px; padding: 2px 0; }
+  .toc a { grid-template-columns: 8ch minmax(14ch, 22ch) 14ch minmax(0, 1fr); }
+  .toc :is(.off, .rem) { display: inline; }
+}
+
+@media (min-width: 960px) {
+  .mhead { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+  .row { grid-template-columns: 8ch 48ch minmax(0, 1fr); padding: 0; }
+  .row .txt { grid-column: auto; order: 0; max-width: 100ch; }
+  .row :is(.off, .hex) { font-size: inherit; }
+  .cols { display: grid; margin-bottom: 4px; border-bottom: 1px dashed var(--rule); color: var(--muted); }
+  .listing .logo { margin-left: 60ch; }
 }
 
 @media (min-width: 720px) {
@@ -311,7 +431,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 /* Motion off (?motion=0, or the OS setting seen by the head script): a still frame with every drop
    parked at its own height down the whole document (the rain scrolls with the page instead of
    staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
-:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after { animation: none; }
+:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after { animation: none; }
 :root[data-motion='off'] .drop { animation: none; top: var(--rest); }
 :root[data-motion='off'] .rain { position: absolute; }
 :root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }

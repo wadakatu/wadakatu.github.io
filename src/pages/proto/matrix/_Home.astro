@@ -1,10 +1,12 @@
 ---
 import Layout from '../../../layouts/ProtoMatrixLayout.astro';
 import Stream from './_Stream.astro';
-import Records from './_Records.astro';
+import Machine from './_Machine.astro';
+import Pill from './_Pill.astro';
 import { person, bio, projects, recentPosts, skills, activity } from '../../../data/proto-content';
 import { phrases, readableCommits, commitFor, host, splitJa } from './_lib';
-interface Props { view: 'page' | 'source' }
+import { home, num } from './_machine';
+interface Props { view: 'page' | 'machine' }
 const { view } = Astro.props;
 
 // The boot types the keys of the data file and decodes their real values.
@@ -45,7 +47,7 @@ const boot = [
           </Stream>
         ))}
       </ul>
-      <p class="after"><a href="/proto/matrix/projects/" data-page-href="/proto/matrix/projects/" data-source-href="/proto/matrix/projects/source/">All projects</a> <a href="/blog/">Read the blog</a></p>
+      <p class="after"><a href="/proto/matrix/projects/" data-page-href="/proto/matrix/projects/" data-machine-href="/proto/matrix/projects/machine/">All projects</a> <a href="/blog/">Read the blog</a></p>
     </section>
 
     <div class="station">
@@ -85,7 +87,16 @@ const boot = [
         {readableCommits.slice(0, 6).map((c) => <li>{c}</li>)}
       </ol>
     </section>
+
+    <section class="choice panel" aria-labelledby="choice">
+      <h2 id="choice">Two readings</h2>
+      <p class="lede">
+        This is the page. The data file it is built from also assembles to a program of {num(home.size)} bytes:
+        the same facts with nothing drawn around them. Either side leads back to the other.
+      </p>
+      <Pill page="home" view="page" notes={['the page', `${num(home.size)} bytes of x86-64`]} />
+    </section>
   </Fragment>
 
-  <Fragment slot="source"><Records /></Fragment>
+  <Fragment slot="machine"><Machine machine={home} h1={person.name} page="home" /></Fragment>
 </Layout>

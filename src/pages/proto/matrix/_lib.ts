@@ -69,7 +69,7 @@ export function rainColumns(count = 40, perColumn = 3) {
   });
 }
 
-/** The curtain that covers the page while the view changes: slabs of running corpus text. */
+/** The curtain that covers the page as the boot ends: slabs of running corpus text. */
 export function curtainSlabs(count = 24, glyphs = 260) {
   const r = rng(1999);
   return Array.from({ length: count }, (_, i) => {

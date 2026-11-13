@@ -2,6 +2,10 @@
 
 Built with Claude Code on 13 November 2026, on `design/explore`, in this worktree only. Reviewed and tightened with Codex on the same date; see `MATRIX-CRITIQUE.md`. A palette and logo pass followed, also with Claude Code; see the last section, which is current where it differs from the ones above. Nothing is committed.
 
+**Current state: the last section, "人間用 / 機械用".** That pass replaced the source view described below with the
+machine reading. Where the two disagree ("See the source", the `/source/` routes, the View source button, the
+curtain on a view change, `_Records.astro`), the last section is right.
+
 Direction: the Operator prototype, plus the See-the-source mechanic switching in place, pushed into a
 night-time operator's station. Evokes the film; copies nothing from it (no logo, title treatment, film font,
 still, likeness or quotation; the two views are not colour-coded against each other).
@@ -398,3 +402,292 @@ The fallback does not rewrite the current address, persist the palette, or carry
 Fully disabled JavaScript still uses the original static phosphor pages. No routes or visual tokens changed.
 
 Review findings and verification are recorded in `PALETTE-LOGO-CRITIQUE.md`.
+
+## 人間用 / 機械用 (Fable pass)
+
+Built with Fable (Claude Code `--model fable`) on 13 November 2026, in this worktree only, on top of everything
+above. This section is current where it differs from the older ones. The work is on `design/explore` (do not merge).
+
+The page now has two readings of the same data file.
+
+- **人間用** is the page as it was: rain, streams, boot, logo, palettes. Unchanged apart from the control that
+  switches and one short panel at the foot of Home.
+- **機械用** is the same facts as the program they assemble to. At build time each page is assembled into a real
+  x86-64 Linux executable (ELF64, static, no libc): 33 bytes of code that write the page's facts to standard
+  output, and one section per group of facts (`.person`, `.bio`, `.projects`, `.posts`, `.activity`, `.skills`,
+  `.rain`, `.log`), each a run of `key=value` lines whose keys are the data file's own keys. The machine reading
+  is that file printed byte for byte in a terminal: offset, the bytes, and what they say. The same bytes are
+  served beside the page for download.
+
+It replaces the earlier source view. `_Records.astro` is deleted; every field it printed is in the listing.
+
+One variant, not several. The raw, unannotated view exists as a command (`xxd`) inside it rather than as a
+second route.
+
+### Routes and flags
+
+| Address | What |
+| --- | --- |
+| `/proto/matrix/`, `/proto/matrix/projects/` | 人間用 |
+| `/proto/matrix/machine/`, `/proto/matrix/projects/machine/` | 機械用, as static HTML. Works without JavaScript |
+| `/proto/matrix/machine/wadakatu`, `/proto/matrix/projects/machine/projects` | The two executables (4,208 and 1,666 bytes in this build) |
+| `/proto/matrix/source/`, `/proto/matrix/projects/source/` | Earlier addresses, kept: they render the machine reading. The next in-place change rewrites the address to `/machine/` |
+
+| Flag | Effect |
+| --- | --- |
+| `?mode=machine` | New. Land in the machine reading on either main URL, with no transition |
+| `?source=1` | Kept, as the earlier name of `?mode=machine` |
+| `?boot=1`, `?boot=frozen`, `?motion=0`, `?theme=day\|night`, `?palette=operator` | Unchanged, and all work in both readings. `palette` and `motion=0` are carried by every link and by the address after a change, as before |
+
+`<html data-view>` is now `page` or `machine` (was `page` or `source`).
+
+### How to switch
+
+1. **The capsule in the header**: one capsule, two halves, `人間用` and `機械用`. They are two links to the two
+   static routes, with `aria-current` on the side you are on; the script makes the same choice happen in place
+   and puts the static twin in the address bar. This replaces the View source button and its no-JS twin link.
+2. **Backslash** `\` (or `¥`), as before, with the same guards and the same off switch in the footer.
+3. **The same capsule, large, in a "Two readings" panel at the foot of Home**, each half saying what is on its
+   side (`the page`, `4,208 bytes of x86-64`).
+4. **On the boot layer**, beside Skip intro. `機械用` ends the intro straight into the machine reading; `人間用`
+   is Skip. `?boot=frozen` shows it, so the choice can be taken as a still.
+5. **From inside the machine reading**: the mode line fixed to the bottom of the window (`-- 機械用 --`, the
+   file and its size, and a link back to `人間用`), or `exit` at the prompt.
+
+The homage is the capsule itself: one capsule, two halves, a blue dot on the side that stays in the constructed
+page and a red dot on the side that shows what it is made of. Those two colours (`--pill-human`,
+`--pill-machine`) are used for the dots only, never for text. No film wording is used anywhere; the labels are
+his own words for the idea. The earlier note that the two views are not colour-coded against each other no
+longer holds for these two dots.
+
+Languages: `人間用` and `機械用` are the only Japanese in the controls, each `lang="ja"` in the Japanese face,
+and neither is glossed in English beside it. The small text under the large capsule describes what is there; it
+does not translate the label.
+
+### What the machine reading shows
+
+Top to bottom, on `/proto/matrix/machine/`:
+
+- **The name as a line of terminal text** with a block cursor (the one shared `h1`; the cursor blinks five
+  times and stays lit).
+- **The name as bits.** `wadakatu` is 8 bytes, so it is an 8 × 8 grid, one row per letter, and it fits one
+  64-bit register (`0x7574616b61646177`). `Projects` is also 8 bytes, so the Projects page gets the same.
+  Decorative, `aria-hidden`; the sentence beside it says the same in text.
+- **The file**: a download link, kind, size, entry point, SHA-256, and the command that runs it.
+- **The section table**, which doubles as the way around: one link per region with its offset and size.
+- **The listing**: ELF header, program header, `.text` (the eight instructions with what each does), then the
+  content sections, then `.shstrtab` and the section table. Every byte of the file appears exactly once, in
+  order. Bytes above `0x7f` are lit, which is where the Japanese is: the three-byte runs are visible in `.posts`
+  and in tombo's blurb.
+- **`public/images/logo-400.png`**, on Home only: the file's first 33 bytes read from disk at build time (PNG
+  signature and the IHDR chunk: 400 × 400, 8 bits per channel, RGB with alpha), then the picture itself. The
+  mark is never set in glyphs or drawn from characters; it is the real `<img>`, whole and square, with the same
+  palette filter as everywhere else, lifted above the scan lines so nothing is drawn across it.
+- **A prompt** (needs the script): `help`, `ls`, `cat SECTION`, `xxd`, `./wadakatu`, `clear`, `exit`.
+  `xxd` and `./wadakatu` fetch the real file. `./wadakatu` does what the code does, reading the address and the
+  length from the instructions' own operands. Output goes to a `role="log"` region and focus stays in the field.
+
+Around it the page itself gives way: no rain, no panels, no giant masked name, full window width, scan lines,
+the nav as a numbered window list with the current one starred, phosphor bloom on headings and lit bits at
+night (none in daylight).
+
+**Where the numbers come from.** Every number on the machine side is computed from the bytes it describes or
+is a value from the data file: offsets, sizes, the entry point, the hashes, the operands. There are no
+invented PIDs, hosts, uptimes or versions. The prompt's `wadakatu@japan` is `person.name` and
+`person.location`. The assembler refuses to build if its rows do not tile the file or if the code's operands do
+not point at the data (a self-check in `_machine.ts`, run on every build). Phrases that name the film are
+still excluded: the listing uses `phrases` and `readableCommits`, never the raw corpus.
+
+### The change between readings
+
+With motion and GSAP: the text on screen turns into the hex digits of its own characters, the picture collapses
+to a line and goes out like a tube being switched off, and the listing prints top to bottom. Going back, the
+listing clears from the bottom, the page opens from a line, its headings settle out of raw glyphs and the name
+doubles once, as before. A little over a second each way (the timeline's durations add up to about 1.2s in
+and up to about 1.3s back). One collapse, no flashing. A second press finishes
+the first change before starting its own: the way back adds its heading tweens while it runs, so finishing it
+takes a second push to the timeline's new end (`finish()` in the script). The curtain of corpus slabs is now used only at the end of the boot.
+
+- **Reduced motion** (`prefers-reduced-motion`, or `?motion=0`): the change is an instant swap, GSAP is not
+  requested, the cursor does not blink, and nothing else in the machine reading moves.
+- **No JavaScript**: the capsule's halves and the mode line's link are plain links between the two static
+  routes. The whole listing, the section table, every link and the download are in the markup. Only the prompt
+  is missing (it is hidden without the script). The operator palette still needs the head script, as before.
+- **Enhancement script blocked, head script running**: the head script's fallback now sets the capsule's
+  links, their `aria-current`, and the flags, for whichever reading the address asked for.
+- **GSAP unreachable**: instant swap, as before.
+
+### Accessibility
+
+- Skip link, one visible `h1`, visible focus, and the same keyboard paths in both readings. Tab order in the
+  header: Home, Projects, Blog, About, 人間用, 機械用, Operator colours, Daylight (on the page, with motion, Hold
+  rain sits before Operator colours, as before).
+- Offsets and bytes are `aria-hidden`. The reading column is real text: `key=value` lines, real links (URLs,
+  `mailto:`), project names and post titles as `h3`, sections as `h2` with their region labelled.
+- Focus is never left in a hidden reading: a change made from inside one (the large capsule, the prompt's
+  `exit`, Backslash with focus on a stream link) hands focus to the header capsule.
+- The status region announces "Machine reading" / "Human reading"; the title follows.
+- The mode line is fixed, so the root has `scroll-padding-bottom` and the shell has room under the footer.
+- Blink is finite (five times), per the repo's earlier decision to drop indefinite blinking.
+
+### Files
+
+| File | Change |
+| --- | --- |
+| `src/pages/proto/matrix/_machine.ts` | New. The assembler: ELF layout, the instructions, the `key=value` sections, the row model, the self-check, the logo file's header |
+| `src/pages/proto/matrix/_Machine.astro` | New. The machine reading |
+| `src/pages/proto/matrix/_Pill.astro` | New. The capsule |
+| `src/pages/proto/matrix/machine/index.astro`, `projects/machine/index.astro` | New static routes |
+| `src/pages/proto/matrix/machine/wadakatu.ts`, `projects/machine/projects.ts` | New endpoints serving the bytes |
+| `src/pages/proto/matrix/_Records.astro` | Deleted |
+| `src/pages/proto/matrix/source/index.astro`, `projects/source/index.astro` | Now render the machine reading |
+| `src/pages/proto/matrix/_Home.astro`, `_Projects.astro` | The `machine` slot; the "Two readings" panel on Home |
+| `src/layouts/ProtoMatrixLayout.astro` | `view` is `page \| machine`; `?mode=machine`; the capsule in the header and the boot; fallback link sync |
+| `public/styles/proto/matrix.css` | Source-view rules removed; the capsule, the machine reading, the mode line; three tokens (`--pill-human`, `--pill-machine`, `--glow`) |
+| `public/scripts/proto-matrix.js` | The in-place change and its motion; the prompt; the capsule replaces the button |
+| `src/pages/proto/matrix/_lib.ts` | One comment |
+
+Not touched: production routes, `tombo.css`, `site.css`, `BaseLayout.astro`, `FooterLogo.astro`, the other
+`/proto/*` concepts, `src/data/*` (imported only; `logo-400.png` is read, not written), `package.json`.
+`package-lock.json` was already modified before this pass. No dependency added: the assembler uses `node:crypto`
+and `node:fs` at build time only.
+
+### Checks
+
+`npm run build` passes (44 pages, up from 42: the two `/machine/` routes; the two endpoints are files, not
+pages). Scripts and stills are in `/tmp/mx-machine/` on the build machine, outside the repo because the brief
+limits which files may be added; they are not preserved with the branch. All figures below were printed by
+those scripts or by the named tool on the final build, after the last edit to the page.
+
+**The file is real.**
+
+- `file` reports both as `ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped`.
+- LLVM `objdump -d` disassembles `.text` to the same eight instructions the page prints, and `objdump -h`
+  lists the same sections with the same sizes and addresses.
+- Run in an `alpine:3.20` container under `--platform linux/amd64` (Docker on an arm64 Mac, so emulated; the
+  image was pulled for this and removed afterwards):
+  `wadakatu` exits 0 and writes 3,275 bytes, `projects` exits 0 and writes 1,230. The SHA-256 of each output
+  equals the SHA-256 of that file's bytes 153 onward for that length, which is what the page says it prints.
+- `shasum -a 256` of each file equals the hash printed on its page.
+- The hex on the page, concatenated, equals the file (4,208 of 4,208 bytes; 1,666 of 1,666), and every row's
+  offset is where its bytes are.
+- The prompt's `xxd` output is identical to `/usr/bin/xxd` on the same file (263 and 105 lines), and
+  `./wadakatu` at the prompt prints exactly the bytes the container run printed.
+- The logo rows match `xxd -l 33 public/images/logo-400.png`; the file is 240,877 bytes.
+
+**`act.mjs`, 42 checks, all passing**: the in-place change by click, by Backslash, from the large capsule, from
+the mode line and from the prompt, with the address, title, status, `aria-current` and focus after each; text
+seen as hex and the transform seen mid-change; nothing left styled, scrambled or `aria-busy` afterwards; two
+quick presses settling cleanly; modifiers ignored; Backslash typed into the prompt staying text; every prompt
+command, including an unknown one and a prototype name, with focus staying in the field; `?mode=machine`, `?source=1` and `/source/` landing in
+the machine reading and then normalising to the static twins; the operator palette, the palette button and
+Daylight inside the machine reading; the boot capsule in `?boot=frozen` and in a playing boot; JavaScript
+disabled (113 rows visible, 16 links in the listing, the way back a link, no prompt); reduced motion (instant,
+no GSAP, no running animation).
+
+**`layout.mjs`, 64 runs, all passing**: phosphor and operator × night and day × 1440, 960, 390, 320 × the four
+routes, motion on. Horizontal overflow 0 (document width, and any element's right edge), one visible `h1`,
+every visible logo square at its natural 400 × 400 with `object-fit: contain`, no radius, clip or transform.
+Lowest text contrast from rendered colours:
+
+| | Machine reading | Page |
+| --- | --- | --- |
+| Phosphor night | 9.18 | 8.68 |
+| Phosphor day | 5.61 | 5.61 |
+| Operator night | 9.42 | 8.98 |
+| Operator day | 6.48 | 6.48 |
+
+The bytes column, which is decorative and hidden from assistive tech, measures 9.18, 6.89, 9.42 and 7.21 in
+the same order. These are solid-colour measurements; the scan lines are a 28% wash of the ground colour on one
+pixel row in three and are not included.
+
+**The two earlier suites, ported.** `/tmp/mx-check/check.mjs` and `/tmp/mx-palette/check.mjs` cannot run
+unchanged: they look for `.view-source` and `#view-toggle`, which no longer exist. `port.py` rewrites only
+selectors and expected names (source to machine, the button to the capsule) and one expectation: Hold rain must
+be present on the page and absent in the machine reading, where there is no rain. Ported, they pass 40 of 40
+and 69 of 69: boot (ended by itself after 6,159ms; failsafe 8,000ms), the four ways to skip it, the frozen
+still, blocked CDN (boot cleared after 897ms, the change still works), `?motion=0`, the déjà vu, the title
+flicker, the name doubling, rain and Hold rain, night on a light OS, the palette button and its addresses, the
+logo geometry and the boot's logo wipe.
+
+**`extra.mjs`, 24 checks, all passing.** It covers what the third earlier suite (`codex-regression.mjs`,
+`codex-layout.mjs`) covered, on the new model, plus two things the rewrite put at risk:
+
+- The shortcut's off switch: keys do nothing, the choice survives a reload, the key hint is removed from the
+  capsule, the capsule still works; back on, Backslash is ignored in inputs, textareas, selects, editable
+  content, the prompt and during composition, and works with focus on the capsule.
+- `proto-matrix.js` blocked: Skip intro focused and working, the capsule shown as links, script-only controls
+  hidden. With `?mode=machine&palette=operator&motion=0` the head script alone sets the reading, the palette,
+  both capsule hrefs, `aria-current` on the machine half only, the mode line's link and the three nav links,
+  all carrying the flags; pressing `人間用` is then a real navigation that keeps the palette.
+- Storage getters that throw: the change still works, no errors.
+- Reduced motion switched on during the boot, and during a change in each direction: it finishes at once and
+  leaves nothing styled, busy, doubled or scrambled.
+- **Rapid changes**, six patterns from 50ms to 400ms apart, two to five presses, starting from either side:
+  each settles in the right reading at the right address with every heading and title restored. This check
+  was confirmed to fail without the fix: with `finish()` reduced to a single push, five of the six patterns
+  left a heading scrambled (for example "Work and writsiW").
+- Japanese runs on all four routes use M PLUS 1 Code first with `letter-spacing: normal`; the skip link is the
+  first tab stop in the machine reading and moves focus to `main`; every tab stop there shows an outline. Tab
+  order in the machine reading: Skip to content, wadakatu_, Home, Projects, Blog, About, 人間用, 機械用,
+  Operator colours, Daylight, then the download link and the section table.
+
+No forbidden phrase in the built pages, the CSS, the JS or the sources (0 matching files). "Kobe" appears three
+times in the machine reading, each inside a real post title; the location is `Japan` only.
+
+The running dev server (PID 88553, port 4321) was left alone and serves the new routes and the binary.
+
+### Still weak
+
+- **It serves executables.** Two small ELF files sit beside the pages. Browsers and scanners can be wary of
+  unknown executables; decide whether that is wanted before this goes anywhere public. The page works the same
+  if the download link is dropped: the listing is static markup.
+- **Run only under emulation.** The container run was amd64 emulated on an arm64 Mac. It was not run on real
+  x86-64 hardware. The program makes a single `write` call and does not retry a short write.
+- **The machine reading is long**: about 9,700px at 1440 wide and 15,560px at 390 (measured before the last
+  small fixes). The section table gets you around, but on a phone it is a lot of scrolling, and the section
+  table at the end of the file is 704 bytes of mostly zeros.
+- **Every route carries both readings.** Home's HTML is now 102,484 bytes uncompressed (the earlier notes
+  measured about 58 KB), Projects 70,643. Most of the growth is hex.
+- **The labels are Japanese on an English page.** That is the idea as he named it, but a reader without
+  Japanese has to learn what the two halves do by pressing one. Nothing on the page says in English what the
+  two words mean, on purpose: a gloss beside them would be a translation set side by side. The "Two readings"
+  panel describes what is on each side (the page, the program) and no more.
+- **The dots are the whole homage.** It is quiet. If it should be felt more, the capsule is the place.
+- **`0x80` and above are lit everywhere**, so opcodes and addresses in the structural rows light up as well as
+  the Japanese. It reads as texture there; it only means "Japanese" in the content sections.
+- **The prompt is small.** Seven commands, no history, no completion. `cat` reads the page's own text, not the
+  file; `xxd` and `./wadakatu` read the file. `xxd` prints the whole file (263 lines on Home) into the log.
+- **The scan lines dim one pixel row in three** over text as well as ground. Contrast was measured without
+  them.
+- **The transition was judged from slow-motion stills**, not on a slow machine. The text-to-hex step rewrites
+  every visible text node for about a third of a second.
+- **Chrome only**, through Playwright, as before. No screen reader, Safari or Firefox run. `content: … / ''`
+  alt text on generated content, `color-mix()` and `:has()` are all used.
+- **`?boot=frozen` stills can catch Japanese mid-decode.** On 13 November 2026 the frozen overlay showed
+  readable English (name, role, Japan) but garbled project and post lines (`laravel-利生ャ発べル・ァ`, and a
+  run of mixed-up kana/kanji instead of the real post title). The live boot finishes correctly; this is a
+  stills/freeze problem, not a content invention. Prefer a completed boot, or a playing one, when judging
+  those two lines.
+- **The old stills in `docs/design-explore/shots/` that show the source view** are from the earlier pass, which
+  this one replaced. New stills for the two readings and the switch were added in that folder after Fable
+  finished (see below). They are also copied to the box at `/workspace/wadakatu-dev/design-protos/`.
+
+### Official stills (taken after Fable finished)
+
+Playwright, Chrome, 1440×900 and 390×844, against the running dev server at `http://127.0.0.1:4321`. The switch
+video is about 2.7s at the true capture rate (~14.7 fps), 1440×900, human page then the in-place change.
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-human-home-1440.png` | 人間用, first screen |
+| `docs/design-explore/shots/matrix-human-home-390.png` | 人間用, phone |
+| `docs/design-explore/shots/matrix-machine-home-1440.png` | 機械用, first screen (bit grid and section table) |
+| `docs/design-explore/shots/matrix-machine-home-390.png` | 機械用, phone |
+| `docs/design-explore/shots/matrix-switch-1440.png` | Mid-change: body text turned into its own hex |
+| `docs/design-explore/shots/matrix-switch-390.png` | Mid-change, phone |
+| `docs/design-explore/shots/matrix-machine-listing-1440.png` | Listing at `.posts`, Japanese bytes lit |
+| `docs/design-explore/shots/matrix-machine-logo-1440.png` | Real `logo-400.png` in the listing, square, no crop |
+| `docs/design-explore/shots/matrix-machine-operator-1440.png` | 機械用 with `?palette=operator` |
+| `docs/design-explore/shots/matrix-boot-choice-1440.png` | `?boot=frozen` with the capsule (see the Japanese caveat above) |
+| `docs/design-explore/shots/matrix-human-machine-switch-1440.mp4` | Switch video (not committed; on the box) |

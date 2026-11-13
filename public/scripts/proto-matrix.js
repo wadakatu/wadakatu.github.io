@@ -1,9 +1,10 @@
 /**
- * /proto/matrix/ enhancement. The page is complete without this file: both views are in the
- * markup, the source view has its own URL, and the head script already ends the boot layer on
- * Skip / Escape / click / timeout. This adds the in-place view change, the theme and palette
- * buttons, the backslash shortcut, and (only when motion is allowed and GSAP loads) the boot, the curtain
- * and three small glitches.
+ * /proto/matrix/ enhancement. The page is complete without this file: both readings (人間用, the
+ * page, and 機械用, the same facts as a program listing) are in the markup, each has its own URL,
+ * and the head script already ends the boot layer on Skip / Escape / click / timeout. This adds
+ * the in-place change between the two, the theme and palette buttons, the backslash shortcut, the
+ * prompt at the end of the machine reading, and (only when motion is allowed and GSAP loads) the
+ * boot, the drop between readings and three small glitches.
  */
 (() => {
   const root = document.documentElement, body = document.body;
@@ -37,13 +38,16 @@
     themeBtn.setAttribute('aria-pressed', isDay());
   });
 
-  // ---------- view: the page, or its source ----------
-  const viewBtn = $('#view-toggle'), main = $('#main'), curtain = $('#curtain'), slabs = $$('.slab'), name = $('#name');
+  // ---------- reading: 人間用 (the page) or 機械用 (the program) ----------
+  const main = $('#main'), curtain = $('#curtain'), slabs = $$('.slab'), name = $('#name');
+  const halves = $$('a[data-mode]');
   const stagger = { amount: 0.26, from: 'random' };
   let tl = null;
+  // Finish a change that is under way. A timeline that grew while it ran needs a second push to reach its new end.
+  const finish = () => { for (let i = 0; tl && i < 4; i++) tl.progress(1); };
 
   // The flags that describe how the page is being read, rebuilt from live state so a spent
-  // ?source=1 or ?boot=1 never rides along. The theme is the reader's stored choice, not an address.
+  // ?mode=machine or ?boot=1 never rides along. The theme is the reader's stored choice, not an address.
   function flags() {
     const q = new URLSearchParams();
     if (root.dataset.palette === 'operator') q.set('palette', 'operator');
@@ -51,20 +55,25 @@
     const s = q.toString();
     return s ? `?${s}` : '';
   }
-  // The static twin is the shareable address of each view, and it also works without JavaScript.
-  const address = (v) => (v === 'source' ? root.dataset.sourceUrl : root.dataset.pageUrl) + flags();
+  // The static twin is the shareable address of each reading, and it also works without JavaScript.
+  const address = (v) => (v === 'machine' ? root.dataset.machineUrl : root.dataset.pageUrl) + flags();
   function sync(v) {
     root.dataset.view = v;
-    document.title = `${root.dataset.page === 'home' ? 'Home' : 'Projects'}${v === 'source' ? ', source view' : ''} | wadakatu`;
-    viewBtn.setAttribute('aria-pressed', v === 'source');
-    $$('[data-source-href]').forEach((a) => (a.href = (v === 'source' ? a.dataset.sourceHref : a.dataset.pageHref) + flags()));
+    document.title = `${root.dataset.page === 'home' ? 'Home' : 'Projects'}${v === 'machine' ? ', machine reading' : ''} | wadakatu`;
+    $$('[data-machine-href]').forEach((a) => (a.href = (v === 'machine' ? a.dataset.machineHref : a.dataset.pageHref) + flags()));
+    halves.forEach((a) => {
+      a.href = address(a.dataset.mode);
+      if (a.closest('#boot')) return; // in the boot neither side has been chosen yet
+      if (a.dataset.mode === v) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
   }
   function swap(v) {
-    // Focus inside the view that is about to be hidden would be lost; hand it to the control instead.
-    if (document.activeElement.closest('.view')) viewBtn.focus();
+    // Focus inside the reading that is about to be hidden would be lost; hand it to the capsule in the header.
+    if (document.activeElement.closest('.view')) $(`.top a[data-mode="${v}"]`).focus();
     sync(v);
     history.replaceState(null, '', address(v));
-    $('#status').textContent = v === 'source' ? 'Source view' : 'Page view';
+    $('#status').textContent = v === 'machine' ? 'Machine reading' : 'Human reading';
     scrollTo(0, 0);
   }
   function decode(el, duration, allWide) {
@@ -75,35 +84,78 @@
       onComplete: () => (el.textContent = text),
     });
   }
+  const onScreen = (el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; };
+  /** Every piece of text on screen in the page, turned step by step into the hex digits of its own characters. */
+  function dissolve(duration) {
+    const walk = document.createTreeWalker($('.view-page'), NodeFilter.SHOW_TEXT), nodes = [];
+    while (walk.nextNode()) {
+      const n = walk.currentNode;
+      if (n.nodeValue.trim() && !n.parentElement.closest('.fall') && onScreen(n.parentElement)) nodes.push({ n, text: n.nodeValue });
+    }
+    const o = { p: 0 };
+    const digit = (c, i) => (/\s/.test(c) ? c : c.codePointAt(0).toString(16).at(i % 2 ? -1 : 0));
+    return {
+      tween: gsap.to(o, {
+        p: 1, duration, ease: 'power1.in',
+        onUpdate: () => nodes.forEach(({ n, text }) => {
+          const cs = Array.from(text);
+          n.nodeValue = cs.map((c, i) => ((i * 0.618) % 1 < o.p ? digit(c, i) : c)).join('');
+        }),
+      }),
+      restore: () => nodes.forEach(({ n, text }) => (n.nodeValue = text)),
+    };
+  }
+  const PRINTED = '.view-machine :is(.byte, .word, .facts div, .about-file > .rem, .toc li, .listing h2, .row)';
   function toggle() {
-    if (tl) tl.progress(1); // a second press finishes the first change before starting its own
-    const v = root.dataset.view === 'source' ? 'page' : 'source';
-    if (!motion || !window.gsap) return swap(v);
+    finish(); // a second press finishes the first change before starting its own
+    const v = root.dataset.view === 'machine' ? 'page' : 'machine';
+    if (!motion || !window.gsap || curtain.classList.contains('on')) return swap(v);
 
-    const dir = v === 'source' ? 1 : -1; // down into the source, back up to the page
-    curtain.classList.add('on');
     main.setAttribute('aria-busy', 'true');
+    // The tube collapses around the middle of the window, wherever the page is scrolled to.
+    const origin = () => gsap.set(main, { transformOrigin: `50% ${innerHeight / 2 - main.getBoundingClientRect().top}px` });
+    // Into the machine: the first screenful of the listing, known before it is shown. Back: what is on screen now.
+    const lines = v === 'machine' ? $$(PRINTED).slice(0, 90) : $$(PRINTED).filter(onScreen);
     const t = (tl = gsap.timeline({
       onComplete() {
-        curtain.classList.remove('on');
+        gsap.set([main, ...lines], { clearProps: 'all' });
         main.removeAttribute('aria-busy');
         tl = null;
         if (v === 'page') double();
       },
     }));
-    t.fromTo(slabs, { yPercent: -100 * dir }, { yPercent: 0, duration: 0.36, ease: 'power2.in', stagger })
-      .add(() => {
-        swap(v);
-        // Settle what is now on screen out of raw glyphs, as the curtain leaves.
-        const sel = v === 'source' ? '.view-source [data-d]' : '.view-page h2, .view-page .stream-name a';
-        [...new Set($$(sel).map((el) => el.firstElementChild || el))]
-          .filter((el) => el.getBoundingClientRect().top < innerHeight)
-          .forEach((el, i) => t.add(decode(el, 0.5), t.time() + 0.1 + Math.min(i, 24) * 0.02));
-      })
-      .to(slabs, { yPercent: 100 * dir, duration: 0.42, ease: 'power2.out', stagger }, '+=0.05');
+    if (v === 'machine') {
+      // The constructed page gives way: its text becomes its own character codes, the picture
+      // collapses to a line and goes out, and the listing prints top to bottom.
+      const d = dissolve(0.34);
+      origin();
+      t.add(d.tween)
+        .to(main, { scaleY: 0.004, duration: 0.16, ease: 'power2.in' })
+        .to(main, { scaleX: 0, duration: 0.1, ease: 'power2.in' })
+        .add(() => { d.restore(); swap(v); gsap.set(main, { clearProps: 'all' }); })
+        .fromTo(lines, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.01, stagger: { amount: 0.55 } }, '+=0.08');
+    } else {
+      // Back: the listing clears from the bottom, then the picture opens from a line.
+      t.to(lines, { autoAlpha: 0, duration: 0.01, stagger: { amount: 0.22, from: 'end' } })
+        .add(() => { swap(v); origin(); })
+        .fromTo(main, { scaleY: 0.004 }, { scaleY: 1, duration: 0.28, ease: 'power2.out', immediateRender: false })
+        .add(() => {
+          // Settle what is now on screen out of raw glyphs.
+          [...new Set($$('.view-page h2, .view-page .stream-name a').map((el) => el.firstElementChild || el))]
+            .filter(onScreen)
+            .forEach((el, i) => t.add(decode(el, 0.5), t.time() + Math.min(i, 24) * 0.02));
+        }, '-=0.2');
+    }
   }
   sync(root.dataset.view);
-  viewBtn.addEventListener('click', toggle);
+  // The capsule's halves are links to the two static routes; here the same choice happens in place.
+  addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[data-mode]');
+    if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    // From the boot either half ends it (the head script has, on this same click): 人間用 is Skip, 機械用 goes straight there.
+    if (a.dataset.mode !== root.dataset.view) a.closest('#boot') ? swap(a.dataset.mode) : toggle();
+  });
 
   // ---------- palette: phosphor unless the address says operator. Never stored, so it can be shared. ----------
   const paletteBtn = $('#palette-toggle');
@@ -119,9 +171,7 @@
   const shortcuts = $('#shortcuts');
   try { shortcuts.checked = localStorage.getItem('proto-matrix-shortcuts') !== 'off'; } catch {}
   function syncShortcut() {
-    if (shortcuts.checked) viewBtn.setAttribute('aria-keyshortcuts', '\\ ¥');
-    else viewBtn.removeAttribute('aria-keyshortcuts');
-    $('kbd', viewBtn).hidden = !shortcuts.checked;
+    halves.forEach((a) => (shortcuts.checked ? a.setAttribute('aria-keyshortcuts', '\\ ¥') : a.removeAttribute('aria-keyshortcuts')));
   }
   syncShortcut();
   shortcuts.addEventListener('change', () => {
@@ -139,6 +189,53 @@
       e.preventDefault();
       toggle();
     }
+  });
+
+  // ---------- prompt: a few real commands over the real file ----------
+  const prompt = $('#prompt'), tty = $('#tty'), cmd = $('#cmd');
+  let file = null;
+  // The bytes the listing prints, fetched once: xxd and ./file read them, not the page.
+  const load = async () => (file ??= new DataView(await (await fetch(prompt.dataset.src)).arrayBuffer()));
+  const sections = () => $$('.listing section').map((s) => ({ name: $('h2 span', s).textContent, el: s }));
+  const commands = {
+    help: () => `ls            the sections of ./${prompt.dataset.file}\ncat SECTION   print one section, for example: cat .projects\nxxd           the whole file as raw bytes\n./${prompt.dataset.file}    run it\nclear         clear this output\nexit          leave the machine reading`,
+    ls: () => $$('.toc li').map((li) => `${$('.size', li).textContent.padStart(13)}  ${$('.sec', li).textContent}`).join('\n'),
+    cat: (arg) => {
+      const s = sections().find((x) => x.name === arg || x.name === `.${arg}`);
+      if (!s) return arg ? `cat: ${arg}: no such section. Try ls.` : 'cat: which section? Try ls.';
+      return $$('.row .txt', s.el).map((t) => t.textContent.replace(/\s+/g, ' ').trim()).join('\n');
+    },
+    xxd: async () => {
+      const v = await load(), out = [];
+      for (let o = 0; o < v.byteLength; o += 16) {
+        const b = Array.from({ length: Math.min(16, v.byteLength - o) }, (_, i) => v.getUint8(o + i));
+        const hex = b.map((x, i) => x.toString(16).padStart(2, '0') + (i % 2 ? ' ' : '')).join('');
+        out.push(`${o.toString(16).padStart(8, '0')}: ${hex.padEnd(40)} ${b.map((x) => (x > 31 && x < 127 ? String.fromCharCode(x) : '.')).join('')}`);
+      }
+      return out.join('\n');
+    },
+    run: async () => {
+      // What the 33 bytes of code do, read from their own operands: write(1, rip + rel32, edx).
+      const v = await load(), text = Number(v.getBigUint64(24, true) - v.getBigUint64(0x50, true));
+      const from = text + 17 + v.getInt32(text + 13, true), size = v.getUint32(text + 18, true);
+      return new TextDecoder().decode(new Uint8Array(v.buffer, from, size)).trimEnd();
+    },
+    clear: () => (tty.replaceChildren(), ''),
+    exit: () => (toggle(), ''),
+  };
+  prompt.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const line = cmd.value.trim(), [word, arg] = line.split(/\s+/);
+    cmd.value = '';
+    if (!line) return;
+    const fn = word === `./${prompt.dataset.file}` ? commands.run : Object.hasOwn(commands, word) && word !== 'run' ? commands[word] : null;
+    let out;
+    try { out = fn ? await fn(arg) : `${word}: command not found. Try help.`; } catch { out = `${word}: could not read ./${prompt.dataset.file}`; }
+    if (word === 'clear' || word === 'exit') return;
+    const pre = document.createElement('pre');
+    pre.append(Object.assign(document.createElement('span'), { className: 'echo', textContent: `$ ${line}\n` }), out);
+    tty.append(pre);
+    cmd.scrollIntoView({ block: 'nearest' });
   });
 
   // ---------- boot ----------
@@ -183,7 +280,7 @@
   // ---------- glitches: rare, tied to his material, off with motion ----------
   function double() {
     if (!motion) return;
-    name.classList.add('double'); // the name doubles for a frame after you have seen the source
+    name.classList.add('double'); // the name doubles for a frame after you have seen what it is made of
     name.addEventListener('animationend', () => name.classList.remove('double'), { once: true });
   }
   function glitches() {
@@ -227,7 +324,7 @@
     root.dataset.motion = motion ? 'on' : 'off';
     if (!motion) {
       window.mxEndBoot?.();
-      tl?.progress(1);
+      finish();
       bootTl?.kill();
       effects.forEach((effect) => effect.progress(1));
       curtain.classList.remove('on');
@@ -244,5 +341,5 @@
   setTimeout(() => window.gsap || window.mxEndBoot?.(), 2500); // a stalled CDN should not hold the page behind an empty layer
   document.head.append(s);
   // Leaving the page: finish, don't abandon, so a restored page is never caught mid-change.
-  addEventListener('pagehide', () => { tl?.progress(1); bootTl?.progress(1); effects.forEach((effect) => effect.progress(1)); });
+  addEventListener('pagehide', () => { finish(); bootTl?.progress(1); effects.forEach((effect) => effect.progress(1)); });
 })();

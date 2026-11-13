@@ -1,17 +1,19 @@
 ---
 /**
- * /proto/matrix/ shell. Each route renders both readings of the same facts (slots "page" and
- * "source"); <html data-view> decides which one is displayed. The static /source/ routes set it
- * in the markup, so the source view exists without JavaScript.
+ * /proto/matrix/ shell. Each route renders both readings of the same facts: 人間用 (slot "page",
+ * the constructed page) and 機械用 (slot "machine", the same facts as the program they assemble to).
+ * <html data-view> decides which one is displayed. The static /machine/ routes set it in the
+ * markup, so the machine reading exists without JavaScript.
  */
 import { person, bio } from '../data/proto-content';
 import { rainColumns, curtainSlabs, glyphs, etch, logo } from '../pages/proto/matrix/_lib';
-interface Props { page: 'home' | 'projects'; view: 'page' | 'source'; h1: string; boot?: { key: string; text: string }[] }
+import Pill from '../pages/proto/matrix/_Pill.astro';
+interface Props { page: 'home' | 'projects'; view: 'page' | 'machine'; h1: string; boot?: { key: string; text: string }[] }
 const { page, view, h1, boot } = Astro.props;
 
 const root = '/proto/matrix/';
-const url = (p: 'home' | 'projects', v: 'page' | 'source') => root + (p === 'projects' ? 'projects/' : '') + (v === 'source' ? 'source/' : '');
-const title = `${page === 'home' ? 'Home' : 'Projects'}${view === 'source' ? ', source view' : ''} | wadakatu`;
+const url = (p: 'home' | 'projects', v: 'page' | 'machine') => root + (p === 'projects' ? 'projects/' : '') + (v === 'machine' ? 'machine/' : '');
+const title = `${page === 'home' ? 'Home' : 'Projects'}${view === 'machine' ? ', machine reading' : ''} | wadakatu`;
 const nav = [
   { label: 'Home', p: 'home' as const },
   { label: 'Projects', p: 'projects' as const },
@@ -22,7 +24,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
 ---
 <!doctype html>
 <html lang="en" data-theme="night" data-page={page} data-view={view}
-  data-page-url={url(page, 'page')} data-source-url={url(page, 'source')}>
+  data-page-url={url(page, 'page')} data-machine-url={url(page, 'machine')}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,7 +50,8 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         // Phosphor unless the address says otherwise. The palette is never stored, so a link carries it.
         if (q.get('palette') === 'operator') d.dataset.palette = 'operator';
         if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
-        if (q.get('source') === '1') d.dataset.view = 'source';
+        // ?source=1 is the earlier name of the same switch.
+        if (q.get('mode') === 'machine' || q.get('source') === '1') d.dataset.view = 'machine';
 
         const boot = q.get('boot');
         const first = !get('sessionStorage', 'proto-matrix-boot') && d.dataset.motion !== 'off';
@@ -63,13 +66,16 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
             if (d.dataset.palette === 'operator') flags.set('palette', 'operator');
             if (q.get('motion') === '0') flags.set('motion', '0');
             const suffix = flags.size ? `?${flags}` : '';
-            const source = d.dataset.view === 'source';
-            document.querySelectorAll('[data-source-href]').forEach((a) => {
-              a.href = (source ? a.dataset.sourceHref : a.dataset.pageHref) + suffix;
+            const view = d.dataset.view;
+            document.querySelectorAll('[data-machine-href]').forEach((a) => {
+              a.href = (view === 'machine' ? a.dataset.machineHref : a.dataset.pageHref) + suffix;
             });
-            const twin = document.querySelector('.nojs');
-            twin.href = (source ? d.dataset.pageUrl : d.dataset.sourceUrl) + suffix;
-            twin.textContent = source ? 'View page' : 'View source';
+            document.querySelectorAll('a[data-mode]').forEach((a) => {
+              a.href = (a.dataset.mode === 'machine' ? d.dataset.machineUrl : d.dataset.pageUrl) + suffix;
+              if (a.closest('#boot')) return;
+              if (a.dataset.mode === view) a.setAttribute('aria-current', 'true');
+              else a.removeAttribute('aria-current');
+            });
           }
           if (d.dataset.boot) document.getElementById('boot-skip')?.focus();
         }, { once: true });
@@ -100,7 +106,8 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           <!-- The last record resolves to the mark itself: the real file, whole, wiped in and never decoded. -->
           <p class="boot-logo"><span class="k">logo</span><img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" /></p>
         </div>
-        <button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button>
+        <!-- The choice is already here: either half ends the intro, one on each side. -->
+        <p class="boot-exit"><button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button><Pill page={page} /></p>
       </div>
     )}
     <a class="skip" href="#main">Skip to content</a>
@@ -118,24 +125,21 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
 
     <div id="shell">
       <header class="top frame">
-        <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-source-href={url('home', 'source')}>
+        <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-machine-href={url('home', 'machine')}>
           <!-- The wordmark names the link, so the mark beside it is decorative here. -->
           <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" />{person.heading}
         </a>
         <nav aria-label="Main">
           {nav.map((n) => (
-            <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-source-href={url(n.p, 'source')}
+            <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-machine-href={url(n.p, 'machine')}
               aria-current={n.p === page ? 'page' : undefined}>{n.label}</a>
           ))}
           <a href="/blog/">Blog</a>
           <a href="/about/">About</a>
         </nav>
         <div class="controls">
-          <!-- Without JavaScript the source view is a real second URL. -->
-          <a class="control nojs" href={url(page, view === 'source' ? 'page' : 'source')}>{view === 'source' ? 'View page' : 'View source'}</a>
-          <button class="control needs-js" id="view-toggle" type="button" aria-pressed={view === 'source' ? 'true' : 'false'} aria-keyshortcuts="\">
-            View source <kbd>\</kbd>
-          </button>
+          <!-- Two links to two real URLs. The script turns the change into an in-place one. -->
+          <Pill page={page} view={view} />
           <!-- A checkbox, so the rain can be stopped without JavaScript. -->
           <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
           <button class="control needs-js" id="palette-toggle" type="button" aria-pressed="false">Operator colours</button>
@@ -146,13 +150,13 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
       <main id="main" class="frame" tabindex="-1">
         <h1 class="name" id="name" data-echo={h1}>{h1}</h1>
         <div class="view view-page"><slot name="page" /></div>
-        <div class="view view-source"><slot name="source" /></div>
+        <div class="view view-machine"><slot name="machine" /></div>
       </main>
 
       <footer class="foot frame">
         <div class="hint needs-js">
           <label class="control"><input type="checkbox" id="shortcuts" checked /> Enable <kbd>\</kbd> / <kbd>¥</kbd> shortcut</label>
-          <p>Switch between the page and its source. Turn off to prevent single-key activation.</p>
+          <p>Switches between the two readings. Turn off to prevent single-key activation.</p>
         </div>
         <a href={`mailto:${person.email}`}>{person.email}</a>
         <a href={person.github}>GitHub</a>
@@ -164,7 +168,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
 
     <p class="vh" id="status" role="status"></p>
 
-    <!-- Covers the page while the view changes. Decorative corpus text. -->
+    <!-- Covers the page as the boot ends. Decorative corpus text. -->
     <div class="curtain" id="curtain" aria-hidden="true">
       {curtainSlabs().map((s) => <span class="slab" lang="ja">{s}</span>)}
     </div>
