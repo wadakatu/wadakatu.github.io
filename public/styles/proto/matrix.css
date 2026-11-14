@@ -503,9 +503,6 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   .login-card > summary::before { content: '▸'; flex: none; }
   .login-card[open] > summary::before { content: '▾'; }
   .login-card > summary:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
-  .login-card > summary .role {
-    min-width: 0; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
   .login-card[open] > summary { border-bottom: 1px solid var(--rule); }
 }
 @supports selector(::details-content) {

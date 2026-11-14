@@ -33,7 +33,7 @@ const role = world.fetch.find((r) => r[0] === 'Role')?.[1] ?? '';
       {blocks.map((b, i) => b.cmd === 'neofetch' && i === 0 ? (
         // Login card: collapsed on a phone so the prompt has the screen; always visible from 720px up (see matrix.css).
         <details class="login-card">
-          <summary><span class="id">{world.user}_</span>{role && <span class="role">{role}</span>}</summary>
+          <summary aria-label={`who am I? ${world.user}_${role ? `, ${role}` : ''}`}>who am I?</summary>
           <div class="ln echo"><span class="ps" aria-hidden="true">{b.prompt}</span> {b.cmd}</div>
           <Out items={b.out} />
         </details>

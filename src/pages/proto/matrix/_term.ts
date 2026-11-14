@@ -84,8 +84,8 @@ function loginCard(cmd: string) {
   const card = Object.assign(document.createElement('details'), { className: 'login-card' });
   const sum = document.createElement('summary');
   const role = world.fetch.find((row) => row[0] === 'Role')?.[1];
-  sum.append(Object.assign(document.createElement('span'), { className: 'id', textContent: `${world.user}_` }));
-  if (role) sum.append(Object.assign(document.createElement('span'), { className: 'role', textContent: role }));
+  sum.setAttribute('aria-label', role ? `who am I? ${world.user}_, ${role}` : `who am I? ${world.user}_`);
+  sum.append('who am I?');
   card.append(sum);
   const line = Object.assign(document.createElement('div'), { className: 'ln echo' });
   line.append(Object.assign(document.createElement('span'), { className: 'ps', ariaHidden: 'true', textContent: shell.prompt() }), ` ${cmd}`);
@@ -93,7 +93,7 @@ function loginCard(cmd: string) {
   print(r.out, card);
   tty.append(card);
   if (matchMedia('(min-width: 720px)').matches) card.open = true;
-  card.addEventListener('toggle', () => { if (!card.open) bottom(); });
+  card.addEventListener('toggle', () => requestAnimationFrame(bottom));
   bottom();
 }
 function echo(cmd: string, tail = '') {

@@ -1316,7 +1316,7 @@ Playwright, Chrome, against `http://127.0.0.1:4321`. `npm run build` completed (
 
 ## The login neofetch on a phone
 
-wadakatu: 「スマホの機械用ですが、上の自己紹介部分はaccordionとかで閉じられるようにすると良さそうかな それかスマホ版の場合は出さないようにするとか あまりにTerminal部分が小さい」. The block is the auto-run login `neofetch` card on `/proto/matrix/machine/` (logo + Role / Location / …), not a separate page section. Below 720px it is now a native `<details class="login-card">`, closed by default, one 44px summary line (`wadakatu_` and the role). The prompt sits under that line and has most of the screen. From 720px up the summary is hidden and the card is just its contents, the same session as before. Accordion, not hidden: the same facts are still one open away, and `whoami` / `about` / a typed `neofetch` were already there. `/projects/machine/` has no login card (it still starts with `ls -l`) and was left alone. Terminal commands and their output are unchanged.
+wadakatu: 「スマホの機械用ですが、上の自己紹介部分はaccordionとかで閉じられるようにすると良さそうかな それかスマホ版の場合は出さないようにするとか あまりにTerminal部分が小さい」. The block is the auto-run login `neofetch` card on `/proto/matrix/machine/` (logo + Role / Location / …), not a separate page section. Below 720px it is now a native `<details class="login-card">`, closed by default, one 44px summary line (`who am I?`, with a `▸` / `▾`). The prompt sits under that line and has most of the screen. From 720px up the summary is hidden and the card is just its contents, the same session as before. Accordion, not hidden: the same facts are still one open away, and `whoami` / `about` / a typed `neofetch` were already there. `/projects/machine/` has no login card (it still starts with `ls -l`) and was left alone. Terminal commands and their output are unchanged.
 
 ### Heights
 
@@ -1329,14 +1329,14 @@ Playwright, Chrome, live shell, boot skipped, against `http://127.0.0.1:4321`. `
 | 430 × 844 | 717.4px, unchanged | `.fetch` 478.3px | 46px card | cramped → **535.3px** |
 | 1440 × 900 | 757.4px, unchanged | `.fetch` 313.5px, tty 398.6px, header 69px | the same; summary not drawn | 318.2px, unchanged |
 
-At 390, opened, the card is 587px and the prompt sits about 6px past the fold (the screen still scrolls). `/projects/machine/` at 390 is unchanged (tty 498.6px, no card).
+At 390, opened, the card is 587px and the prompt sits 16px above the fold (`bottom()` on toggle). `/projects/machine/` at 390 is unchanged (tty 498.6px, no card). The summary is the short label `who am I?`; it does not ellipsize at 360 or 390. Its accessible name is `who am I? wadakatu_, Backend Developer @ Studio Inc.`
 
 ### How it is built
 
 - The recorded session in `_Terminal.astro` wraps only the first `neofetch` block (the echo line and the `.fetch`) in `<details class="login-card">`. Later commands print as they did.
 - The live shell in `_term.ts` does the same for the auto-run `~/.zshrc` `neofetch`. A typed `neofetch`, or `?run=` of any command including `neofetch`, still prints in the open. `loginCard()` does not go through `run()`, so it calls `refresh()` so the prompt is drawn.
 - Below 720px the summary is a 44px flex row with a `▸` / `▾` marker (`display: flex` hides the native triangle). From 720px, `.login-card` and `::details-content` are `display: contents`, the content stays `content-visibility: visible` whether or not the details is open, and the summary is `display: none` — the same pattern as the header menu. The live shell also sets `open` at 720px and up, for engines without `::details-content`.
-- Closing the details calls `bottom()` so the prompt comes back into view. Opening does not steal scroll from the card. `visualViewport` / `fit()` / `.kb` are untouched; `.kb` still only hides the modeline (and the desktop nav from 720px up).
+- Toggling the details (open or close) calls `bottom()` on the next frame so the prompt stays in view. `visualViewport` / `fit()` / `.kb` are untouched; `.kb` still only hides the modeline (and the desktop nav from 720px up).
 
 ### No JavaScript, reduced motion, accessibility
 
@@ -1362,12 +1362,12 @@ Playwright, Chrome, 390 × 844, against `http://127.0.0.1:4321`. Also copied to 
 | `docs/design-explore/shots/matrix-intro-390-phosphor-expanded.png` | After, expanded, phosphor |
 | `docs/design-explore/shots/matrix-intro-390-operator-collapsed.png` | After, collapsed, Operator |
 | `docs/design-explore/shots/matrix-intro-390-operator-expanded.png` | After, expanded, Operator |
+| `docs/design-explore/shots/matrix-intro-360-phosphor-collapsed.png` | After, collapsed, phosphor, 360 (`who am I?`) |
 | `docs/design-explore/shots/matrix-intro-before-projects-machine-390.png` | `/projects/machine/`, 390, before (no card; left unchanged) |
 
 ### Still weak
 
-- **Opening the card at 390 leaves the prompt about 6px past the fold.** Closing calls `bottom()`; opening does not, so the card is not scrolled away from. The screen still scrolls.
-- **The role in the summary ellipsizes** (`Backend Developer @ St…` at 390). The full role is in the open card.
+- **At 360, opened, the card is taller than the screen** (tty 727.4px + prompt 45px). `bottom()` keeps the prompt in view, so the top of the motd can scroll away.
 - **It depends on `::details-content` at desktop** (same class of engine as the header menu). An older no-JS desktop would see a closed disclosure; the live shell sets `open` from 720px up.
 - **Checked in Chrome only.** An iPhone, and the on-screen keyboard with the accordion open, were not opened. `fit()` itself was not changed.
 - **`display: flex` on the summary** means the marker is a CSS `▸` / `▾`, not the native triangle.
