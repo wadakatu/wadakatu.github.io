@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="ogp.webp" width="180" alt="wadakatu logo" />
+<img src="public/ogp.webp" width="180" alt="wadakatu logo" />
 
 <h1>wadakatu<sub>_</sub></h1>
 
@@ -20,34 +20,34 @@ $ cat site_info.txt
 |-----|-------|
 | `URL` | https://www.wadakatu.dev |
 | `STATUS` | ![](https://img.shields.io/badge/●_ONLINE-004d00?style=flat-square&labelColor=004d00) |
-| `STACK` | HTML / CSS / JavaScript |
+| `STACK` | Astro 5 |
 | `HOST` | GitHub Pages |
 
 ---
 
 ```bash
-$ tree ./
+$ tree ./src/pages
 ```
 
 ```
-./
-├── index.html        # Navigation Hub
-├── projects/         # OSS & Personal Works
-├── blog/             # Tech Articles
-├── about/            # Career & Skills
-├── styles/           # Shared CSS
-└── scripts/          # Shared JavaScript
+src/pages/
+├── index.astro      # Home
+├── projects/        # OSS & personal works
+├── blog/            # Tech articles (content collection)
+├── about/           # Career & skills
+├── feed.xml.ts      # RSS, built from published posts
+└── atom.xml.ts      # Atom, built from published posts
 ```
 
 ---
 
 ```bash
-$ ./dev.sh
+$ npm ci && npm run dev
 ```
 
 ```bash
-# Start local server
-python -m http.server 8000
+# Production build
+npm run build
 ```
 
 ---

@@ -18,8 +18,8 @@ Location: Japan
 
 ## Featured Projects
 
-- [Laravel Spectrum](https://docs.laravel-spectrum.dev): Zero-annotation API documentation generator for Laravel. Automatically generates OpenAPI documentation from your Laravel application without requiring annotations.
-- [W3C Hackathon TPAC 2025](https://github.com/wadakatu/w3c-hackathon): Award-winning dashboard project built with vibe-coding methodology, guided by web standards. Winner at W3C TPAC 2025 hackathon.
+- [Laravel Spectrum](https://docs.laravel-spectrum.dev): Zero-annotation API documentation generator for Laravel.
+- [W3C Hackathon TPAC 2025](https://github.com/wadakatu/w3c-hackathon): Dashboard built with vibe-coding, guided by web standards. Winner at W3C TPAC 2025 hackathon.
 
 ## Social Links
 
@@ -30,23 +30,21 @@ Location: Japan
 ## Site Structure
 
 - [Homepage](https://www.wadakatu.dev/): Main portfolio page with navigation hub
-- [Projects](https://www.wadakatu.dev/projects): OSS contributions and personal works
-- [Blog](https://www.wadakatu.dev/blog): Technical articles and learnings
-- [About](https://www.wadakatu.dev/about): Career history and skills
+- [Projects](https://www.wadakatu.dev/projects/): OSS contributions and personal works
+- [Blog](https://www.wadakatu.dev/blog/): Technical articles and learnings
+- [About](https://www.wadakatu.dev/about/): Career history and skills
 
 ## Language Support
 
 - Primary language: English (homepage, about, projects)
 - Japanese content: Blog section (all articles)
-- hreflang attributes link English and Japanese versions
+- English pages use `og:locale` `en_US` and `lang="en"`; Japanese articles use `ja_JP` and `lang="ja"`
 
 ## Technical Stack
 
 This portfolio site is built with:
-- Pure HTML, CSS, and JavaScript (no frameworks)
-- Matrix-inspired dark theme design
-- Responsive bento grid layout
-- Full accessibility support (WCAG 2.2 compliant)
+- Astro 5, with a static build hosted on GitHub Pages
+- The TOMBO design system (`tombo.css`) used across the production pages
 - Structured data (JSON-LD) for SEO and AI readability
 
 ## Contact

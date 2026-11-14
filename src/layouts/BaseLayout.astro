@@ -28,6 +28,7 @@ const {
 } = Astro.props;
 
 const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
+const ogLocale = lang.toLowerCase().startsWith('ja') ? 'ja_JP' : 'en_US';
 ---
 
 <!DOCTYPE html>
@@ -54,7 +55,7 @@ const siteTitle = title.includes('wadakatu') ? title : `${title} | wadakatu`;
   <meta property="og:image" content={ogImage}>
   <meta property="og:image:alt" content="wadakatu - Backend Developer portfolio preview">
   <meta property="og:site_name" content="wadakatu">
-  <meta property="og:locale" content="ja_JP">
+  <meta property="og:locale" content={ogLocale}>
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">

@@ -64,13 +64,50 @@ const listRepos = async (): Promise<Repo[]> => {
   return repos;
 };
 
+/** Prefer GET: some hosts answer HEAD unreliably, and a 404 can follow a redirect
+ *  to the user site's home with 200. The final URL must stay on the path we asked
+ *  about, or land on https (a custom domain). http destinations are not treated as live. */
 const isLive = async (url: string): Promise<boolean> => {
   try {
-    return (await fetch(url, { method: 'HEAD' })).ok;
+    const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+    if (!res.ok) return false;
+    const requested = new URL(url);
+    const finalUrl = new URL(res.url);
+    if (finalUrl.protocol !== 'https:') return false;
+    if (finalUrl.origin === requested.origin) {
+      const want = requested.pathname.replace(/\/$/, '') || '/';
+      const got = finalUrl.pathname.replace(/\/$/, '') || '/';
+      return want === got;
+    }
+    return true;
   } catch {
     return false;
   }
 };
+
+/** Project Pages under the user domain that actually live on a custom https host. */
+const siteUrl: Record<string, string> = {
+  'laravel-spectrum': 'https://docs.laravel-spectrum.dev/',
+};
+
+const featured = [
+  { name: 'laravel-spectrum', lang: 'PHP' },
+  { name: 'screenbook', lang: 'TypeScript' },
+  { name: 'gitlyte', lang: 'TypeScript' },
+] as const;
+
+const otherProjects = [
+  { name: 'w3c-hackathon', href: 'https://github.com/wadakatu/w3c-hackathon', description: 'Dashboard built with vibe-coding', lang: 'JS' },
+  { name: 'ui_lab', href: 'https://github.com/wadakatu/ui_lab', description: 'Frontend UI Component Laboratory', lang: 'HTML' },
+] as const;
+
+/** Taken off the Projects page: the first three were retired; resume lives on About. */
+const hiddenFromProjects = new Set([
+  'laravel-factory-refactor',
+  'studio-carousel',
+  'slides',
+  'resume',
+]);
 
 const candidates = (await listRepos())
   .filter(
@@ -80,13 +117,14 @@ const candidates = (await listRepos())
       !repo.archived &&
       !repo.private &&
       // the site doing the linking
-      repo.name !== 'wadakatu.github.io'
+      repo.name !== 'wadakatu.github.io' &&
+      !hiddenFromProjects.has(repo.name)
   )
   .map((repo) => ({
     name: repo.name,
     description: repo.description ?? '',
     language: repo.language ?? '—',
-    url: `https://www.wadakatu.dev/${repo.name}/`,
+    url: siteUrl[repo.name] ?? `https://www.wadakatu.dev/${repo.name}/`,
   }))
   .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -100,6 +138,19 @@ const sites = (
 if (sites.length === 0) {
   throw new Error('every GitHub Pages probe failed - refusing to publish an empty section');
 }
+
+const repoNames = new Set<string>([
+  ...featured.map((p) => p.name),
+  ...otherProjects.map((p) => p.name),
+  ...sites.map((s) => s.name),
+]);
+const languages = new Set(
+  [
+    ...featured.map((p) => p.lang),
+    ...otherProjects.map((p) => p.lang),
+    ...sites.map((s) => s.language),
+  ].filter((lang) => lang && lang !== '—'),
+);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -144,15 +195,15 @@ const jsonLd = {
       <div class="stats-bar">
         <div class="stat-item tombo-metric">
           <div class="k">Repositories</div>
-          <div class="v">10</div>
+          <div class="v">{repoNames.size}</div>
         </div>
         <div class="stat-item tombo-metric">
           <div class="k">Featured</div>
-          <div class="v">3</div>
+          <div class="v">{featured.length}</div>
         </div>
         <div class="stat-item tombo-metric">
           <div class="k">Languages</div>
-          <div class="v">5+</div>
+          <div class="v">{languages.size}</div>
         </div>
       </div>
 
@@ -160,7 +211,7 @@ const jsonLd = {
       <section>
         <SectionHeader command="ls featured/" />
         <div class="tombo-dim" aria-hidden="true"></div>
-        <div class="tombo-dimlab">3 items</div>
+        <div class="tombo-dimlab">{featured.length} items</div>
 
         <div class="featured-grid">
           <a href="https://github.com/wadakatu/laravel-spectrum" target="_blank" class="featured-card tombo-metric tombo-corners">
@@ -259,7 +310,7 @@ const jsonLd = {
       <section>
         <SectionHeader command="ls projects/" />
         <div class="tombo-dim" aria-hidden="true"></div>
-        <div class="tombo-dimlab">6 items</div>
+        <div class="tombo-dimlab">{otherProjects.length} items</div>
 
         <div class="tombo-table-wrap" role="region" aria-label="Other projects" tabindex="0">
           <table class="tombo-table other-table">
@@ -267,36 +318,13 @@ const jsonLd = {
             <tr><th>Repository</th><th>Description</th><th>Lang</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td><a href="https://github.com/wadakatu/w3c-hackathon" target="_blank">w3c-hackathon</a></td>
-              <td>Dashboard built with vibe-coding</td>
-              <td class="tombo-mono">JS</td>
-            </tr>
-            <tr>
-              <td><a href="https://github.com/wadakatu/ui_lab" target="_blank">ui_lab</a></td>
-              <td>Frontend UI Component Laboratory</td>
-              <td class="tombo-mono">HTML</td>
-            </tr>
-            <tr>
-              <td><a href="https://github.com/wadakatu/laravel-factory-refactor" target="_blank">laravel-factory-refactor</a></td>
-              <td>Refactor factory call style in Laravel 8.x~10.x</td>
-              <td class="tombo-mono">PHP</td>
-            </tr>
-            <tr>
-              <td><a href="https://github.com/wadakatu/studio-carousel" target="_blank">studio-carousel</a></td>
-              <td>Carousel collection for Studio UI lab</td>
-              <td class="tombo-mono">CSS</td>
-            </tr>
-            <tr>
-              <td><a href="https://github.com/wadakatu/slides" target="_blank">slides</a></td>
-              <td>Presentation slides built with Slidev</td>
-              <td class="tombo-mono">Vue</td>
-            </tr>
-            <tr>
-              <td><a href="https://github.com/wadakatu/resume" target="_blank">resume</a></td>
-              <td>Fake it until you make it</td>
-              <td class="tombo-mono">CSS</td>
-            </tr>
+            {otherProjects.map((project) => (
+              <tr>
+                <td><a href={project.href} target="_blank">{project.name}</a></td>
+                <td>{project.description}</td>
+                <td class="tombo-mono">{project.lang}</td>
+              </tr>
+            ))}
           </tbody>
           </table>
         </div>
