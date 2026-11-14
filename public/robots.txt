@@ -4,7 +4,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://www.wadakatu.dev/sitemap.xml
+Sitemap: https://www.wadakatu.dev/sitemap-index.xml
 
 # AI crawlers - welcome to use llms.txt
 # See: https://www.wadakatu.dev/llms.txt

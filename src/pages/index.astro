@@ -5,7 +5,10 @@ import SkipLink from '@components/SkipLink.astro';
 import SectionHeader from '@components/SectionHeader.astro';
 import ThemeToggle from '@components/ThemeToggle.astro';
 import Footer from '@components/Footer.astro';
-import { profile, ratio } from '@/data/profile';
+import { loadActivity, profile, ratio } from '@/data/profile';
+import { execSync } from 'node:child_process';
+
+const activity = await loadActivity();
 
 // derived at build time — the hero states numbers, so they have to be true
 const posts = await getCollection('blog', ({ data }) => data.published === true);
@@ -17,11 +20,33 @@ const latestDate = latestPost
   ? new Date(latestPost).toISOString().slice(0, 10)
   : '—';
 
+function headCommitDate(): Date | undefined {
+  try {
+    const iso = execSync('git log -1 --format=%cI', { encoding: 'utf8' }).trim();
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? undefined : d;
+  } catch {
+    return undefined;
+  }
+}
+
+const dateModified = new Date(
+  Math.max(
+    ...[
+      ...posts.map((p) => p.data.updated_at ?? p.data.published_at),
+      headCommitDate(),
+    ]
+      .filter((d): d is Date => d instanceof Date && !Number.isNaN(d.getTime()))
+      .map((d) => d.getTime()),
+  ),
+).toISOString();
+
 // ruler tracks: each represents a round ceiling, so the fill reads as progress
 // toward a milestone rather than as a fraction of nothing
 const RULERS = {
-  prs: ratio(profile.recentPrs, 40),
-  repos: ratio(profile.originalRepos, 20),
+  // 120 is the next round milestone above the current OSS PR count
+  prs: ratio(activity.recentPrs, 120),
+  repos: ratio(activity.originalRepos, 20),
   articles: ratio(articleCount, 20),
   years: ratio(new Date().getFullYear() - profile.since, 10),
 };
@@ -45,7 +70,6 @@ const jsonLd = [
       "image": "https://www.wadakatu.dev/images/logo-400.webp",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Osaka",
         "addressCountry": "JP"
       },
       "sameAs": [
@@ -56,7 +80,7 @@ const jsonLd = [
       "knowsAbout": ["PHP", "Laravel", "Backend Development", "Open Source Software"]
     },
     "dateCreated": "2024-01-01",
-    "dateModified": "2025-01-06"
+    "dateModified": dateModified
   },
   {
     "@context": "https://schema.org",
@@ -128,7 +152,7 @@ const jsonLd = [
             <div class="tombo-dimlab">handle: 1 line — measured / glyphs: 9</div>
             <p class="hero-role" transition:name="site-role">Backend Developer @ Studio Inc.</p>
             <div class="hero-meta">
-              <span class="hero-location">Osaka, Japan</span>
+              <span class="hero-location">Japan</span>
               <nav class="social-links" aria-label="Social links">
                 <a href="https://github.com/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="GitHub">GITHUB</a>
                 <a href="https://zenn.dev/wadakatu" target="_blank" rel="noopener noreferrer" class="tombo-chip social-link" aria-label="Zenn">ZENN</a>
@@ -142,15 +166,15 @@ const jsonLd = [
             <b class="tombo-corner-tr" aria-hidden="true"></b><b class="tombo-corner-bl" aria-hidden="true"></b>
             <p class="tombo-fig">FIG. 00 — ACTIVITY</p>
             <div class="k">Pull requests merged</div>
-            <div class="v">{profile.recentPrs}<span class="unit">/ 12 MO</span></div>
+            <div class="v">{activity.recentPrs}<span class="unit">/ 12 MO</span></div>
             <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.prs * 100).toFixed(0)}%`} aria-hidden="true"></div>
             <dl class="hero-rows">
-              <div class="hero-row"><dt>Original repos</dt><dd>{profile.originalRepos}</dd></div>
-              <div class="hero-row"><dt>OSS forks</dt><dd>{profile.ossForks}</dd></div>
+              <div class="hero-row"><dt>Original repos</dt><dd>{activity.originalRepos}</dd></div>
+              <div class="hero-row"><dt>OSS forks</dt><dd>{activity.ossForks}</dd></div>
               <div class="hero-row"><dt>Articles published</dt><dd>{articleCount}</dd></div>
               <div class="hero-row"><dt>Latest entry</dt><dd class="is-now">{latestDate}</dd></div>
             </dl>
-            <figcaption class="tombo-dimlab">github.com/wadakatu — verified {profile.verifiedOn}</figcaption>
+            <figcaption class="tombo-dimlab">github.com/wadakatu — verified {activity.verifiedOn}</figcaption>
           </figure>
         </div>
       </div>
@@ -164,12 +188,12 @@ const jsonLd = [
       <nav class="nav-grid" aria-label="Main navigation">
         <a href="/projects" class="nav-card tombo-metric tombo-corners" transition:name="nav-projects">
           <p class="tombo-fig">FIG. 01 — PROJECTS</p>
-          <p class="nav-value">{profile.originalRepos}<span class="unit">repos</span></p>
+          <p class="nav-value">{activity.originalRepos}<span class="unit">repos</span></p>
           <h3 class="nav-title">Projects</h3>
           <p class="nav-desc">OSS contributions & personal works</p>
           <div class="tombo-ruler" style={`--tombo-ruler-value:${(RULERS.repos * 100).toFixed(0)}%`} aria-hidden="true"></div>
           <p class="nav-foot">
-            <span>{profile.ossForks} forks upstream</span>
+            <span>{activity.ossForks} OSS forks</span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
