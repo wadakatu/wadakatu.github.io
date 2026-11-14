@@ -18,7 +18,12 @@ node_modules/
 # Astro build output
 .astro/
 dist/
-blog/
+# Root-only: leftover of the hand-written blog HTML (7245c7c). Do not use a bare `blog/`,
+# which would also hide `src/pages/proto/matrix/blog/`.
+/blog/
 
 # agent scratch
 .superpowers/
+
+# Local design-skill copies for the explore pass (do not vendor)
+.design-skills/

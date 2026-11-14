@@ -1,0 +1,101 @@
+---
+import Layout from '../../../layouts/ProtoMatrixLayout.astro';
+import Stream from './_Stream.astro';
+import Terminal from './_Terminal.astro';
+import Pill from './_Pill.astro';
+import { person, bio, projects, recentPosts, skills, activity } from '../../../data/proto-content';
+import { phrases, readableCommits, commitFor, host, splitJa, route, postHref, slugOf, ROOT } from './_lib';
+interface Props { view: 'page' | 'machine' }
+const { view } = Astro.props;
+
+// The boot types the keys of the data file and decodes their real values.
+const boot = [
+  { key: 'name', text: person.heading },
+  { key: 'role', text: person.role },
+  { key: 'location', text: person.location },
+  { key: 'project', text: projects[0].name },
+  { key: 'post', text: recentPosts[0].title },
+];
+---
+<Layout page="home" view={view} h1={person.name} boot={boot}>
+  <Fragment slot="page">
+    <section class="about panel" aria-label="About">
+      <p class="role">{person.role}<br />{person.location}</p>
+      <p class="brief">{bio.line1}<br />{bio.line2}</p>
+    </section>
+
+    <section class="wall panel" aria-labelledby="streams">
+      <h2 id="streams">Work and writing</h2>
+      <p class="lede">
+        {projects.length} projects and {recentPosts.length} recent posts. Each one falls in its own words and settles into the entry below it.
+      </p>
+      <ul class="streams">
+        {projects.map((p, i) => {
+          const [en, ja] = splitJa(p.blurb);
+          return (
+            <Stream name={p.name} href={p.href} index={i} commit={commitFor(p.name)} strands={[p.name, p.blurb, host(p.href), p.lang]}>
+              <p class="meta">{p.lang}</p>
+              <p class="blurb">{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+            </Stream>
+          );
+        })}
+        {recentPosts.map((post, i) => (
+          <Stream name={post.title} href={postHref(slugOf(post.href))} ja index={i + projects.length} commit={commitFor(post.title)}
+            strands={[post.title, post.date, host(person.site + post.href), post.category]}>
+            <p class="meta"><time datetime={post.date}>{post.date}</time> {post.category}</p>
+          </Stream>
+        ))}
+      </ul>
+      <p class="after"><a href={route('projects', 'page')} data-page-href={route('projects', 'page')} data-machine-href={route('projects', 'machine')}>All projects</a> <a href={`${ROOT}blog/`}>Read the blog</a></p>
+    </section>
+
+    <div class="station">
+      <section class="panel" aria-labelledby="activity">
+        <h2 id="activity">Activity</h2>
+        <dl class="figures">
+          <div><dt>Original repos</dt><dd>{activity.originalRepos}</dd></div>
+          <div><dt>OSS forks</dt><dd>{activity.ossForks}</dd></div>
+          <div><dt>Recent PRs</dt><dd>{activity.recentPrs}</dd></div>
+          <div><dt>Shipping since</dt><dd>{activity.since}</dd></div>
+          <div><dt>Checked by hand</dt><dd><time datetime={activity.verifiedOn}>{activity.verifiedOn}</time></dd></div>
+        </dl>
+      </section>
+      <section class="panel" aria-labelledby="writing">
+        <h2 id="writing">Writing</h2>
+        <dl class="figures">
+          <div><dt>Articles published</dt><dd>{activity.articlesPublished}</dd></div>
+          <div><dt>Latest entry</dt><dd><time datetime={activity.latestEntry}>{activity.latestEntry}</time></dd></div>
+        </dl>
+        <p class="after"><a href={activity.latestEntryHref} lang="ja">{activity.latestEntryTitle}</a></p>
+      </section>
+      <section class="panel" aria-labelledby="skills">
+        <h2 id="skills">Skills</h2>
+        <ul class="skills">
+          {skills.map((skill) => <li>{skill}</li>)}
+        </ul>
+      </section>
+    </div>
+
+    <section class="made panel" aria-labelledby="made">
+      <h2 id="made">What the rain is made of</h2>
+      <p class="lede">
+        {phrases.length} real phrases: commit subjects from this site's repository, its file paths, the project
+        descriptions above, and titles and openings from {activity.articlesPublished} published posts. These are the latest commits in it.
+      </p>
+      <ol class="log">
+        {readableCommits.slice(0, 6).map((c) => <li>{c}</li>)}
+      </ol>
+    </section>
+
+    <section class="choice panel" aria-labelledby="choice">
+      <h2 id="choice">Two readings</h2>
+      <p class="lede">
+        This is the page. The data file it is built from is also a shell you can type into:
+        the same facts with nothing drawn around them. Either side leads back to the other.
+      </p>
+      <Pill page="home" view="page" notes={['the page', 'a shell']} />
+    </section>
+  </Fragment>
+
+  <Fragment slot="machine"><Terminal page="home" /></Fragment>
+</Layout>

@@ -1,0 +1,11 @@
+---
+import Layout from '../../../../layouts/ProtoBLayout.astro';
+import { projects } from '../../../../data/proto-content';
+---
+<Layout title="Selected wavelengths" section="Projects">
+  <header class="project-intro"><p class="eyebrow">Spectrum / Selected projects</p><h1>One practice.<br />Distinct wavelengths.</h1><p>Code, documentation, and the places they meet.</p></header>
+  <div class="project-spectrum">
+    {projects.slice(0,3).map((project, i) => <article class={`project-band band-${i}`}><span class="project-line" aria-hidden="true"></span><div class="project-type">{project.lang}</div><div><h2>{project.name}</h2><p>{project.blurb}</p><a href={project.href}>View repository ↗</a>{'docs' in project && <a href={project.docs}>Read documentation ↗</a>}</div></article>)}
+  </div>
+  <div class="endnote"><a class="text-link" href="/projects/">View all projects →</a><a href="/proto/b/">← Back to the beam</a></div>
+</Layout>

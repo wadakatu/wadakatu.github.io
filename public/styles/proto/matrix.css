@@ -1,0 +1,744 @@
+/* /proto/matrix/: an operator's station at night. Phosphor green on near-black is the default
+   world whatever the OS says; "day" is the same screen read in daylight. Reading text sits on
+   solid panels, the rain only shows around them. Text is dimmed with colour, never opacity.
+   Two readings share these tokens: 機械用 (the facts behind a shell prompt, in one viewport; what
+   the site opens as; see "machine" below) and 人間用 (the page, under human/). Blog pages add
+   matrix-blog.css. */
+:root {
+  color-scheme: dark;
+  --bg: #020805;
+  --panel: #06120b;
+  --rule: #1d4d2f;
+  --text: #c4f2d0;
+  --muted: #7cbd90;
+  --lead: #eafff0;
+  --green: #2bf07a;
+  --rain-tail: #0b3d20;
+  --rain: #1a8f4a;
+  --rain-head: #d6ffe2;
+  --mono: 'IBM Plex Mono', 'M PLUS 1 Code', ui-monospace, Menlo, monospace;
+  --dot: DotGothic16, 'M PLUS 1 Code', ui-monospace, monospace;
+  --pad: clamp(12px, 3.4vw, 48px);
+  /* The two sides of the choice. Used only for the dots on the capsule, never for text. */
+  --pill-human: #58b7ff;
+  --pill-machine: #ff5d4f;
+  /* Phosphor bloom on the machine reading's name line. A lit tube at night; none in daylight. */
+  --glow: 0 0 12px color-mix(in srgb, var(--green) 45%, transparent);
+}
+/* "light" is accepted as an alias so the shared screenshot harness can force the theme. */
+:root[data-theme='day'], :root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #ccd7c9;
+  --panel: #dee7db;
+  --rule: #7f9a86;
+  --text: #0c2115;
+  --muted: #2a4735;
+  --lead: #03130a;
+  --green: #0a5a31;
+  --rain-tail: #b9c9b8;
+  --rain: #5f8c6c;
+  --rain-head: #0a3a20;
+  --pill-human: #0b5cad;
+  --pill-machine: #b3261e;
+  --glow: none;
+}
+/* ?palette=operator: the same station in the earlier Operator palette. Night is a warm amber CRT,
+   day its grey-green LCD. Every token is restated so nothing leaks from the phosphor blocks above.
+   --panel and --rain-tail are steps between that palette's ground and rule. --rain is Operator's
+   stream colour stepped towards the ground: there it filled narrow strips, here it fills the viewport. */
+:root[data-palette='operator'] {
+  color-scheme: dark;
+  --bg: #100e0b;
+  --panel: #17140f;
+  --rule: #3d362c;
+  --text: #ece4d4;
+  --muted: #c2b496;
+  --lead: #f0e0b4;
+  --green: #d9b56a;
+  --rain-tail: #2a251d;
+  --rain: #8a7b5e;
+  --rain-head: #f0e0b4;
+  --logo-filter: hue-rotate(-80deg) saturate(1.15);
+}
+:root[data-palette='operator']:is([data-theme='day'], [data-theme='light']) {
+  color-scheme: light;
+  --bg: #cdd6cb;
+  --panel: #dbe2d9;
+  --rule: #8fa093;
+  --text: #111b15;
+  --muted: #2f4236;
+  --lead: #06281a;
+  --green: #0a4f2f;
+  --rain-tail: #b7c3b6;
+  --rain: #6f8073;
+  --rain-head: #06281a;
+  --logo-filter: none;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  color: var(--text);
+  font: 400 15px/1.7 var(--mono);
+  position: relative; overflow-x: clip;
+}
+:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); letter-spacing: normal; }
+h1, h2, h3, p, ul, ol, dl, dd { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+a:hover { color: var(--lead); text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+main:focus { outline: none; }
+kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radius: 2px; }
+::selection { background: var(--green); color: var(--bg); }
+
+.frame { max-width: 1376px; margin-inline: auto; padding-inline: var(--pad); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; left: 16px; top: -80px; padding: 8px 12px; background: var(--green); color: var(--bg); z-index: 50; }
+.skip:focus { top: 12px; }
+.skip:hover { color: var(--bg); }
+:root:not(.enhanced) .needs-js, :root.enhanced .nojs { display: none; }
+
+/* ---------- rain: every drop is a piece of a real phrase, falling head first ---------- */
+.rain { position: fixed; inset: 0; z-index: -1; overflow: hidden; --h: 100vh; }
+.col { position: absolute; top: 0; left: var(--x); width: 16px; height: 100%; }
+.drop {
+  position: absolute; top: 0; left: 0;
+  writing-mode: vertical-rl; text-orientation: upright; white-space: nowrap;
+  font: 16px/1 var(--dot);
+  color: transparent;
+  background: linear-gradient(to bottom, transparent, var(--rain-tail) 15%, var(--rain) 80%, var(--rain-head));
+  -webkit-background-clip: text; background-clip: text;
+  animation: drop-vh var(--t) linear var(--d) infinite;
+}
+.fall .drop { animation-name: drop-cqh; }
+.drop:lang(ja) { font-family: var(--dot); }
+/* Keyframes use plain units, not var(--h): changing theme/palette on :root used to
+   re-resolve custom properties inside paused animations (and 100cqh on stream drops)
+   across every drop at once. */
+@keyframes drop-vh { from { transform: translateY(-100%); } to { transform: translateY(100vh); } }
+@keyframes drop-cqh { from { transform: translateY(-100%); } to { transform: translateY(100cqh); } }
+/* data-rain is set from the checkbox when JS runs, so a palette/theme change on :root
+   does not have to re-evaluate :has() against the whole tree. :has() remains the no-JS path. */
+:root:is(:has(#hold:checked), [data-rain='held']) .drop {
+  animation-play-state: paused;
+  will-change: auto;
+}
+@media (max-width: 1099px) { .rain .col:nth-child(even) { display: none; } }
+@media (max-width: 719px) { .rain .col:not(:nth-child(4n + 1)) { display: none; } }
+
+/* ---------- header ---------- */
+.top {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 28px;
+  padding-block: 12px; font-size: 14px;
+  background: var(--bg); border-bottom: 1px solid var(--rule);
+}
+.mark { display: inline-flex; align-items: center; gap: 14px; margin-right: auto; text-decoration: none; font: 500 16px/1.5 var(--mono); color: var(--green); }
+/* The mark is the designer's file, whole: square, never cropped, rounded or redrawn. Its black
+   field is part of it. Only the operator night palette tints it, with a filter that moves no pixel. */
+.logo { display: block; flex: none; aspect-ratio: 1; height: auto; object-fit: contain; filter: var(--logo-filter, none); }
+.mark .logo { width: 44px; }
+.top nav { display: flex; gap: 24px; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover, .top nav a[aria-current] { color: var(--lead); }
+.top nav a[aria-current] { text-decoration: underline; text-decoration-color: var(--green); text-decoration-thickness: 2px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.control {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-size: 14px; line-height: 1.7; color: var(--text); background: var(--bg); cursor: pointer; text-decoration: none;
+  border: 1px solid var(--muted); border-radius: 2px; padding: 4px 12px;
+}
+.control:hover { color: var(--lead); border-color: var(--green); }
+.control[aria-pressed='true'] { background: var(--green); border-color: var(--green); color: var(--bg); }
+.control input { accent-color: var(--green); margin: 0; }
+.hold:has(:focus-visible) { outline: 2px solid var(--green); outline-offset: 3px; }
+
+/* ---------- the menu: a <details> around the nav and the controls ----------
+   From 720px up it is not a menu at all: neither it nor its content slot lays a box, the summary
+   is gone, and the nav and the controls are the header's own flex items whether it is open or
+   closed. Below that the header is one slim row (the mark, the menu button, the switch) and the
+   rest unfolds under it. The switch sits inside the <details> in the markup, so its content is
+   kept rendered and the closed state hides only the nav and the three controls.
+   An engine without ::details-content gets a plain native disclosure labelled Menu. */
+.menu > summary { list-style: none; }
+.menu > summary::-webkit-details-marker { display: none; }
+@supports selector(::details-content) {
+  .menu, .menu::details-content { display: contents; }
+  .menu::details-content { content-visibility: visible; }
+  .menu > summary { display: none; }
+  @media (max-width: 719px) {
+    .top { gap: 0 8px; padding-block: 3px; }
+    .top:has(.menu[open]) { padding-bottom: 12px; }
+    .mark { gap: 10px; min-height: 44px; }
+    .mark .logo { width: 32px; }
+    .controls { display: contents; }
+    /* 601 to 719px still shows two strands: stand them as tall as the button beside them. */
+    :root:not([data-switch]) .top .switch { min-height: 46px; margin-block: 0; }
+    :root:not([data-switch]) .top .switch .half { text-align: center; }
+    /* The button is the same cell as the compact switch beside it: 46px, a 44px target inside a 1px
+       ring. Its word is set at no size, so it is still the button's name. Three rules closed; one,
+       on the filled face, open. */
+    .menu > summary { display: grid; place-content: center; width: 46px; height: 46px; padding: 0; font-size: 0; color: var(--muted); }
+    .menu > summary::before {
+      content: ''; width: 16px; height: 12px;
+      background: linear-gradient(currentColor 0 0) top, linear-gradient(currentColor 0 0) center, linear-gradient(currentColor 0 0) bottom;
+      background-size: 100% 2px; background-repeat: no-repeat;
+    }
+    .menu[open] > summary, .menu[open] > summary:hover { background: var(--green); border-color: var(--green); color: var(--bg); }
+    .menu[open] > summary::before { background-size: 0 0, 100% 2px, 0 0; }
+    .menu:not([open]) :is(nav, .controls .control) { display: none; }
+    /* Unfolded: the nav as a list of 44px lines, then the controls, all after the row in the header's own box. */
+    .top nav, .controls .control { order: 1; }
+    .top nav { flex: 0 0 100%; flex-direction: column; gap: 0; margin-top: 4px; }
+    .top nav a { display: flex; align-items: center; min-height: 44px; border-top: 1px dotted var(--rule); }
+    .controls .control { flex: 1 1 40%; justify-content: center; min-height: 44px; margin-top: 8px; }
+    .controls .hold { flex-basis: 100%; }
+  }
+}
+
+/* ---------- the name: set as wide as the frame, with the commit log cut out of it ---------- */
+.name {
+  padding-block: clamp(40px, 10vh, 112px) 20px;
+  font: 700 min(15.5rem, calc((100vw - 2 * var(--pad)) / 4.86)) / 0.86 var(--mono);
+  letter-spacing: -0.02em;
+  color: var(--green);
+  -webkit-mask: var(--etch) 0 0 / 1000px auto; mask: var(--etch) 0 0 / 1000px auto;
+}
+.name.double { animation: double 200ms steps(1); }
+@keyframes double {
+  0% { text-shadow: 0.07em 0.035em 0 var(--rain); transform: translateX(-0.02em); }
+  50% { text-shadow: -0.05em -0.02em 0 var(--rain); transform: none; }
+}
+
+:root[data-view='page'] .view-machine, :root[data-view='machine'] .view-page { display: none; }
+
+.panel { background: var(--panel); border: 1px solid var(--rule); padding: 20px clamp(16px, 2.2vw, 28px) 28px; margin-top: 24px; }
+.panel > h2 { font: 500 15px/1.7 var(--mono); color: var(--green); margin-bottom: 8px; }
+.lede, .cap { max-width: 68ch; color: var(--muted); }
+.after { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
+/* Work and writing, and the projects page: tighter box, same rhythm as the other panels. */
+.wall.panel { padding: 16px clamp(16px, 2.2vw, 24px) 20px; }
+.wall .after { margin-top: 12px; }
+
+.about { display: grid; gap: 12px 48px; margin-top: 0; padding-block: 20px; }
+.role { font-size: 18px; line-height: 1.6; color: var(--lead); }
+.brief { max-width: 60ch; }
+
+/* ---------- streams, mobile first: a strip of falling text beside the entry it settles as ---------- */
+.streams { display: grid; margin-top: 12px; }
+.stream { position: relative; display: flex; gap: 16px; min-width: 0; border-top: 1px solid var(--rule); }
+.fall {
+  position: relative; flex: none; width: 72px; min-height: 136px; margin-block: 8px; overflow: hidden;
+  container-type: size; --h: 100cqh;
+}
+.strand { position: absolute; top: 0; left: calc(var(--j) * 28px); width: 16px; height: 100%; }
+.strand:nth-child(n + 4) { display: none; }
+
+.read { flex: 1; min-width: 0; padding: 12px 0 16px; }
+.stream-name { position: relative; display: grid; font: 500 15px/1.5 var(--mono); color: var(--lead); overflow-wrap: anywhere; }
+.stream-name > * { grid-area: 1 / 1; }
+.stream-name a { text-decoration: none; }
+.stream-name:lang(ja) { font-family: 'M PLUS 1 Code', var(--mono); letter-spacing: normal; }
+.stream-name a:focus-visible { outline: none; }
+.stream:has(.stream-name a:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.blurb { font-size: 14px; margin-top: 8px; max-width: 62ch; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 24px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.links a { position: relative; z-index: 1; overflow-wrap: anywhere; }
+
+/* The stream you point at holds still and comes up to reading brightness. */
+.stream:hover .drop, .stream:focus-within .drop { animation-play-state: paused; --rain: var(--green); --rain-tail: var(--rain); }
+.stream:hover .stream-name a { text-decoration: underline; text-decoration-color: var(--green); }
+
+/* Déjà vu: an entry you come back to repeats its own line once. */
+.stream.deja .stream-name::after {
+  content: attr(data-echo) / ''; grid-area: 1 / 1; align-self: start;
+  white-space: nowrap; overflow: hidden; background: var(--panel);
+  color: var(--green); position: relative; z-index: 2; pointer-events: none;
+  animation: echo 480ms steps(1) forwards;
+}
+@keyframes echo { 0% { transform: translateX(6px); } 40% { transform: none; } 100% { visibility: hidden; } }
+/* Title-to-commit flicker: a decorative layer over the title that takes no room of its own. */
+.ghost { position: absolute; inset: 0; overflow: hidden; z-index: 2; pointer-events: none; }
+.ghost span { display: block; padding-bottom: 4px; background: var(--panel); color: var(--green); }
+.stream.flick .stream-name a { color: transparent; text-decoration: none; }
+
+.streams--rows .stream:first-child { border-top: 0; }
+.streams--rows { margin-top: 0; }
+.streams--rows .stream-name { font-size: clamp(22px, 3.2vw, 34px); line-height: 1.25; color: var(--green); }
+.streams--rows .blurb { font-size: 15px; }
+
+.station { display: grid; gap: 0 24px; }
+.figures div { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-bottom: 1px dotted var(--rule); }
+.figures dt { color: var(--muted); }
+.figures dd { font-variant-numeric: tabular-nums; }
+.skills { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.log { margin-top: 16px; font-size: 13px; max-width: 96ch; }
+.log li { padding: 4px 0; border-bottom: 1px dotted var(--rule); overflow-wrap: anywhere; }
+
+/* ---------- the switch: two links, 人間用 and 機械用, drawn one of four ways ----------
+   <html data-switch> picks the drawing (?switch=brace|bits|capsule; none is "rain"). The markup is
+   the same for all four, and the side you are on is always the filled one: --green under --bg. */
+.controls { align-items: center; }
+:where(:root:not([data-switch='capsule'])) .switch {
+  display: inline-flex; background: var(--bg); border: 1px solid var(--muted); border-radius: 2px;
+  & .half { position: relative; color: var(--muted); text-decoration: none; white-space: nowrap; }
+  & .half:hover { color: var(--lead); background: var(--panel); }
+  & .half[aria-current], & .half[aria-current]:hover { background: var(--green); color: var(--bg); }
+  & .half:focus-visible { z-index: 1; outline-offset: 2px; box-shadow: 0 0 0 2px var(--bg); }
+}
+/* Both ends are explicit inset(): a to-state of clip-path: none has frozen Chrome
+   tabs when a composited clip-path animation restarted (e.g. on a palette recast). */
+@keyframes wipe-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes wipe-right { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+/* rain (the default): each name is a strand of the rain, set top to bottom in the rain's own face.
+   The strand you are reading has settled. Down the other one a drop still falls, a glyph at a time. */
+:root:not([data-switch]) .switch {
+  margin-block: -3px; /* three 16px glyphs stand 6px taller than the row; the header keeps its height */
+  & .half { padding: 0 9px; font: 16px/1 var(--dot); writing-mode: vertical-rl; text-orientation: upright; }
+  & .half + .half { border-left: 1px solid var(--muted); }
+  & .lab, & .lab span { font-family: var(--dot); }
+  & .half[aria-current] { animation: wipe-down 240ms steps(3); }
+  /* Eight cells: three at rest, the tail, the head, three at rest. The strand is a window three cells tall. */
+  & .half:not([aria-current], :hover) .lab {
+    color: transparent;
+    background: linear-gradient(to bottom, var(--muted) 0 3em, var(--green) 3em 4em, var(--rain-head) 4em 5em, var(--muted) 5em) 0 0 / 100% 8em no-repeat;
+    -webkit-background-clip: text; background-clip: text;
+    animation: drip 3.2s infinite;
+  }
+  & .half[data-mode='machine'] .lab { animation-delay: -1.6s; }
+}
+@keyframes drip {
+  0% { background-position-y: -5em; animation-timing-function: steps(5); }
+  24%, 100% { background-position-y: 0; }
+}
+
+/* brace: one shell word that expands to both names. The block is the terminal's caret. */
+:root[data-switch='brace'] .switch {
+  padding-inline: 8px; font-size: 15px; line-height: 25.8px; color: var(--green);
+  &::before { content: '{' / ''; align-self: center; }
+  &::after { content: '}\7528' / ''; align-self: center; }
+  & .half { padding: 3px 4px; }
+  & .half + .half { margin-left: 1ch; }
+  & .half + .half::before { content: ',' / ''; position: absolute; right: 100%; width: 1ch; text-align: center; color: var(--green); font-family: var(--mono); }
+  & .yo { font-size: 0; line-height: 0; } /* set once after the brace; still inline, so each link is still named by its whole word */
+  & .half:hover { background: none; box-shadow: inset 0 0 0 1px var(--green); }
+  & .half[aria-current] { box-shadow: none; animation: wipe-right 160ms steps(2); }
+}
+
+/* bits: a two-line listing. One reading can only be read; the other can be run. */
+:root[data-switch='bits'] .switch {
+  flex-direction: column; margin-block: -3px; font-size: 13px;
+  & .half { display: flex; align-items: center; height: 24px; padding-inline: 8px 12px; }
+  & .half::before { content: '  r--' / ''; margin-right: 2ch; white-space: pre; font-family: var(--mono); }
+  & .half[data-mode='machine']::before { content: '  r-x' / ''; }
+  & .half[aria-current]::before { content: '▸ r--' / ''; }
+  & .half[data-mode='machine'][aria-current]::before { content: '▸ r-x' / ''; }
+  & .half[aria-current] { animation: wipe-right 200ms steps(4); }
+}
+@media (max-width: 719px) {
+  :root:not([data-switch]) .switch { margin-block: -3.6px; }
+  :root:not([data-switch]) .switch .half { font-size: 13px; }
+  :root[data-switch='bits'] .switch { flex-direction: row; margin-block: 0; }
+  :root[data-switch='bits'] .switch .half { height: 31.8px; padding-inline: 6px 10px; }
+  :root[data-switch='bits'] .switch .half::before { margin-right: 1ch; }
+}
+
+/* rain at phone width: one button, the current reading. A drop falling through it
+   briefly shows the other reading underneath, then the current face returns. The
+   boot layer keeps both strands so the first choice is still a choice. */
+@media (max-width: 600px) {
+  :root:not([data-switch]) .top .switch {
+    display: grid;
+    grid-template: 1fr / 1fr;
+    margin-block: 0;
+    min-width: 44px;
+    min-height: 44px;
+    overflow: hidden;
+  }
+  :root:not([data-switch]) .top .switch .half {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 2px 10px;
+    font-size: 13px;
+  }
+  :root:not([data-switch]) .top .switch .half + .half { border-left: 0; }
+  :root:not([data-switch]) .top .switch .half:not([aria-current]) {
+    z-index: 0;
+    background: var(--bg);
+    color: var(--muted);
+  }
+  :root:not([data-switch]) .top .switch .half:not([aria-current]):hover { color: var(--lead); background: var(--bg); }
+  /* The filled face sits on top. A travelling hole in the mask is the drop: through
+     it you read the other name, a glyph at a time, on the same cadence as the desktop drip.
+     Long solid regions on both sides of the hole, so the face is fully covered at rest
+     (hole above, then hole below) and never opens into the no-repeat void. */
+  :root:not([data-switch]) .top .switch .half[aria-current] {
+    z-index: 1;
+    pointer-events: none;
+    animation: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0 8em, transparent 8em 9.15em, #000 9.15em 24em);
+    mask-image: linear-gradient(to bottom, #000 0 8em, transparent 8em 9.15em, #000 9.15em 24em);
+    -webkit-mask-size: 100% 24em;
+    mask-size: 100% 24em;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 0 -9.3em;
+    mask-position: 0 -9.3em;
+    animation: glimpse 3.2s infinite;
+  }
+  :root:not([data-switch]) .top .switch .half[aria-current] .lab {
+    color: inherit;
+    background: none;
+    animation: none;
+  }
+}
+@keyframes glimpse {
+  /* Hole starts just above the 44px face and exits just below it, then parks. */
+  0% { -webkit-mask-position: 0 -9.3em; mask-position: 0 -9.3em; animation-timing-function: steps(5); }
+  24%, 100% { -webkit-mask-position: 0 -4.4em; mask-position: 0 -4.4em; }
+}
+/* Forced colours drop backgrounds: give the falling strand its text colour back and keep the filled side filled. */
+@media (forced-colors: active) {
+  .switch .half .lab { color: inherit !important; background: none !important; }
+  .switch .half[aria-current] { forced-color-adjust: none; background: Highlight; color: HighlightText; -webkit-mask-image: none; mask-image: none; }
+}
+
+/* ---------- the capsule: one capsule, two halves. The foot of Home, and ?switch=capsule ---------- */
+:where(.pill--big, :root[data-switch='capsule'] .pill) {
+  display: inline-flex; border: 1px solid var(--muted); border-radius: 999px; background: var(--bg);
+  & .half {
+    display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px;
+    color: var(--text); text-decoration: none; line-height: 1.7; white-space: nowrap;
+    border-radius: 999px 0 0 999px;
+  }
+  & .half + .half { border-left: 1px solid var(--muted); border-radius: 0 999px 999px 0; }
+  & .half::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pill-human); }
+  & .half[data-mode='machine']::before { background: var(--pill-machine); }
+  & .half:hover { color: var(--lead); background: var(--panel); }
+  & .half:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-human); }
+  & .half[data-mode='machine']:hover::before { box-shadow: 0 0 0 3px var(--panel), 0 0 0 4px var(--pill-machine); }
+  & .half[aria-current], & .half[aria-current]:hover { background: var(--green); color: var(--bg); }
+  & .half[aria-current]::before { background: var(--bg); box-shadow: none; }
+}
+/* The same capsule at the foot of the page, large, each half saying what is on its side. */
+.pill--big { display: flex; width: fit-content; max-width: 100%; margin-top: 20px; }
+.pill--big .half {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 12px; align-items: center;
+  align-content: start; flex: 1 1 0; min-width: 0; padding: 12px clamp(16px, 4vw, 40px) 14px clamp(16px, 3vw, 28px);
+  font-size: clamp(18px, 2.6vw, 24px); white-space: normal;
+}
+.pill--big .half::before { width: 12px; height: 12px; }
+.pill--big small { grid-column: 2; font-size: 13px; }
+
+/* ---------- 機械用: the page dropped out of its layout, as one shell ---------- */
+:root[data-view='machine'] { scroll-padding-bottom: 56px; }
+:root[data-view='machine'] :is(.rain, .hold) { display: none; }
+:root[data-view='machine'] .frame { max-width: none; }
+:root[data-view='machine'] #shell { padding-bottom: 36px; }
+/* Scan lines over the whole tube. They take no pointer events and sit under the boot and the mode line.
+   The mark is lifted above them: it is shown as designed, with nothing drawn across it. */
+:root[data-view='machine'] .logo { position: relative; z-index: 21; }
+/* The compact rain switch is a filled face, and so is the open menu button; scan lines across them make the glyphs hard to read. */
+:root[data-view='machine'] .top :is(.switch, summary) { position: relative; z-index: 21; }
+:root[data-view='machine'] body::after {
+  content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, color-mix(in srgb, var(--bg) 28%, transparent) 2px 3px);
+}
+/* The header becomes a window list: numbered, the current one starred. */
+:root[data-view='machine'] .top { border-bottom-style: dashed; }
+:root[data-view='machine'] .top nav { counter-reset: win -1; column-gap: 2ch; }
+:root[data-view='machine'] .top nav a::before { counter-increment: win; content: counter(win) ':' / ''; }
+:root[data-view='machine'] .top nav a[aria-current] { text-decoration: none; }
+:root[data-view='machine'] .top nav a[aria-current]::after { content: '*' / ''; color: var(--green); }
+/* The name is a line of terminal text with a cursor that settles after five blinks. */
+:root[data-view='machine'] .name {
+  padding-block: 28px 0; font: 500 clamp(28px, 4vw, 44px) / 1.2 var(--mono); letter-spacing: 0;
+  -webkit-mask: none; mask: none; text-shadow: var(--glow);
+}
+:root[data-view='machine'] .name::after {
+  content: ''; display: inline-block; width: 0.56em; height: 1em; margin-left: 0.14em; vertical-align: -0.14em;
+  background: var(--green); animation: blink 1s steps(1) 5;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.view-machine { font-size: 14px; line-height: 1.6; }
+:root:not(.term) .live { display: none; }
+
+/* The guide line: the first row of 機械用, and the plain way to 人間用 for a reader who did not ask
+   for a shell. It is the page's, not the shell's: `clear` leaves it and it does not scroll. The ×
+   (which needs the live shell) hides it for good. On a phone the sentence is kept for assistive
+   tech only, so the row is one 44px button and the ×. */
+.guide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-block: 8px; border-bottom: 1px dashed var(--rule); color: var(--muted); font-size: 13px; }
+.guide .say { margin-right: auto; }
+.guide kbd { color: var(--text); }
+.guide .control { font-size: 13px; padding-block: 2px; }
+.guide a.control { border-color: var(--green); color: var(--lead); }
+.guide a.control:hover { background: var(--green); color: var(--bg); }
+.guide button { justify-content: center; min-width: 32px; padding-inline: 0; border-color: var(--rule); color: var(--muted); }
+:root[data-guide='off'] .guide { display: none; }
+@media (max-width: 719px) {
+  .guide { flex-wrap: nowrap; gap: 8px; }
+  .guide .say { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .guide a.control { flex: 1; justify-content: center; min-height: 44px; }
+  .guide button { flex: none; width: 44px; min-height: 44px; }
+}
+
+/* The session. One .ln per line, wrapping the way a terminal wraps. Without the script this is a
+   recorded session in an ordinary scrolling page; with it, the live shell prints the same markup. */
+.screen { padding-block: 16px 24px; }
+.screen:focus-visible { outline-offset: -2px; }
+.term .ln { min-height: 1.6em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.term .dim { color: var(--muted); }
+.term .hi { color: var(--green); }
+.term .dir { color: var(--lead); font-weight: 500; }
+.term .note { margin-left: 2ch; }
+.tty a { color: var(--lead); }
+.ps { color: var(--green); }
+.echo { margin-top: 6px; color: var(--lead); }
+/* A command you can tap: a file name in a listing, a suggestion in a message. */
+.run {
+  max-width: 100%; margin: 0; padding: 0; border: 0; background: none; cursor: pointer;
+  font: inherit; color: var(--green); text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; vertical-align: top;
+}
+.run:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* neofetch: the mark beside the facts. The image is the real file at its own proportions. */
+.fetch { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px 3ch; align-items: center; margin-block: 6px; }
+.fetch .logo { width: 112px; }
+/* Values that wrap stay in their own column, under themselves. */
+.fetch .side .ln { padding-left: 10ch; text-indent: -10ch; }
+/* Login neofetch on a phone: one 44px line so the prompt has the screen. From 720px the
+   summary hides and the card is just its contents, the same as a session that printed in the open. */
+@media (max-width: 719px) {
+  .login-card { margin-block: 4px 2px; border: 1px solid var(--rule); }
+  .login-card > summary {
+    display: flex; align-items: center; gap: 1ch; min-height: 44px; padding: 0 10px;
+    cursor: pointer; color: var(--green); list-style: none;
+  }
+  .login-card > summary::-webkit-details-marker { display: none; }
+  .login-card > summary::before { content: '▸'; flex: none; }
+  .login-card[open] > summary::before { content: '▾'; }
+  .login-card > summary:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+  .login-card[open] > summary { border-bottom: 1px solid var(--rule); }
+}
+@supports selector(::details-content) {
+  @media (min-width: 720px) {
+    .login-card, .login-card::details-content { display: contents; }
+    .login-card::details-content { content-visibility: visible; }
+    .login-card > summary { display: none; }
+  }
+}
+.sw { display: inline-block; width: 3ch; height: 1.2em; vertical-align: middle; }
+.sw0 { background: var(--panel); } .sw1 { background: var(--rule); } .sw2 { background: var(--rain-tail); } .sw3 { background: var(--rain); }
+.sw4 { background: var(--muted); } .sw5 { background: var(--text); } .sw6 { background: var(--lead); } .sw7 { background: var(--green); }
+
+/* The command line: a real text field. Its caret is drawn as a block that shows the character
+   under it in reverse, lit while the field has focus and hollow when it does not, which is also
+   the focus indicator. It blinks five times after a keystroke, then rests lit. */
+.ps1 { display: flex; flex-wrap: wrap; align-items: baseline; margin-top: 6px; }
+.ps1 label, .ps1 .ps { display: contents; }
+.ps1 .ps[hidden] { display: none; }
+.ps-who, .ps-sym { color: var(--green); white-space: nowrap; }
+.ps-who { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.ps-sym { margin-right: 1ch; }
+.field { position: relative; flex: 1 1 10ch; min-width: 0; }
+.field input {
+  display: block; width: 100%; height: 1.6em; margin: 0; padding: 0; border: 0; border-radius: 0; outline: none;
+  font: inherit; color: var(--lead); background: none; caret-color: transparent;
+}
+.mirror, .cur { position: absolute; left: 0; top: 0.15em; height: 1.3em; line-height: 1.3em; white-space: pre; pointer-events: none; }
+.mirror { visibility: hidden; }
+.cur { min-width: 1ch; color: var(--bg); background: var(--green); }
+.cur.blink { animation: blink 1s steps(1) 5; }
+.field:not(:focus-within) .cur { color: transparent; background: none; box-shadow: inset 0 0 0 1px var(--green); animation: none; }
+
+/* vim takes the screen; the field below it becomes its command line. */
+.vim { display: flex; flex-direction: column; flex: 1; min-height: 40vh; }
+.vim[hidden], .screen.vim-on .tty { display: none; }
+.vim pre { flex: 1 1 0; min-height: 0; margin: 0; overflow: hidden; font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+#vim-msg { min-height: 1.6em; color: var(--lead); white-space: pre-wrap; }
+
+/* Keys a phone keyboard does not have, then commands worth trying. One row; it scrolls sideways in itself. */
+.chips { display: flex; gap: 6px; padding: 8px var(--pad); overflow-x: auto; scrollbar-width: none; border-top: 1px dashed var(--rule); }
+.chip {
+  flex: none; padding: 2px 10px; border: 1px solid var(--rule); border-radius: 2px; background: var(--bg); cursor: pointer;
+  font: inherit; font-size: 13px; color: var(--muted); white-space: nowrap;
+}
+.chip:hover { color: var(--lead); border-color: var(--green); }
+.chip.key { display: none; color: var(--green); border-color: var(--muted); }
+
+/* The status line: always on screen in 機械用, with the way back. */
+.modeline {
+  position: fixed; inset: auto 0 0; z-index: 25; display: flex; align-items: center; gap: 2ch;
+  margin: 0; padding: 4px var(--pad); background: var(--green); color: var(--bg); font-size: 13px;
+}
+.modeline .mode { flex: none; white-space: nowrap; }
+.modeline .where { margin-right: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.modeline .jst { flex: none; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.modeline a { padding: 0 4px; color: inherit; font-weight: 500; white-space: nowrap; }
+.modeline a::before { content: '\2190\00a0' / ''; }
+.modeline a:hover { color: inherit; }
+.modeline a:focus-visible { outline-color: var(--bg); outline-offset: 0; }
+
+/* With scripts running, 機械用 is one viewport: the header, the screen, the keys, the status line.
+   The session scrolls inside the screen and the window does not scroll at all. --vvh is the
+   visible height, which the live shell keeps in step with a phone's on-screen keyboard. If the
+   live shell never arrives, the head script sets .term-off and this block lets go. */
+:root.js:not(.term-off)[data-view='machine'] {
+  overflow: hidden;
+  & body { height: var(--vvh, 100dvh); overflow: hidden; }
+  /* Every grid here has one column that may shrink: wide output must wrap or scroll inside the screen, never widen the page. */
+  & #shell { display: grid; grid-template: auto minmax(0, 1fr) / minmax(0, 1fr); height: 100%; padding-bottom: 0; }
+  & .frame { margin-inline: 0; } /* an auto margin would shrink a grid item to its content */
+  & main, & .view-machine { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); min-height: 0; padding-inline: 0; }
+  /* Rows are named by position, so a hidden guide line leaves an empty row and nothing else moves up into it. */
+  & .term { display: grid; grid-template: auto minmax(0, 1fr) auto auto / minmax(0, 1fr); min-height: 0; }
+  & .guide { grid-row: 1; padding-inline: var(--pad); background: var(--panel); }
+  & .screen { grid-row: 2; }
+  & .chips { grid-row: 3; }
+  & .modeline { grid-row: 4; }
+  & .screen {
+    display: flex; flex-direction: column; min-height: 0; padding: 12px var(--pad) 16px;
+    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--rule) transparent;
+  }
+  & .tty, & .ps1 { flex: none; }
+  & .vim { min-height: 0; }
+  & .name { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  & .foot { display: none; }
+  & .modeline { position: relative; }
+}
+/* cmatrix: the page's own rain, over the whole tube, under the status line that says how to stop it. */
+:root.cmatrix[data-view='machine'] .rain { display: block; z-index: 22; background: var(--bg); }
+
+.foot {
+  display: flex; flex-wrap: wrap; gap: 8px 28px;
+  margin-top: 72px; padding-block: 20px 40px;
+  background: var(--bg); border-top: 1px solid var(--rule);
+  color: var(--muted); font-size: 13px;
+}
+.hint { width: 100%; }
+.foot .back { margin-left: auto; }
+
+/* An earlier address of 機械用: one line and a link, for the moment before the refresh. */
+.moved { padding-block: 20vh; }
+
+/* ---------- boot: the data file's keys, their values decoding in ---------- */
+.boot { display: none; position: fixed; inset: 0; z-index: 30; background: var(--bg); padding: min(26vh, 160px) var(--pad) var(--pad); overflow-y: auto; align-content: start; gap: 40px; }
+:root[data-boot] .boot { display: grid; }
+:root[data-boot] :is(#shell, .skip) { visibility: hidden; }
+:root[data-boot] { overflow: hidden; }
+.boot-lines p {
+  visibility: hidden;
+  display: grid; grid-template-columns: 9ch minmax(0, 1fr); gap: 0 16px;
+  font: clamp(16px, 2.6vw, 34px) / 1.6 var(--dot);
+}
+.boot-lines p.on { visibility: visible; }
+.boot .k { color: var(--muted); }
+.boot .v { color: var(--green); overflow-wrap: anywhere; font-family: var(--dot); }
+.boot .v.done { color: var(--lead); }
+.boot-exit { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.boot-note { flex-basis: 100%; max-width: 62ch; color: var(--muted); font-size: 14px; }
+/* The last record is the mark. A still (?boot=frozen) shows it without the script or the motion library. */
+.boot-lines .boot-logo { align-items: start; margin-top: 1em; }
+.boot-logo .logo { width: clamp(120px, 24vh, 220px); }
+:root[data-boot='frozen'] .boot-logo { visibility: visible; }
+
+/* ---------- curtain: slabs of corpus text that cover the page as the boot ends ---------- */
+.curtain { display: none; position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.curtain.on { display: flex; }
+.slab {
+  position: relative; flex: 1 1 0; min-width: 0; height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--rain);
+  writing-mode: vertical-rl; text-orientation: upright; line-break: anywhere; word-break: break-all;
+  font: 16px/1.25 var(--dot);
+  will-change: transform;
+}
+.slab::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: var(--rain-head); }
+
+@media (min-width: 600px) {
+  .fetch { grid-template-columns: auto minmax(0, 1fr); }
+  .fetch .logo { width: clamp(132px, 26vmin, 224px); }
+}
+
+@media (min-width: 720px) {
+  .about { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: end; }
+  .station { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .streams--rows .fall { width: 100px; min-height: 152px; }
+  .streams--rows .strand:nth-child(4) { display: block; }
+  .streams--rows .stream { gap: 24px; }
+  .streams--rows .read { padding-block: 16px 20px; }
+}
+
+/* Home at desk width: the rows stand up into a wall, each stream falling into its entry. */
+@media (min-width: 1360px) {
+  .streams:not(.streams--rows) { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 20px; }
+  .streams:not(.streams--rows) .stream { flex-direction: column; gap: 0; border-top: 0; }
+  .streams:not(.streams--rows) .fall { width: auto; min-height: 0; margin-block: 0; height: clamp(168px, 22vh, 240px); }
+  .streams:not(.streams--rows) .strand { left: calc(var(--j) * 25% + 6%); }
+  .streams:not(.streams--rows) .strand:nth-child(4) { display: block; }
+  .streams:not(.streams--rows) .read { flex: none; padding: 12px 0 0; border-top: 1px solid var(--rule); }
+  .streams:not(.streams--rows) .stream:hover .read,
+  .streams:not(.streams--rows) .stream:focus-within .read { border-color: var(--green); }
+}
+
+@media (max-width: 719px) {
+  .foot { margin-top: 48px; }
+  .name { -webkit-mask: none; mask: none; }
+  .boot-lines p { grid-template-columns: 7ch minmax(0, 1fr); gap: 0 12px; }
+  .foot .back { margin-left: 0; }
+}
+
+/* On a phone the shell needs the height: the header is the one slim row (see "the menu"), and the
+   two colour buttons give way to the commands that do the same (theme, palette), so the menu holds
+   only the window list. Long notes take their own line. */
+@media (max-width: 719px) {
+  .term .note { display: block; margin-left: 4ch; }
+  .ps-who { flex-basis: 100%; }
+  :root.js:not(.term-off)[data-view='machine'] .controls .control { display: none; }
+}
+/* The on-screen keyboard is up: every row counts. The switch in the header is still the way back.
+   Below 720px the window list is already folded into the menu and costs no row. */
+:root.kb.js:not(.term-off)[data-view='machine'] :is(.modeline, .guide) { display: none; }
+@media (min-width: 720px) { :root.kb.js:not(.term-off)[data-view='machine'] .top nav { display: none; } }
+/* Fingers: bigger keys, the extra key row, and 16px in the field so iOS does not zoom into it. */
+@media (pointer: coarse) {
+  .ps1 { font-size: 16px; }
+  .chip { padding: 8px 12px; }
+  .chip.key { display: inline-block; }
+}
+
+/* Motion off (?motion=0, or the OS setting seen by the head script): a still frame with every drop
+   parked at its own height down the whole document (the rain scrolls with the page instead of
+   staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
+:root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after, :root[data-motion='off'] .cur { animation: none; }
+:root:is([data-motion='off'], [data-boot='frozen']) .switch :is(.half, .lab) { animation: none !important; } /* ?boot=frozen stays a still */
+:root:is([data-motion='off'], [data-boot='frozen']) .top .switch .half[aria-current] {
+  -webkit-mask-image: none; mask-image: none;
+}
+/* No drop: a caret marks that the one button still has another reading underneath. */
+@media (max-width: 600px) {
+  :root:is([data-motion='off'], [data-boot='frozen']):not([data-switch]) .top .switch .half[aria-current]::after {
+    content: '▾' / '';
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    position: absolute; top: 50%; right: 2px; left: auto; bottom: auto;
+    transform: translateY(-50%);
+    font-size: 9px; line-height: 1; color: var(--bg);
+  }
+}
+:root[data-motion='off'] .drop { animation: none; top: var(--rest); }
+:root[data-motion='off'] .rain { position: absolute; }
+:root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .drop { top: var(--rest); }
+  .rain { position: absolute; }
+  .strand .drop + .drop, .hold { display: none; }
+}

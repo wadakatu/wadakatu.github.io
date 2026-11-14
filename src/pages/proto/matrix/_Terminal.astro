@@ -1,0 +1,87 @@
+---
+/**
+ * 機械用: one shell in one viewport. What is in the markup is a recorded session, printed at build
+ * time by the same shell the browser runs (_shell.ts), so a reader without JavaScript gets the
+ * same facts as a plain scrolling document. With it, _term.ts replaces the recording with a live
+ * prompt and the page locks to the height of the window.
+ * The site opens here, so the first row is the guide line: in plain words, what this is and the way
+ * to 人間用. It belongs to the page, not the shell, so `clear` leaves it and it never scrolls away.
+ */
+import { world, still } from './_world';
+import { createShell, type DirNode } from './_shell';
+import Out from './_Out.astro';
+import { route } from './_lib';
+interface Props { page: 'home' | 'projects' }
+const { page } = Astro.props;
+
+// Where each route starts, and what its recording goes on to show.
+const cwd = page === 'projects' ? 'projects' : '';
+const files = Object.keys((world.root.dir.projects as DirNode).dir);
+const session = page === 'projects'
+  ? ['ls -l', ...files.map((f) => `cat ${f}`), 'cat ~/contact.txt']
+  : ['neofetch', 'cat about.txt', 'ls -l projects', ...files.map((f) => `cat projects/${f}`), 'ls -l posts', 'cat contact.txt', 'git log --oneline -n 8'];
+const sh = createShell(world, still());
+if (cwd) sh.cd(cwd);
+const blocks = session.map((cmd) => ({ cmd, prompt: sh.prompt(), out: sh.exec(cmd).out }));
+const keys = [['Tab', 'tab', 'Complete'], ['ArrowUp', '↑', 'Previous command'], ['ArrowDown', '↓', 'Next command'], ['C-c', '^C', 'Cancel']];
+const chips = ['help', 'whoami', 'ls', 'projects', 'posts', 'contact', 'git log --oneline', 'neofetch', 'clear', 'exit'];
+const back = route(page, 'page');
+const role = world.fetch.find((r) => r[0] === 'Role')?.[1] ?? '';
+---
+<div class="term" id="term" data-cwd={cwd} data-first={session[0]}>
+  <p class="guide" id="guide">
+    <span class="say">This site opens as a terminal.<span class="live"> Type <kbd>help</kbd>, or tap a command below.</span></span>
+    <a class="control" data-mode="page" href={back}>Read it as an ordinary page: <span lang="ja">人間用</span></a>
+    <button class="control live" id="guide-hide" type="button" aria-label="Hide this note">×</button>
+  </p>
+  <!-- Focusable so the scrollback can be read with the keyboard alone. -->
+  <div class="screen" id="screen" tabindex="0" role="group" aria-label="Terminal">
+    <div class="tty" id="tty">
+      <Out items={sh.motd()} />
+      {blocks.map((b, i) => b.cmd === 'neofetch' && i === 0 ? (
+        // Login card: collapsed on a phone so the prompt has the screen; always visible from 720px up (see matrix.css).
+        <details class="login-card">
+          <summary aria-label={`who am I? ${world.user}_${role ? `, ${role}` : ''}`}>who am I?</summary>
+          <div class="ln echo"><span class="ps" aria-hidden="true">{b.prompt}</span> {b.cmd}</div>
+          <Out items={b.out} />
+        </details>
+      ) : (
+        <Fragment>
+          <div class="ln echo"><span class="ps" aria-hidden="true">{b.prompt}</span> {b.cmd}</div>
+          <Out items={b.out} />
+        </Fragment>
+      ))}
+    </div>
+    <!-- vim takes the screen over. The same field below becomes its command line. -->
+    <div class="vim" id="vim" hidden>
+      <pre id="vim-buf"></pre>
+      <p id="vim-msg" role="status"></p>
+    </div>
+    <form class="ps1 live" id="prompt" autocomplete="off">
+      <label for="cmd"><span class="ps" id="ps" aria-hidden="true"></span><span class="vh">Command</span></label>
+      <span class="field">
+        <input id="cmd" name="cmd" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-describedby="cmd-hint" />
+        <span class="mirror" id="mirror" aria-hidden="true"></span><span class="cur" id="cur" aria-hidden="true"> </span>
+      </span>
+    </form>
+  </div>
+  <p class="vh" id="cmd-hint">Type help and press Enter to list the commands. Tab completes when the line has text. On an empty line, or after Escape, Tab moves focus. Type exit to leave.</p>
+
+  <div class="chips live" role="group" aria-label="Keys and suggested commands">
+    {keys.map(([key, label, name]) => <button class="chip key" type="button" data-key={key} aria-label={name}>{label}</button>)}
+    {chips.map((c) => <button class="chip" type="button" data-run={c}>{c}</button>)}
+  </div>
+
+  <!-- The status line, tmux style: where you are, the time in Japan, and the way back. -->
+  <p class="modeline">
+    <span class="mode">[<span lang="ja">機械用</span>]</span>
+    <span class="where" id="where">recorded session</span>
+    <span class="jst live" id="jst"></span>
+    <a data-mode="page" href={back}><span lang="ja">人間用</span></a>
+  </p>
+</div>
+
+<script type="application/json" id="mx-world" set:html={JSON.stringify(world).replace(/</g, '\\u003c')} />
+<script>
+  import './_term.ts';
+</script>

@@ -1,0 +1,15 @@
+---
+import Layout from '../../../layouts/ProtoDLayout.astro';
+import { person, bio, activity, skills, projects, recentPosts } from '../../../data/proto-content';
+const hackathon = projects[4];
+---
+<Layout title="Personal specification">
+  <article class="manuscript">
+    <header class="document-title"><p class="running">Personal specification <span>Recorded <time datetime={activity.verifiedOn}>22 July 2026</time></span></p><h1>Notes on<br /><em>{person.name}.</em></h1><p class="subtitle">An engineer, described through work.</p><dl class="particulars"><div><dt>Practice</dt><dd>{person.role}</dd></div><div><dt>Location</dt><dd>{person.location}</dd></div><div><dt>Code</dt><dd><a href={person.github}>github.com/wadakatu ↗</a></dd></div></dl></header>
+    <nav class="contents" aria-label="Document contents"><span>Contents</span><a href="#scope">1. Scope</a><a href="#work">2. Work</a><a href="#notes">3. Notes</a></nav>
+    <section class="clause" id="scope"><span class="clause-number" aria-hidden="true">1.</span><div><h2>Scope</h2><p>{bio.line1} {bio.line2}</p><p class="tools"><span>Working vocabulary</span>{skills.join(' · ')}</p></div></section>
+    <section class="clause" id="work"><span class="clause-number" aria-hidden="true">2.</span><div><h2>Work</h2><p>Creator of <a href={projects[0].href}>laravel-spectrum</a> and <a href={projects[2].href}>gitlyte</a>.</p><blockquote><h3>{hackathon.name}</h3><p>{hackathon.blurb}</p><p>{hackathon.note}</p><a href={hackathon.href}>Read the source ↗</a></blockquote><a href="/proto/d/projects/">Selected work, with descriptions →</a></div></section>
+    <section class="clause" id="notes"><span class="clause-number" aria-hidden="true">3.</span><div><h2>Notes</h2><ol class="references">{recentPosts.map(post => <li><time datetime={post.date}>{post.date}</time><a href={post.href} lang="ja">{post.title}</a></li>)}</ol></div></section>
+    <p class="document-end">End of personal specification <span aria-hidden="true">◇</span></p>
+  </article>
+</Layout>

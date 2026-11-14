@@ -1,0 +1,24 @@
+---
+/**
+ * The choice between the two readings: two real links to two static routes, so it works without
+ * JavaScript; the script only makes it happen in place. In the header and on the boot layer the
+ * pair is the switch (`.switch`), drawn one of four ways by <html data-switch> (see "the switch" in
+ * matrix.css). With `notes` it is the large capsule at the foot of 人間用 Home, which is always a capsule.
+ * 用 is a span of its own because one drawing sets it once, after both names.
+ * `to` is for a page with one reading (an article): its own address, and the shell at its file.
+ */
+import { route, type Page, type View } from './_lib';
+interface Props { page?: Page; view?: View; notes?: [string, string]; to?: Record<View, string> }
+const { page = 'home', view, notes, to = { page: route(page, 'page'), machine: route(page, 'machine') } } = Astro.props;
+const halves = [
+  { mode: 'page', stem: '人間', href: to.page },
+  { mode: 'machine', stem: '機械', href: to.machine },
+];
+---
+<span class:list={['pill', notes ? 'pill--big' : 'switch']} role="group" aria-label="Reading">
+  {halves.map((h, i) => (
+    <a class="half" data-mode={h.mode} href={h.href} aria-current={h.mode === view ? 'true' : undefined}>
+      <span class="lab" lang="ja"><span data-text={h.stem}>{h.stem}</span><span class="yo" data-text="用">用</span></span>{notes && <small>{notes[i]}</small>}
+    </a>
+  ))}
+</span>

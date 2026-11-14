@@ -1,0 +1,35 @@
+---
+import Layout from '../../../layouts/ProtoMatrixLayout.astro';
+import Stream from './_Stream.astro';
+import Terminal from './_Terminal.astro';
+import { projects } from '../../../data/proto-content';
+import { commitFor, host, splitJa } from './_lib';
+interface Props { view: 'page' | 'machine' }
+const { view } = Astro.props;
+---
+<Layout page="projects" view={view} h1="Projects">
+  <Fragment slot="page">
+    <section class="wall panel" aria-label="Projects">
+      <ul class="streams streams--rows">
+        {projects.map((p, i) => {
+          const [en, ja] = splitJa(p.blurb);
+          return (
+            <Stream name={p.name} href={p.href} index={i} level="h2" commit={commitFor(p.name)} strands={[p.name, p.blurb, host(p.href), p.lang]}>
+              <p class="meta">{p.lang}</p>
+              <p class="blurb">{en}{ja && <><br /><span lang="ja">{ja}</span></>}</p>
+              {'note' in p && <p class="blurb">{p.note}</p>}
+              <p class="links">
+                <a href={p.href}>{host(p.href)}</a>
+                {'docs' in p && <a href={p.docs}>{host(p.docs)}</a>}
+                {'site' in p && <a href={p.site}>{host(p.site)}</a>}
+              </p>
+            </Stream>
+          );
+        })}
+      </ul>
+      <p class="after"><a href="/projects/">Full project archive</a></p>
+    </section>
+  </Fragment>
+
+  <Fragment slot="machine"><Terminal page="projects" /></Fragment>
+</Layout>

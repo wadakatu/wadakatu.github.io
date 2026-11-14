@@ -1,0 +1,22 @@
+---
+/**
+ * Shell output as markup, for the recorded session. The browser builds the same structure for
+ * live output (print() in _term.ts): one .ln per line, real links, Japanese runs marked.
+ * `run` segments are tappable commands in the live shell; in a recording they are plain text.
+ */
+import { isLogo, segs, jaRuns, type Item } from './_shell';
+import { world } from './_world';
+interface Props { items: Item[] }
+const { items } = Astro.props;
+---
+{items.map((item) => isLogo(item) ? (
+  <div class="fetch">
+    <img class="logo" src={world.png.src} width={world.png.px} height={world.png.px} alt="wadakatu logo" />
+    {item.side && <div class="side"><Astro.self items={item.side} /></div>}
+  </div>
+) : (
+  <div class="ln">{segs(item).map((s) => {
+    const body = jaRuns(typeof s === 'string' ? s : s.t).map((part, i) => (i % 2 ? <span lang="ja">{part}</span> : part));
+    return typeof s === 'string' ? body : s.href ? <a class={s.c} href={s.href}>{body}</a> : <span class={s.c}>{body}</span>;
+  })}</div>
+))}

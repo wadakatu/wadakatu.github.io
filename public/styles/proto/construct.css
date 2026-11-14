@@ -1,0 +1,187 @@
+/* The Construct: a pale void, one horizon, work loaded onto it. No hue anywhere. */
+:root {
+  color-scheme: light dark;
+  --void: light-dark(#f4f5f3, #0f1011);
+  --floor: light-dark(#e8eae7, #191a1c);
+  --ink: light-dark(#17191a, #ecedea);
+  --muted: light-dark(#565b5a, #a4a8a5);
+  --ghost: light-dark(#a3a7a4, #5d6163);
+  --pad: clamp(20px, 4.5vw, 64px);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--void);
+  color: var(--ink);
+  font: 400 17px/1.6 Geist, 'Zen Kaku Gothic New', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+:lang(ja) {
+  font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  letter-spacing: normal;
+  line-height: 1.75;
+}
+h1, h2, h3, p, ul, dl { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+[hidden] { display: none !important; }
+
+.skip { position: absolute; left: var(--pad); top: -80px; padding: 8px 12px; background: var(--ink); color: var(--void); z-index: 10; }
+.skip:focus { top: 12px; }
+
+/* Chrome: as quiet as the room. */
+.top {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 12px 32px;
+  padding: 28px var(--pad); font-size: 14px;
+}
+.mark { margin-right: auto; text-decoration: none; }
+.top nav { display: flex; gap: 28px; }
+.top nav a { text-decoration: none; color: var(--muted); }
+.top nav a:hover, .top nav a[aria-current] { color: var(--ink); }
+.top nav a[aria-current] { text-decoration: underline; }
+.quiet {
+  font: inherit; color: var(--muted); background: none; border: 0; padding: 4px 0; cursor: pointer;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+}
+.quiet:hover { color: var(--ink); }
+.to-day { display: none; }
+:root[data-theme='dark'] .to-day { display: inline; }
+:root[data-theme='dark'] .to-night { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .to-day { display: inline; }
+  :root:not([data-theme='light']) .to-night { display: none; }
+}
+
+/* The room: empty above, the name standing on the horizon, a floor that fades out below. */
+.room {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: max(420px, calc(100svh - 300px));
+  padding: 0 var(--pad) 72px;
+  overflow-x: clip; isolation: isolate;
+}
+.room--short { min-height: 48svh; }
+.stand { display: flex; align-items: baseline; }
+/* A zero-size flex item aligns to the text baseline, so the line sits exactly under the letters. */
+.horizon { position: relative; width: 0; height: 0; }
+.horizon::before, .horizon::after { content: ''; position: absolute; top: 0; left: calc(-1 * var(--pad)); width: 100vw; }
+.horizon::before { border-top: 1px solid var(--ink); transform-origin: left; }
+.horizon::after { height: 240px; background: linear-gradient(var(--floor), var(--void)); z-index: -1; }
+.name {
+  font-size: clamp(56px, 11vw, 176px); font-weight: 300; line-height: 1; letter-spacing: -0.045em;
+}
+.under {
+  display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px 48px;
+  padding-top: 4px;
+}
+.under p { max-width: 44ch; text-wrap: balance; }
+.status { color: var(--muted); font-variant-numeric: tabular-nums; position: relative; }
+
+/* Sections sit far apart; the gaps are the room. */
+.bay { padding: 0 var(--pad); margin-top: clamp(96px, 14vw, 176px); }
+/* The first project shows at the foot of the first screen, mid-load. */
+.room + .bay { margin-top: 72px; }
+.bay > h2, .pair h2 { font-size: 17px; font-weight: 500; margin-bottom: 40px; }
+.programs { display: grid; gap: 56px; }
+.program { position: relative; }
+.program-head {
+  position: relative;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+  padding-bottom: 8px;
+  background: linear-gradient(var(--ink), var(--ink)) left bottom / 100% 1px no-repeat;
+}
+.program-name { font-size: clamp(26px, 3.4vw, 44px); font-weight: 300; line-height: 1.2; letter-spacing: -0.025em; overflow-wrap: anywhere; }
+.program-name:lang(ja) { font-size: clamp(19px, 2.1vw, 28px); font-weight: 400; line-height: 1.6; letter-spacing: normal; }
+.program-name a { text-decoration: none; }
+.program-name a::after { content: ''; position: absolute; inset: 0; }
+.program-name a:focus-visible { outline: none; }
+.program:has(.program-name a:focus-visible) { outline: 2px solid var(--ink); outline-offset: 12px; }
+.program-head > span, .program-foot { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+.program-head > span { flex: none; }
+.program-foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 32px; padding-top: 12px; }
+.program-foot p { max-width: 56ch; }
+.program-foot a { position: relative; z-index: 1; }
+/* The one hover detail: the line under a program loads again, heavier. */
+.program-head::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--ink);
+  transform: scaleX(0); transform-origin: left; transition: transform 0.5s var(--ease);
+}
+.program:hover .program-head::after, .program:focus-within .program-head::after { transform: scaleX(1); }
+.program:hover .program-foot { color: var(--ink); }
+
+.more { margin-top: 48px; color: var(--muted); }
+.plain { font-size: clamp(20px, 2.2vw, 28px); font-weight: 300; line-height: 1.45; max-width: 34ch; font-variant-numeric: tabular-nums; }
+.plain + .plain { margin-top: 16px; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 64px var(--pad); }
+.skills { display: flex; flex-wrap: wrap; gap: 4px 28px; font-size: clamp(20px, 2.2vw, 28px); font-weight: 300; }
+
+/* Work page: each project gets more room. */
+.programs--wide { gap: clamp(88px, 12vw, 160px); }
+.programs--wide .program-name { font-size: clamp(32px, 5.6vw, 80px); letter-spacing: -0.035em; }
+.programs--wide .program-foot { font-size: 17px; padding-top: 16px; }
+.programs--wide .program-foot p { color: var(--ink); }
+.links { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.note { margin-top: 12px; color: var(--muted); font-size: 15px; }
+
+.foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 32px;
+  margin-top: clamp(120px, 16vw, 200px); padding: 32px var(--pad) 48px;
+  color: var(--muted); font-size: 14px;
+}
+.foot .back { margin-left: auto; }
+
+@media (max-width: 700px) {
+  .top { padding-block: 20px; gap: 12px 20px; }
+  .top nav { order: 3; width: 100%; gap: 24px; }
+  .room { padding-bottom: 56px; }
+  .room--short { min-height: 36svh; }
+  .program-foot { flex-direction: column; }
+  .pair { grid-template-columns: 1fr; }
+  .foot .back { margin-left: 0; }
+}
+
+/* The load. Everything is already in place without it; reduced motion and no-CSS-animation see the finished room. */
+@media (prefers-reduced-motion: no-preference) {
+  .horizon::before { animation: draw 0.8s var(--ease) 0.1s backwards; }
+  .name, .program-name {
+    background: linear-gradient(90deg, var(--ink) 50%, transparent 50%) 0 0 / 200% 100% no-repeat;
+    -webkit-background-clip: text; background-clip: text;
+  }
+  /* Wireframe first, then filled from the left as the line passes. */
+  .name { animation: appear 0.3s linear 0.15s backwards, fill 0.9s var(--ease) 0.5s backwards; }
+  .horizon::after { animation: appear 0.8s linear 0.3s backwards; }
+  .bio, .bay > h2, .pair h2, .more, .plain, .skills, .foot { animation: appear 0.6s linear 1.3s backwards; }
+  /* "Loading" holds the status slot until the count is in. */
+  .status::before {
+    content: 'Loading'; position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0;
+    animation: loading 1.7s linear 0.1s;
+  }
+  .status span { animation: appear 0.3s linear 1.9s backwards; }
+  .program-head {
+    animation: line 0.6s var(--ease) backwards; animation-delay: calc(1.3s + var(--i, 0) * 0.14s);
+  }
+  .program-name {
+    animation: appear 0.2s linear backwards, fill 0.6s var(--ease) backwards;
+    animation-delay: calc(1.3s + var(--i, 0) * 0.14s), calc(1.4s + var(--i, 0) * 0.14s);
+  }
+  .program-head > span, .program-foot, .note {
+    animation: appear 0.4s linear backwards; animation-delay: calc(1.7s + var(--i, 0) * 0.14s);
+  }
+  .still *, .still *::before, .still *::after { animation: none !important; }
+}
+@keyframes draw { from { transform: scaleX(0); } }
+@keyframes appear { from { opacity: 0; } }
+@keyframes loading { 0%, 100% { opacity: 0; } 10%, 85% { opacity: 1; } }
+@keyframes line { from { background-size: 0 1px; } }
+@keyframes fill {
+  from { color: transparent; -webkit-text-stroke: 1px var(--ghost); background-position: 100% 0; }
+  to { color: transparent; -webkit-text-stroke: 0 var(--ghost); background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

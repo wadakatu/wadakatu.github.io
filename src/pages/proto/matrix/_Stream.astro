@@ -1,0 +1,32 @@
+---
+/**
+ * One stream: drops of the item's own text falling into the readable entry they settle as.
+ * The drops repeat text that is already in the entry, so they are hidden from assistive tech.
+ */
+import { chunk, hasJa, rng } from './_lib';
+interface Props { name: string; href: string; strands: string[]; index: number; ja?: boolean; level?: 'h2' | 'h3'; commit?: string }
+const { name, href, strands, index, ja = false, level: Heading = 'h3', commit } = Astro.props;
+const r = rng(index + 1);
+---
+<li class="stream" data-commit={commit}>
+  <div class="fall" aria-hidden="true">
+    {strands.map((s, j) => {
+      // Two short drops per strand, half a cycle apart, so they follow each other without touching.
+      const parts = chunk(s, 10).slice(0, 2);
+      const t = +(5 + r() * 6).toFixed(1);
+      const phase = r();
+      return (
+        <span class="strand" style={`--j:${j}`}>
+          {parts.map((text, k) => (
+            <span class="drop" lang={hasJa(text) ? 'ja' : undefined}
+              style={`--t:${t}s;--d:${(-(phase + k / 2) * t).toFixed(1)}s;--rest:${Math.round(phase * 45)}%`}>{text}</span>
+          ))}
+        </span>
+      );
+    })}
+  </div>
+  <div class="read">
+    <Heading class="stream-name" data-echo={name} lang={ja ? 'ja' : undefined}><a href={href}>{name}</a></Heading>
+    <slot />
+  </div>
+</li>
