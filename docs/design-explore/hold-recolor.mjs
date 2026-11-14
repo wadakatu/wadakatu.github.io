@@ -39,6 +39,8 @@ for (const c of cases) {
   try {
     await page.goto(BASE + '/proto/matrix/' + c.sw, { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForTimeout(400);
+    // Below 720px Hold rain and the two colour buttons are inside the header menu.
+    if (c.viewport.width < 720) await page.locator('.menu > summary').click();
     if (c.hold) {
       await page.locator('#hold').check();
       await page.waitForFunction(() => document.documentElement.dataset.rain === 'held', { timeout: 3000 });

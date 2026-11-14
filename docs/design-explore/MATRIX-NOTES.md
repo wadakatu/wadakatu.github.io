@@ -1229,3 +1229,88 @@ Also copied to `/workspace/wadakatu-dev/design-protos/`.
 - **No-JS at 390** still stacks the two links visually, but it cannot set the single-tab-stop attributes; both names are in the tree. Clicks still land on the other reading because the current face has `pointer-events: none`.
 - **Checked in Chrome only.** The compact drop is a CSS mask animation; Safari / iPhone were not opened.
 - **The shell `boot` command still drops the `switch` flag** (`_term.ts` was left alone).
+
+## The phone header (Fable header pass)
+
+wadakatu: 「スマホ幅の時のHeaderの占める割合が多いね ここもっとブラッシュアップして綺麗にしてほしい」. Below 720px the header is now one slim row, and everything else folds into a menu. One design, no flags. `/proto/matrix/` only. From 720px up nothing changed.
+
+### Heights
+
+Playwright, Chrome, against `http://127.0.0.1:4321`. Home, Projects and 機械用 measure the same at each width.
+
+| Width × height | Before, 人間用 | Before, 機械用 | After, both | Share of the viewport after |
+| --- | --- | --- | --- | --- |
+| 360 × 800 | 204.6px | 92.8px | **53px** | 6.6% |
+| 390 × 844 | 204.6px (24.2%) | 92.8px (11.0%) | **53px** | 6.3% |
+| 430 × 932 | 204.6px | 92.8px | **53px** | 5.7% |
+| 601 and 719 × 844 | not measured | not measured | **53px** | 6.3% |
+| 1440 × 900 | 69px | 69px | 69px, unchanged | 7.7% |
+
+The "before" phone figures are the ones handed to this pass; 390 was re-measured here and matched (204.6 / 92.8). At 390 the 機械用 screen went from 677.6px to 717.4px tall.
+
+### What is in the row, and what moved
+
+The row, left to right: the mark at 32px with `wadakatu_`, then the menu button, then the switch. The button and the compact rain switch are the same cell: 46×46, a 44×44 target inside a 1px ring (the switch's link is 44×44, as shipped). The button is three rules; open, it is the filled face with one rule.
+
+| Was in the header | Now |
+| --- | --- |
+| Logo, `wadakatu_` | In the row (logo 44px to 32px, as 機械用 already had it) |
+| Rain switch | In the row. One button with its drop up to 600px, two strands from 601 to 719px, both 46px tall |
+| Main nav (Home, Projects, Blog, About) | In the menu, a list of four 44px lines |
+| 機械用's numbered window list | The same list in the menu: `0:Home*`, `1:Projects`, … |
+| Hold rain | In the menu, a full-width 44px line |
+| Operator colours, Daylight | In the menu, side by side, 44px tall. In the live shell they stay hidden as before (`palette`, `theme`) |
+
+Opened, the header unfolds in place and pushes the page down: 345px at 390 on 人間用, 241px on 機械用 (the window list only). There is no hide-on-scroll: the header is not sticky, so it already leaves when the page scrolls, and 機械用 does not scroll.
+
+### How it is built
+
+- The nav and `.controls` sit in one `<details class="menu">` with `<summary class="control">Menu</summary>`. The markup order inside is the old order, so the switch is still inside `.controls`.
+- From 720px up, `.menu` and `.menu::details-content` are `display: contents`, the content is `content-visibility: visible` whether or not the details is open, and the summary is `display: none`. The nav and `.controls` are the header's flex items exactly as before.
+- Below 720px `.controls` is `display: contents` too, so the switch is a flex item of the row. Closed, only the nav and the three `.control`s are hidden (`.menu:not([open])`). Open, they take `order: 1` and wrap under the row.
+- The compact switch's own rules are untouched. The row's padding is 3px so that its 46px cell gives a 53px header.
+- The on-screen-keyboard rule that hid `.top nav` in 機械用 now only applies from 720px up. Below that the list is in the menu and costs no row.
+- `proto-matrix.js` adds four ways to close it: Escape, a press outside the header, a change of reading (`mx:view`) and `pagehide` (so Back from a menu link should not restore it unfolded; not tested). If focus was on a line that is about to be hidden, it goes to the button. Opening and closing is the native element.
+- `hold-recolor.mjs` opens the menu first in its 390 cases.
+
+### No JavaScript, reduced motion, accessibility
+
+- No JS: the summary toggles natively, the nav is real links, the switch is two links, Hold rain is a checkbox. The header is 53px closed and 293px open at 390 (no palette or theme buttons).
+- `?motion=0` and `prefers-reduced-motion`: Hold rain is hidden as before, so the menu ends with Operator colours and Daylight. The switch's `▾` is still drawn. The menu has no animation of its own.
+- The button is a native `<summary>`: Chrome exposes it as a disclosure named "Menu" with `expanded` true or false, so no `aria-expanded` or `aria-controls` was added. Its word is set at `font-size: 0`, the same way the brace drawing hides 用.
+- Tab order closed: Skip, mark, Menu, switch. That is also the visual order, which is why the button is left of the switch.
+- At 1440 the Tab order and every header rect are identical to before, with JS on and off. The markup order of the nav and controls did not change.
+
+### Checks
+
+- Header rects at 1440, 1024, 900 and 720 (人間用, and 機械用 at 1440 and 720), before and after: identical. Tab order was compared at 1440 only, on both readings and with JS off on 人間用: identical. The 1440 人間用 header matches `shots/matrix-header-before-human-home-1440.png` pixel for pixel within a threshold of 24 levels; 機械用 at 1440 is identical to a still taken before the change.
+- 53px and no horizontal overflow at 320, 360, 390, 430, 601, 719, on Home, Projects and 機械用. Phosphor and Operator, night and day, `?motion=0`, reduced motion and JS off were opened at 390 only.
+- Behaviour at 390: Enter opens, Escape closes and returns focus, an outside press closes, Hold rain set in the menu stays held when it is closed, palette and theme change without closing it, switching reading closes it, `\` with focus on a menu line closes it and leaves focus on the button, `theme day` and `exit` in the shell still work, resizing to 1440 while open gives the 69px row. In 機械用 the shell does not pull focus back from the open menu, and Tab goes from the button to `0:Home`.
+- `docs/design-explore/hold-recolor.mjs`: all cases passed.
+
+### Still weak
+
+- **Open, the Tab order goes nav, switch, then Hold rain.** The switch is drawn in the row above but sits between them in the markup. Moving it would change the desktop Tab order, which was out of bounds.
+- **The menu pushes the page down, it does not float over it.** On 機械用 the screen is 188px shorter while it is open.
+- **It depends on `::details-content`** (Chrome 131, Safari 18.4, Firefox 143, from MDN's compat data; Baseline since September 2025). An older engine gets a plain "Menu" disclosure at every width, 69px closed at 390. That branch was only exercised by making the `@supports` test false in current Chrome, never in a real old engine.
+- **Checked in Chrome only.** `display: contents` on `<details>` with the content kept visible was not opened in Safari or Firefox. An iPhone is the first place to look.
+- **`?switch=bits` and `?switch=capsule` wrap to a second row at 360** (86.8px). Brace fits in the row.
+- **From 601 to 719px each strand is 46px tall but still about 32px wide.**
+- **Without JS** the menu closes only from its own button.
+- **A closed menu still reads "collapsed" while the switch inside it is reachable**, and at desktop the details adds an unnamed group around the nav and controls in the accessibility tree.
+- Open, the header at 390 is **346px** on 人間用 and **242px** on 機械用 (executor re-measure; this pass's earlier note said 345 / 241).
+
+### Official stills (header pass)
+
+Playwright, Chrome, against `http://127.0.0.1:4321`. `npm run build` completed (44 pages). `hold-recolor.mjs` all cases passed after the menu change. Also copied to `/workspace/wadakatu-dev/design-protos/`.
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-header-before-human-home-page-390.png` | 人間用 Home, 390, before (204.6px) |
+| `docs/design-explore/shots/matrix-header-after-human-home-page-390.png` | 人間用 Home, 390, after (53px) |
+| `docs/design-explore/shots/matrix-header-after-human-home-open-page-390.png` | Same, menu open |
+| `docs/design-explore/shots/matrix-header-after-human-projects-page-390.png` | 人間用 Projects, 390, after |
+| `docs/design-explore/shots/matrix-header-after-machine-page-390.png` | 機械用, 390, after (screen 717.4px) |
+| `docs/design-explore/shots/matrix-header-after-machine-open-page-390.png` | 機械用, menu open |
+| `docs/design-explore/shots/matrix-header-after-human-home-operator-page-390.png` | 人間用 Home, `?palette=operator` |
+

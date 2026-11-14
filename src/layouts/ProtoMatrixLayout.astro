@@ -137,22 +137,27 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           <!-- The wordmark names the link, so the mark beside it is decorative here. -->
           <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" />{person.heading}
         </a>
-        <nav aria-label="Main">
-          {nav.map((n) => (
-            <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-machine-href={url(n.p, 'machine')}
-              aria-current={n.p === page ? 'page' : undefined}>{n.label}</a>
-          ))}
-          <a href="/blog/">Blog</a>
-          <a href="/about/">About</a>
-        </nav>
-        <div class="controls">
-          <!-- Two links to two real URLs. The script turns the change into an in-place one. -->
-          <Pill page={page} view={view} />
-          <!-- A checkbox, so the rain can be stopped without JavaScript. -->
-          <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
-          <button class="control needs-js" id="palette-toggle" type="button" aria-pressed="false">Operator colours</button>
-          <button class="control needs-js" id="theme-toggle" type="button" aria-pressed="false">Daylight</button>
-        </div>
+        <!-- A disclosure only below 720px (see "the menu" in matrix.css). From there up it lays no box of
+             its own and its children sit in the header row as before. Native, so it opens without JavaScript. -->
+        <details class="menu">
+          <summary class="control">Menu</summary>
+          <nav aria-label="Main">
+            {nav.map((n) => (
+              <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-machine-href={url(n.p, 'machine')}
+                aria-current={n.p === page ? 'page' : undefined}>{n.label}</a>
+            ))}
+            <a href="/blog/">Blog</a>
+            <a href="/about/">About</a>
+          </nav>
+          <div class="controls">
+            <!-- Two links to two real URLs. The script turns the change into an in-place one. -->
+            <Pill page={page} view={view} />
+            <!-- A checkbox, so the rain can be stopped without JavaScript. -->
+            <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
+            <button class="control needs-js" id="palette-toggle" type="button" aria-pressed="false">Operator colours</button>
+            <button class="control needs-js" id="theme-toggle" type="button" aria-pressed="false">Daylight</button>
+          </div>
+        </details>
       </header>
 
       <main id="main" class="frame" tabindex="-1">

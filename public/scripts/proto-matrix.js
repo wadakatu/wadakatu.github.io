@@ -207,6 +207,23 @@
   }
   compactSwitch.addEventListener('change', syncSwitchA11y);
 
+  // ---------- menu: below 720px the nav and the controls fold into a native <details> (see matrix.css) ----------
+  // It opens and closes without this. Added here: Escape, a press anywhere outside the header, a
+  // change of reading and leaving the page all close it. Above 720px the summary is not rendered
+  // and none of this runs.
+  const menu = $('.menu'), menuBtn = $('summary', menu);
+  function closeMenu() {
+    if (!menu.open || !menuBtn.offsetParent) return;
+    // Focus on something about to be hidden goes back to the button. The switch stays where it is.
+    const lost = menu.contains(document.activeElement) && !document.activeElement.closest('.switch');
+    menu.open = false;
+    if (lost) menuBtn.focus();
+  }
+  menu.addEventListener('keydown', (e) => e.key === 'Escape' && closeMenu());
+  addEventListener('click', (e) => e.target.closest?.('.top') || closeMenu());
+  addEventListener('mx:view', closeMenu);
+  addEventListener('pagehide', closeMenu); // so Back from a menu link does not restore it unfolded
+
   sync(root.dataset.view);
   // The switch is two links to the two static routes; here the same choice happens in place.
   addEventListener('click', (e) => {

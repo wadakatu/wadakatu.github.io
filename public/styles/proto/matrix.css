@@ -153,6 +153,49 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .control input { accent-color: var(--green); margin: 0; }
 .hold:has(:focus-visible) { outline: 2px solid var(--green); outline-offset: 3px; }
 
+/* ---------- the menu: a <details> around the nav and the controls ----------
+   From 720px up it is not a menu at all: neither it nor its content slot lays a box, the summary
+   is gone, and the nav and the controls are the header's own flex items whether it is open or
+   closed. Below that the header is one slim row (the mark, the menu button, the switch) and the
+   rest unfolds under it. The switch sits inside the <details> in the markup, so its content is
+   kept rendered and the closed state hides only the nav and the three controls.
+   An engine without ::details-content gets a plain native disclosure labelled Menu. */
+.menu > summary { list-style: none; }
+.menu > summary::-webkit-details-marker { display: none; }
+@supports selector(::details-content) {
+  .menu, .menu::details-content { display: contents; }
+  .menu::details-content { content-visibility: visible; }
+  .menu > summary { display: none; }
+  @media (max-width: 719px) {
+    .top { gap: 0 8px; padding-block: 3px; }
+    .top:has(.menu[open]) { padding-bottom: 12px; }
+    .mark { gap: 10px; min-height: 44px; }
+    .mark .logo { width: 32px; }
+    .controls { display: contents; }
+    /* 601 to 719px still shows two strands: stand them as tall as the button beside them. */
+    :root:not([data-switch]) .top .switch { min-height: 46px; margin-block: 0; }
+    :root:not([data-switch]) .top .switch .half { text-align: center; }
+    /* The button is the same cell as the compact switch beside it: 46px, a 44px target inside a 1px
+       ring. Its word is set at no size, so it is still the button's name. Three rules closed; one,
+       on the filled face, open. */
+    .menu > summary { display: grid; place-content: center; width: 46px; height: 46px; padding: 0; font-size: 0; color: var(--muted); }
+    .menu > summary::before {
+      content: ''; width: 16px; height: 12px;
+      background: linear-gradient(currentColor 0 0) top, linear-gradient(currentColor 0 0) center, linear-gradient(currentColor 0 0) bottom;
+      background-size: 100% 2px; background-repeat: no-repeat;
+    }
+    .menu[open] > summary, .menu[open] > summary:hover { background: var(--green); border-color: var(--green); color: var(--bg); }
+    .menu[open] > summary::before { background-size: 0 0, 100% 2px, 0 0; }
+    .menu:not([open]) :is(nav, .controls .control) { display: none; }
+    /* Unfolded: the nav as a list of 44px lines, then the controls, all after the row in the header's own box. */
+    .top nav, .controls .control { order: 1; }
+    .top nav { flex: 0 0 100%; flex-direction: column; gap: 0; margin-top: 4px; }
+    .top nav a { display: flex; align-items: center; min-height: 44px; border-top: 1px dotted var(--rule); }
+    .controls .control { flex: 1 1 40%; justify-content: center; min-height: 44px; margin-top: 8px; }
+    .controls .hold { flex-basis: 100%; }
+  }
+}
+
 /* ---------- the name: set as wide as the frame, with the commit log cut out of it ---------- */
 .name {
   padding-block: clamp(40px, 10vh, 112px) 20px;
@@ -399,15 +442,15 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 /* Scan lines over the whole tube. They take no pointer events and sit under the boot and the mode line.
    The mark is lifted above them: it is shown as designed, with nothing drawn across it. */
 :root[data-view='machine'] .logo { position: relative; z-index: 21; }
-/* The compact rain switch is a filled face; scan lines across it make the glyphs hard to read. */
-:root[data-view='machine'] .top .switch { position: relative; z-index: 21; }
+/* The compact rain switch is a filled face, and so is the open menu button; scan lines across them make the glyphs hard to read. */
+:root[data-view='machine'] .top :is(.switch, summary) { position: relative; z-index: 21; }
 :root[data-view='machine'] body::after {
   content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none;
   background: repeating-linear-gradient(to bottom, transparent 0 2px, color-mix(in srgb, var(--bg) 28%, transparent) 2px 3px);
 }
 /* The header becomes a window list: numbered, the current one starred. */
 :root[data-view='machine'] .top { border-bottom-style: dashed; }
-:root[data-view='machine'] .top nav { counter-reset: win -1; gap: 2ch; }
+:root[data-view='machine'] .top nav { counter-reset: win -1; column-gap: 2ch; }
 :root[data-view='machine'] .top nav a::before { counter-increment: win; content: counter(win) ':' / ''; }
 :root[data-view='machine'] .top nav a[aria-current] { text-decoration: none; }
 :root[data-view='machine'] .top nav a[aria-current]::after { content: '*' / ''; color: var(--green); }
@@ -593,29 +636,24 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 }
 
 @media (max-width: 719px) {
-  .mark, .top nav { width: 100%; }
-  .top nav { justify-content: space-between; gap: 12px; }
   .foot { margin-top: 48px; }
   .name { -webkit-mask: none; mask: none; }
   .boot-lines p { grid-template-columns: 7ch minmax(0, 1fr); gap: 0 12px; }
   .foot .back { margin-left: 0; }
 }
 
-/* On a phone the shell needs the height: the header folds to two short rows and the two colour
-   buttons give way to the commands that do the same (theme, palette). Long notes take their own line. */
+/* On a phone the shell needs the height: the header is the one slim row (see "the menu"), and the
+   two colour buttons give way to the commands that do the same (theme, palette), so the menu holds
+   only the window list. Long notes take their own line. */
 @media (max-width: 719px) {
   .term .note { display: block; margin-left: 4ch; }
   .ps-who { flex-basis: 100%; }
-  :root.js:not(.term-off)[data-view='machine'] {
-    & .top { gap: 6px 16px; padding-block: 8px; }
-    & .mark { width: auto; }
-    & .mark .logo { width: 32px; }
-    & .top nav { order: 1; }
-    & .controls .control { display: none; }
-  }
+  :root.js:not(.term-off)[data-view='machine'] .controls .control { display: none; }
 }
-/* The on-screen keyboard is up: every row counts. The capsule in the header is still the way back. */
-:root.kb.js:not(.term-off)[data-view='machine'] :is(.top nav, .modeline) { display: none; }
+/* The on-screen keyboard is up: every row counts. The switch in the header is still the way back.
+   Below 720px the window list is already folded into the menu and costs no row. */
+:root.kb.js:not(.term-off)[data-view='machine'] .modeline { display: none; }
+@media (min-width: 720px) { :root.kb.js:not(.term-off)[data-view='machine'] .top nav { display: none; } }
 /* Fingers: bigger keys, the extra key row, and 16px in the field so iOS does not zoom into it. */
 @media (pointer: coarse) {
   .ps1 { font-size: 16px; }
