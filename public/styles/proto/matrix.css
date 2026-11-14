@@ -491,6 +491,30 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .fetch .logo { width: 112px; }
 /* Values that wrap stay in their own column, under themselves. */
 .fetch .side .ln { padding-left: 10ch; text-indent: -10ch; }
+/* Login neofetch on a phone: one 44px line so the prompt has the screen. From 720px the
+   summary hides and the card is just its contents, the same as a session that printed in the open. */
+@media (max-width: 719px) {
+  .login-card { margin-block: 4px 2px; border: 1px solid var(--rule); }
+  .login-card > summary {
+    display: flex; align-items: center; gap: 1ch; min-height: 44px; padding: 0 10px;
+    cursor: pointer; color: var(--green); list-style: none;
+  }
+  .login-card > summary::-webkit-details-marker { display: none; }
+  .login-card > summary::before { content: '▸'; flex: none; }
+  .login-card[open] > summary::before { content: '▾'; }
+  .login-card > summary:focus-visible { outline: 2px solid var(--green); outline-offset: -2px; }
+  .login-card > summary .role {
+    min-width: 0; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .login-card[open] > summary { border-bottom: 1px solid var(--rule); }
+}
+@supports selector(::details-content) {
+  @media (min-width: 720px) {
+    .login-card, .login-card::details-content { display: contents; }
+    .login-card::details-content { content-visibility: visible; }
+    .login-card > summary { display: none; }
+  }
+}
 .sw { display: inline-block; width: 3ch; height: 1.2em; vertical-align: middle; }
 .sw0 { background: var(--panel); } .sw1 { background: var(--rule); } .sw2 { background: var(--rain-tail); } .sw3 { background: var(--rain); }
 .sw4 { background: var(--muted); } .sw5 { background: var(--text); } .sw6 { background: var(--lead); } .sw7 { background: var(--green); }

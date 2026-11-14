@@ -78,6 +78,24 @@ function print(items: Item[], into: HTMLElement = tty) {
   while (tty.childElementCount > 500) tty.firstElementChild!.remove(); // scrollback has an end
   bottom();
 }
+/** The ~/.zshrc neofetch: a <details> on a phone so the prompt has the screen. Typed `neofetch` still prints in the open. */
+function loginCard(cmd: string) {
+  const r = shell.exec(cmd);
+  const card = Object.assign(document.createElement('details'), { className: 'login-card' });
+  const sum = document.createElement('summary');
+  const role = world.fetch.find((row) => row[0] === 'Role')?.[1];
+  sum.append(Object.assign(document.createElement('span'), { className: 'id', textContent: `${world.user}_` }));
+  if (role) sum.append(Object.assign(document.createElement('span'), { className: 'role', textContent: role }));
+  card.append(sum);
+  const line = Object.assign(document.createElement('div'), { className: 'ln echo' });
+  line.append(Object.assign(document.createElement('span'), { className: 'ps', ariaHidden: 'true', textContent: shell.prompt() }), ` ${cmd}`);
+  card.append(line);
+  print(r.out, card);
+  tty.append(card);
+  if (matchMedia('(min-width: 720px)').matches) card.open = true;
+  card.addEventListener('toggle', () => { if (!card.open) bottom(); });
+  bottom();
+}
 function echo(cmd: string, tail = '') {
   const div = Object.assign(document.createElement('div'), { className: 'ln echo' });
   div.append(Object.assign(document.createElement('span'), { className: 'ps', ariaHidden: 'true', textContent: shell.prompt() }), ` ${cmd}${tail}`);
@@ -328,7 +346,10 @@ tty.replaceChildren();
 print(shell.motd(last));
 if (term.dataset.cwd) shell.cd(term.dataset.cwd);
 // The first command is the one ~/.zshrc ends with, or whatever the address asked for. Neither is something you typed.
-run((new URLSearchParams(location.search).get('run') ?? term.dataset.first!).slice(0, 200), false);
+const first = (new URLSearchParams(location.search).get('run') ?? term.dataset.first!).slice(0, 200);
+if (first === 'neofetch' && !new URLSearchParams(location.search).has('run')) loginCard(first);
+else run(first, false);
+refresh(); // loginCard does not go through run(); the prompt still has to be drawn
 tty.setAttribute('role', 'log'); // from here on, new output is announced
 clock();
 root.classList.add('term');

@@ -23,13 +23,21 @@ const blocks = session.map((cmd) => ({ cmd, prompt: sh.prompt(), out: sh.exec(cm
 const keys = [['Tab', 'tab', 'Complete'], ['ArrowUp', '↑', 'Previous command'], ['ArrowDown', '↓', 'Next command'], ['C-c', '^C', 'Cancel']];
 const chips = ['help', 'whoami', 'ls', 'projects', 'posts', 'contact', 'git log --oneline', 'neofetch', 'clear', 'exit'];
 const back = Astro.url.pathname.replace(/(source|machine)\/$/, '');
+const role = world.fetch.find((r) => r[0] === 'Role')?.[1] ?? '';
 ---
 <div class="term" id="term" data-cwd={cwd} data-first={session[0]}>
   <!-- Focusable so the scrollback can be read with the keyboard alone. -->
   <div class="screen" id="screen" tabindex="0" role="group" aria-label="Terminal">
     <div class="tty" id="tty">
       <Out items={sh.motd()} />
-      {blocks.map((b) => (
+      {blocks.map((b, i) => b.cmd === 'neofetch' && i === 0 ? (
+        // Login card: collapsed on a phone so the prompt has the screen; always visible from 720px up (see matrix.css).
+        <details class="login-card">
+          <summary><span class="id">{world.user}_</span>{role && <span class="role">{role}</span>}</summary>
+          <div class="ln echo"><span class="ps" aria-hidden="true">{b.prompt}</span> {b.cmd}</div>
+          <Out items={b.out} />
+        </details>
+      ) : (
         <Fragment>
           <div class="ln echo"><span class="ps" aria-hidden="true">{b.prompt}</span> {b.cmd}</div>
           <Out items={b.out} />
