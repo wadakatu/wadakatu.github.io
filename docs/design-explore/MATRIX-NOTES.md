@@ -1184,3 +1184,48 @@ Playwright, Chrome, against the running dev server at `http://127.0.0.1:4321`. H
 | `docs/design-explore/shots/matrix-switch-capsule-human-close-1440.png` | capsule (current), 人間用 close-up |
 
 Matching `*-machine-close-1440.png` and 390 crops live in the same folder. Also copied to `/workspace/wadakatu-dev/design-protos/`.
+
+### Hold rain recolor, and the compact rain switch
+
+wadakatu confirmed this pass (「それで進めてくれる？」). Two changes, both on `/proto/matrix/` only. 機械用 itself is untouched except the header switch.
+
+**1. Hold rain, then a palette or theme change, no longer freezes 人間用.**
+
+Chrome could lock the tab after `#hold` was checked and then Operator colours or Daylight was pressed. Three things stacked: paused drop animations whose `to` state used `var(--h)` (and `100cqh` on the stream drops) were re-resolved when a `data-*` attribute changed on `:root`; `:has(#hold:checked)` was re-evaluated against the whole tree on that same recast; and a `clip-path` wipe whose `to` was `none` could be restarted mid-composite when `sync()` rewrote `aria-current` on every recast.
+
+The drops now animate to plain `100vh` / `100cqh` (`drop-vh`, `drop-cqh`). Checking Hold rain also sets `data-rain='held'` on `:root`, so the paused state does not depend on `:has()` once JS has run (`:has()` remains the no-JS path). `sync()` only writes `aria-current` when the value actually changes. The wipe keyframes end on `inset(0 0 0 0)`, not `none`.
+
+**2. On a phone, the default rain switch is one button.**
+
+At `max-width: 600px`, and only for the default rain drawing (`.top .switch`, not the boot layer, not `?switch=brace|bits|capsule`), the two strands share one 44×44 cell. The current reading is the filled face. A hole travels down it on the same 3.2s cadence as the desktop drip, and through the hole you read the other name, a glyph at a time, then the current face returns. With `?motion=0` or `?boot=frozen` the hole is removed and a small `▾` (empty alternative text) sits on the right of the face, so it is still obvious there is another reading underneath.
+
+JS keeps a single tab stop: the current half is `aria-hidden` / `tabindex="-1"`; the other is named `人間用から機械用へ` or `機械用から人間用へ`. Enter on that link still goes in place. Brace, bits and capsule at 390 are unchanged. Desktop (and 601px and up) is still two strands.
+
+### Checks (this pass)
+
+- `docs/design-explore/hold-recolor.mjs` against `127.0.0.1:4321`: 1440 and 390, rain / brace / bits / capsule, Hold rain then palette and theme (twice), plus a no-hold control. All cases passed (clicks 19–73ms, ~91 animation frames in 1.5s).
+- Playwright, Chrome: 390 compact switch is 44×44, one tab stop, named destination, Enter opens the other reading; 601px is still two strands; no horizontal overflow on 人間用 or 機械用; `?motion=0` draws the caret.
+- Stills looked at: compact rest, mid-glimpse, motion-off, machine header (switch lifted above the tube scanlines), and Hold rain + Operator / Daylight at 1440.
+
+### Official stills (this pass)
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-rain-compact-human-390.png` | 人間用 Home, compact rain switch at rest, 390 |
+| `docs/design-explore/shots/matrix-rain-compact-human-header-390.png` | Header crop of the same |
+| `docs/design-explore/shots/matrix-rain-compact-glimpse-strip-390.png` | Six frames of the drop falling through 人間用, revealing 機械用, then the face returning |
+| `docs/design-explore/shots/matrix-rain-compact-glimpse-header-390.png` | Mid-drop, in the header |
+| `docs/design-explore/shots/matrix-rain-compact-human-motion0-390.png` | `?motion=0`, caret on the right |
+| `docs/design-explore/shots/matrix-rain-compact-machine-header-390.png` | 機械用 header, compact 機械用 face, no scanlines on the switch |
+| `docs/design-explore/shots/matrix-hold-recolor-operator-1440.png` | Hold rain, then Operator colours, page still live |
+| `docs/design-explore/shots/matrix-hold-recolor-day-1440.png` | Then Daylight, still live |
+
+Also copied to `/workspace/wadakatu-dev/design-protos/`.
+
+### Still weak
+
+- **The glimpse hole is high-contrast.** The other name sits on `--bg`, so the drop reads as a black bar with a cut glyph, not a soft phosphor trail. The other word is a glimpse, not a clear reading.
+- **`▾` is a 9px mark in 10px of side padding.** It is visible, but tight, and it is only a hint that another reading is underneath.
+- **No-JS at 390** still stacks the two links visually, but it cannot set the single-tab-stop attributes; both names are in the tree. Clicks still land on the other reading because the current face has `pointer-events: none`.
+- **Checked in Chrome only.** The compact drop is a CSS mask animation; Safari / iPhone were not opened.
+- **The shell `boot` command still drops the `switch` flag** (`_term.ts` was left alone).

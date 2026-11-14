@@ -66,14 +66,26 @@
     halves.forEach((a) => {
       a.href = address(a.dataset.mode);
       if (a.closest('#boot')) return; // in the boot neither side has been chosen yet
-      if (a.dataset.mode === v) a.setAttribute('aria-current', 'true');
-      else a.removeAttribute('aria-current');
+      // Only touch aria-current when it actually changes, so the wipe animation does not restart
+      // on a palette recast (clip-path wipes have frozen Chrome tabs when restarted mid-composite).
+      if (a.dataset.mode === v) {
+        if (a.getAttribute('aria-current') !== 'true') a.setAttribute('aria-current', 'true');
+      } else if (a.hasAttribute('aria-current')) {
+        a.removeAttribute('aria-current');
+      }
     });
+    syncSwitchA11y();
   }
   function swap(v) {
     // Focus inside the reading that is about to be hidden would be lost; hand it to the switch in the header.
-    if (document.activeElement.closest('.view')) $(`.top a[data-mode="${v}"]`).focus();
+    // On a compact rain switch the side just taken is aria-hidden; focus the one button instead.
+    const fromView = document.activeElement.closest('.view');
     sync(v);
+    if (fromView) {
+      const taken = $(`.top a[data-mode="${v}"]`);
+      const btn = taken?.getAttribute('tabindex') === '-1' ? $('.top a[data-mode]:not([tabindex="-1"])') : taken;
+      (btn || taken)?.focus();
+    }
     // The side just taken settles out of raw glyphs, as the page's own headings do. The old capsule stays as it was.
     if (motion && window.gsap && root.dataset.switch !== 'capsule') $$(`.top a[data-mode="${v}"] [data-text]`).forEach((el) => {
       const t = decode(el, 0.45, true);
@@ -157,6 +169,44 @@
         }, '-=0.2');
     }
   }
+  const hold = $('#hold');
+  const syncHold = () => {
+    if (!hold) return;
+    if (hold.checked) root.dataset.rain = 'held';
+    else delete root.dataset.rain;
+  };
+  hold?.addEventListener('change', syncHold);
+  syncHold();
+
+  // On a phone the rain switch is one button (see matrix.css). Keep a single tab stop and a
+  // name that says where the press goes. The boot layer is left as two strands.
+  const compactSwitch = matchMedia('(max-width: 600px)');
+  function syncSwitchA11y() {
+    const compact = compactSwitch.matches && !root.dataset.switch;
+    halves.forEach((a) => {
+      if (!a.closest('.top')) return;
+      if (compact) {
+        const current = a.getAttribute('aria-current') === 'true';
+        if (current) {
+          a.setAttribute('aria-hidden', 'true');
+          a.setAttribute('tabindex', '-1');
+          a.removeAttribute('aria-label');
+        } else {
+          a.removeAttribute('aria-hidden');
+          a.removeAttribute('tabindex');
+          const to = a.dataset.mode === 'machine' ? '機械用' : '人間用';
+          const from = a.dataset.mode === 'machine' ? '人間用' : '機械用';
+          a.setAttribute('aria-label', `${from}から${to}へ`);
+        }
+      } else {
+        a.removeAttribute('aria-hidden');
+        a.removeAttribute('tabindex');
+        a.removeAttribute('aria-label');
+      }
+    });
+  }
+  compactSwitch.addEventListener('change', syncSwitchA11y);
+
   sync(root.dataset.view);
   // The switch is two links to the two static routes; here the same choice happens in place.
   addEventListener('click', (e) => {

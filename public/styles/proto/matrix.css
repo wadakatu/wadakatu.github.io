@@ -109,12 +109,21 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   color: transparent;
   background: linear-gradient(to bottom, transparent, var(--rain-tail) 15%, var(--rain) 80%, var(--rain-head));
   -webkit-background-clip: text; background-clip: text;
-  animation: drop var(--t) linear var(--d) infinite;
-  will-change: transform;
+  animation: drop-vh var(--t) linear var(--d) infinite;
 }
+.fall .drop { animation-name: drop-cqh; }
 .drop:lang(ja) { font-family: var(--dot); }
-@keyframes drop { from { transform: translateY(-100%); } to { transform: translateY(var(--h)); } }
-:root:has(#hold:checked) .drop { animation-play-state: paused; }
+/* Keyframes use plain units, not var(--h): changing theme/palette on :root used to
+   re-resolve custom properties inside paused animations (and 100cqh on stream drops)
+   across every drop at once. */
+@keyframes drop-vh { from { transform: translateY(-100%); } to { transform: translateY(100vh); } }
+@keyframes drop-cqh { from { transform: translateY(-100%); } to { transform: translateY(100cqh); } }
+/* data-rain is set from the checkbox when JS runs, so a palette/theme change on :root
+   does not have to re-evaluate :has() against the whole tree. :has() remains the no-JS path. */
+:root:is(:has(#hold:checked), [data-rain='held']) .drop {
+  animation-play-state: paused;
+  will-change: auto;
+}
 @media (max-width: 1099px) { .rain .col:nth-child(even) { display: none; } }
 @media (max-width: 719px) { .rain .col:not(:nth-child(4n + 1)) { display: none; } }
 
@@ -232,8 +241,10 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   & .half[aria-current], & .half[aria-current]:hover { background: var(--green); color: var(--bg); }
   & .half:focus-visible { z-index: 1; outline-offset: 2px; box-shadow: 0 0 0 2px var(--bg); }
 }
-@keyframes wipe-down { from { clip-path: inset(0 0 100% 0); } }
-@keyframes wipe-right { from { clip-path: inset(0 100% 0 0); } }
+/* Both ends are explicit inset(): a to-state of clip-path: none has frozen Chrome
+   tabs when a composited clip-path animation restarted (e.g. on a palette recast). */
+@keyframes wipe-down { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes wipe-right { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 
 /* rain (the default): each name is a strand of the rain, set top to bottom in the rain's own face.
    The strand you are reading has settled. Down the other one a drop still falls, a glyph at a time. */
@@ -287,10 +298,70 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   :root[data-switch='bits'] .switch .half { height: 31.8px; padding-inline: 6px 10px; }
   :root[data-switch='bits'] .switch .half::before { margin-right: 1ch; }
 }
+
+/* rain at phone width: one button, the current reading. A drop falling through it
+   briefly shows the other reading underneath, then the current face returns. The
+   boot layer keeps both strands so the first choice is still a choice. */
+@media (max-width: 600px) {
+  :root:not([data-switch]) .top .switch {
+    display: grid;
+    grid-template: 1fr / 1fr;
+    margin-block: 0;
+    min-width: 44px;
+    min-height: 44px;
+    overflow: hidden;
+  }
+  :root:not([data-switch]) .top .switch .half {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 2px 10px;
+    font-size: 13px;
+  }
+  :root:not([data-switch]) .top .switch .half + .half { border-left: 0; }
+  :root:not([data-switch]) .top .switch .half:not([aria-current]) {
+    z-index: 0;
+    background: var(--bg);
+    color: var(--muted);
+  }
+  :root:not([data-switch]) .top .switch .half:not([aria-current]):hover { color: var(--lead); background: var(--bg); }
+  /* The filled face sits on top. A travelling hole in the mask is the drop: through
+     it you read the other name, a glyph at a time, on the same cadence as the desktop drip.
+     Long solid regions on both sides of the hole, so the face is fully covered at rest
+     (hole above, then hole below) and never opens into the no-repeat void. */
+  :root:not([data-switch]) .top .switch .half[aria-current] {
+    z-index: 1;
+    pointer-events: none;
+    animation: none;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0 8em, transparent 8em 9.15em, #000 9.15em 24em);
+    mask-image: linear-gradient(to bottom, #000 0 8em, transparent 8em 9.15em, #000 9.15em 24em);
+    -webkit-mask-size: 100% 24em;
+    mask-size: 100% 24em;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 0 -9.3em;
+    mask-position: 0 -9.3em;
+    animation: glimpse 3.2s infinite;
+  }
+  :root:not([data-switch]) .top .switch .half[aria-current] .lab {
+    color: inherit;
+    background: none;
+    animation: none;
+  }
+}
+@keyframes glimpse {
+  /* Hole starts just above the 44px face and exits just below it, then parks. */
+  0% { -webkit-mask-position: 0 -9.3em; mask-position: 0 -9.3em; animation-timing-function: steps(5); }
+  24%, 100% { -webkit-mask-position: 0 -4.4em; mask-position: 0 -4.4em; }
+}
 /* Forced colours drop backgrounds: give the falling strand its text colour back and keep the filled side filled. */
 @media (forced-colors: active) {
   .switch .half .lab { color: inherit !important; background: none !important; }
-  .switch .half[aria-current] { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .switch .half[aria-current] { forced-color-adjust: none; background: Highlight; color: HighlightText; -webkit-mask-image: none; mask-image: none; }
 }
 
 /* ---------- the capsule: one capsule, two halves. The foot of Home, and ?switch=capsule ---------- */
@@ -328,6 +399,8 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 /* Scan lines over the whole tube. They take no pointer events and sit under the boot and the mode line.
    The mark is lifted above them: it is shown as designed, with nothing drawn across it. */
 :root[data-view='machine'] .logo { position: relative; z-index: 21; }
+/* The compact rain switch is a filled face; scan lines across it make the glyphs hard to read. */
+:root[data-view='machine'] .top .switch { position: relative; z-index: 21; }
 :root[data-view='machine'] body::after {
   content: ''; position: fixed; inset: 0; z-index: 20; pointer-events: none;
   background: repeating-linear-gradient(to bottom, transparent 0 2px, color-mix(in srgb, var(--bg) 28%, transparent) 2px 3px);
@@ -555,6 +628,20 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
    staying fixed), and nothing left to hold. The media query repeats it for no-JS. */
 :root[data-motion='off'] .double, :root[data-motion='off'] .deja::after, :root[data-motion='off'] .name::after, :root[data-motion='off'] .cur { animation: none; }
 :root:is([data-motion='off'], [data-boot='frozen']) .switch :is(.half, .lab) { animation: none !important; } /* ?boot=frozen stays a still */
+:root:is([data-motion='off'], [data-boot='frozen']) .top .switch .half[aria-current] {
+  -webkit-mask-image: none; mask-image: none;
+}
+/* No drop: a caret marks that the one button still has another reading underneath. */
+@media (max-width: 600px) {
+  :root:is([data-motion='off'], [data-boot='frozen']):not([data-switch]) .top .switch .half[aria-current]::after {
+    content: '▾' / '';
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    position: absolute; top: 50%; right: 2px; left: auto; bottom: auto;
+    transform: translateY(-50%);
+    font-size: 9px; line-height: 1; color: var(--bg);
+  }
+}
 :root[data-motion='off'] .drop { animation: none; top: var(--rest); }
 :root[data-motion='off'] .rain { position: absolute; }
 :root[data-motion='off'] .strand .drop + .drop, :root[data-motion='off'] .hold { display: none; }
