@@ -11,16 +11,25 @@
  * - originalRepos: public repositories wadakatu owns that are not forks
  * - ossForks: public forks wadakatu owns of other people's repositories
  * - recentPrs: pull requests wadakatu authored that merged, in the trailing
- *   12 months, in repositories wadakatu does not own
+ *   12 months, in repositories wadakatu does not own, excluding work orgs
+ *   listed in WORK_ORGS (employer and private-work organizations)
  */
 
 const OWNER = 'wadakatu';
+
+/**
+ * Organizations treated as wadakatu's work, not OSS, and excluded from recentPrs.
+ * - studio-design: Studio Inc. / Studio.Design (studio.design), his employer
+ * - TestStudioOrg: private Studio-related test org ("For testing github organization");
+ *   no merged PRs in the current window, excluded so a later test PR cannot count as OSS
+ */
+const WORK_ORGS = ['studio-design', 'TestStudioOrg'] as const;
 
 /** Last successful API reading, recorded 15 November 2026 (Asia/Tokyo). */
 export const fallbackActivity = {
   originalRepos: 27,
   ossForks: 60,
-  recentPrs: 4748,
+  recentPrs: 105,
   verifiedOn: '2026-11-15',
 } as const;
 
@@ -99,7 +108,8 @@ async function listOwnedRepos(): Promise<Repo[]> {
 }
 
 async function mergedPrsInOtherRepos(since: string): Promise<number> {
-  const q = `author:${OWNER} is:pr is:merged -user:${OWNER} merged:>=${since}`;
+  const work = WORK_ORGS.map((org) => `-org:${org}`).join(' ');
+  const q = `author:${OWNER} is:pr is:merged -user:${OWNER} ${work} merged:>=${since}`;
   const data = await github<{ total_count: number }>(
     `https://api.github.com/search/issues?q=${encodeURIComponent(q)}&per_page=1`,
   );

@@ -44,7 +44,8 @@ const dateModified = new Date(
 // ruler tracks: each represents a round ceiling, so the fill reads as progress
 // toward a milestone rather than as a fraction of nothing
 const RULERS = {
-  prs: ratio(activity.recentPrs, 40),
+  // 120 is the next round milestone above the current OSS PR count
+  prs: ratio(activity.recentPrs, 120),
   repos: ratio(activity.originalRepos, 20),
   articles: ratio(articleCount, 20),
   years: ratio(new Date().getFullYear() - profile.since, 10),
