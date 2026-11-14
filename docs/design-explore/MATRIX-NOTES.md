@@ -1261,7 +1261,7 @@ The row, left to right: the mark at 32px with `wadakatu_`, then the menu button,
 | Hold rain | In the menu, a full-width 44px line |
 | Operator colours, Daylight | In the menu, side by side, 44px tall. In the live shell they stay hidden as before (`palette`, `theme`) |
 
-Opened, the header unfolds in place and pushes the page down: 345px at 390 on 人間用, 241px on 機械用 (the window list only). There is no hide-on-scroll: the header is not sticky, so it already leaves when the page scrolls, and 機械用 does not scroll.
+Opened, the header unfolds in place and pushes the page down: 346px at 390 on 人間用, 242px on 機械用 (the window list only). There is no hide-on-scroll: the header is not sticky, so it already leaves when the page scrolls, and 機械用 does not scroll.
 
 ### How it is built
 
@@ -1275,7 +1275,7 @@ Opened, the header unfolds in place and pushes the page down: 345px at 390 on �
 
 ### No JavaScript, reduced motion, accessibility
 
-- No JS: the summary toggles natively, the nav is real links, the switch is two links, Hold rain is a checkbox. The header is 53px closed and 293px open at 390 (no palette or theme buttons).
+- No JS: the summary toggles natively, the nav is real links, the switch is two links, Hold rain is a checkbox. The header is 53px closed and 294px open at 390 (no palette or theme buttons).
 - `?motion=0` and `prefers-reduced-motion`: Hold rain is hidden as before, so the menu ends with Operator colours and Daylight. The switch's `▾` is still drawn. The menu has no animation of its own.
 - The button is a native `<summary>`: Chrome exposes it as a disclosure named "Menu" with `expanded` true or false, so no `aria-expanded` or `aria-controls` was added. Its word is set at `font-size: 0`, the same way the brace drawing hides 用.
 - Tab order closed: Skip, mark, Menu, switch. That is also the visual order, which is why the button is left of the switch.
@@ -1291,7 +1291,7 @@ Opened, the header unfolds in place and pushes the page down: 345px at 390 on �
 ### Still weak
 
 - **Open, the Tab order goes nav, switch, then Hold rain.** The switch is drawn in the row above but sits between them in the markup. Moving it would change the desktop Tab order, which was out of bounds.
-- **The menu pushes the page down, it does not float over it.** On 機械用 the screen is 188px shorter while it is open.
+- **The menu pushes the page down, it does not float over it.** On 機械用 the screen is 189px shorter while it is open.
 - **It depends on `::details-content`** (Chrome 131, Safari 18.4, Firefox 143, from MDN's compat data; Baseline since September 2025). An older engine gets a plain "Menu" disclosure at every width, 69px closed at 390. That branch was only exercised by making the `@supports` test false in current Chrome, never in a real old engine.
 - **Checked in Chrome only.** `display: contents` on `<details>` with the content kept visible was not opened in Safari or Firefox. An iPhone is the first place to look.
 - **`?switch=bits` and `?switch=capsule` wrap to a second row at 360** (86.8px). Brace fits in the row.
