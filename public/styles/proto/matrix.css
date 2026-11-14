@@ -217,22 +217,25 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .panel > h2 { font: 500 15px/1.7 var(--mono); color: var(--green); margin-bottom: 8px; }
 .lede, .cap { max-width: 68ch; color: var(--muted); }
 .after { display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 20px; }
+/* Work and writing, and the projects page: tighter box, same rhythm as the other panels. */
+.wall.panel { padding: 16px clamp(16px, 2.2vw, 24px) 20px; }
+.wall .after { margin-top: 12px; }
 
 .about { display: grid; gap: 12px 48px; margin-top: 0; padding-block: 20px; }
 .role { font-size: 18px; line-height: 1.6; color: var(--lead); }
 .brief { max-width: 60ch; }
 
 /* ---------- streams, mobile first: a strip of falling text beside the entry it settles as ---------- */
-.streams { display: grid; margin-top: 16px; }
-.stream { position: relative; display: flex; gap: 20px; min-width: 0; border-top: 1px solid var(--rule); }
+.streams { display: grid; margin-top: 12px; }
+.stream { position: relative; display: flex; gap: 16px; min-width: 0; border-top: 1px solid var(--rule); }
 .fall {
-  position: relative; flex: none; width: 72px; min-height: 184px; margin-block: 12px; overflow: hidden;
+  position: relative; flex: none; width: 72px; min-height: 136px; margin-block: 8px; overflow: hidden;
   container-type: size; --h: 100cqh;
 }
 .strand { position: absolute; top: 0; left: calc(var(--j) * 28px); width: 16px; height: 100%; }
 .strand:nth-child(n + 4) { display: none; }
 
-.read { flex: 1; min-width: 0; padding: 16px 0 24px; }
+.read { flex: 1; min-width: 0; padding: 12px 0 16px; }
 .stream-name { position: relative; display: grid; font: 500 15px/1.5 var(--mono); color: var(--lead); overflow-wrap: anywhere; }
 .stream-name > * { grid-area: 1 / 1; }
 .stream-name a { text-decoration: none; }
@@ -667,17 +670,17 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 @media (min-width: 720px) {
   .about { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); align-items: end; }
   .station { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .streams--rows .fall { width: 100px; min-height: 216px; }
+  .streams--rows .fall { width: 100px; min-height: 152px; }
   .streams--rows .strand:nth-child(4) { display: block; }
-  .streams--rows .stream { gap: 40px; }
-  .streams--rows .read { padding-block: 28px 36px; }
+  .streams--rows .stream { gap: 24px; }
+  .streams--rows .read { padding-block: 16px 20px; }
 }
 
 /* Home at desk width: the rows stand up into a wall, each stream falling into its entry. */
 @media (min-width: 1360px) {
   .streams:not(.streams--rows) { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 20px; }
   .streams:not(.streams--rows) .stream { flex-direction: column; gap: 0; border-top: 0; }
-  .streams:not(.streams--rows) .fall { width: auto; min-height: 0; margin-block: 0; height: clamp(220px, 34vh, 360px); }
+  .streams:not(.streams--rows) .fall { width: auto; min-height: 0; margin-block: 0; height: clamp(168px, 22vh, 240px); }
   .streams:not(.streams--rows) .strand { left: calc(var(--j) * 25% + 6%); }
   .streams:not(.streams--rows) .strand:nth-child(4) { display: block; }
   .streams:not(.streams--rows) .read { flex: none; padding: 12px 0 0; border-top: 1px solid var(--rule); }

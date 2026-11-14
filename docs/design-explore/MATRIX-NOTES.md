@@ -1613,3 +1613,61 @@ Official stills (executor, Playwright, Chrome, against `http://127.0.0.1:4321`).
 | `docs/design-explore/shots/mf-post-tpac-390.png` | TPAC article, 390 |
 
 `npm run build` completed (49 pages). `hold-recolor.mjs` all cases passed against `/proto/matrix/human/`.
+
+## Tighter projects on 人間用 — 15 November 2026
+
+wadakatu felt the Projects area on 人間用 had too much empty space. This pass tightens only that
+area: the "Work and writing" rain wall on `/proto/matrix/human/`, and `/proto/matrix/human/projects/`.
+機械用 and the blog pages were not touched. Markup, typography, and the falling-entry idea are the
+same; only spacing in `public/styles/proto/matrix.css` changed.
+
+### What changed
+
+- The wall's own padding (20 / 28 → 16 / 20) and the gap before "All projects".
+- Phone and stacked rows: the fall column's minimum height (184 → 136) and its margins (12 → 8);
+  the gap beside the entry (20 → 16); the entry's padding (16 / 24 → 12 / 16).
+- The projects page from 720px up: fall minimum (216 → 152), gap (40 → 24), entry padding (28 / 36 → 16 / 20).
+- The home rain wall from 1360px up: `clamp(220px, 34vh, 360px)` → `clamp(168px, 22vh, 240px)`
+  (198px at 1440×900, was 306).
+
+### Before / after (Playwright, Chrome, phosphor night, reduced motion)
+
+| Surface | Before | After | Δ |
+| --- | --- | --- | --- |
+| Home wall, 1440 | 740 | 608 | −132 (streams 544 → 436; fall 306 → 198) |
+| Home wall, 390 | 1726 | 1385 | −341 (short rows 209 → 153) |
+| Projects wall, 1440 | 1330 | 1076 | −254 (first row 240 → 172) |
+| Projects wall, 390 | 1496 | 1416 | −80 (rows already set by the copy) |
+
+### Checks
+
+- `npm run build`: 49 pages, complete.
+- `docs/design-explore/hold-recolor.mjs`: all cases passed.
+- Looked at in stills at 1440 and 390, before and after. Touch-sized controls in the header were
+  not changed. Title links on a phone are still the line of type they were; the row around them is
+  the practical target, as before.
+
+### Still weak
+
+- **The home wall at 1440 is less tall**, on purpose. The drops still fall into the entry, but the
+  monument is shorter. If it feels slight, the clamp can come up a little without giving back all
+  of the 306px.
+- **From 720px to 1359px the home wall is still a stack of rows**, not the seven-column wall. The
+  tighter minima help, but it remains a long scroll.
+- **The projects page at 390 barely moved**, because the blurbs and links already taller than the
+  fall column.
+- **Checked in Chrome only.** No Safari, no Firefox, no real phone.
+
+Official stills (executor, Playwright, Chrome, against `http://127.0.0.1:4321`). Also copied to
+`/workspace/wadakatu-dev/design-protos/`.
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/matrix-projects-before-home-1440.png` | Work and writing, 1440, before |
+| `docs/design-explore/shots/matrix-projects-after-home-1440.png` | Same, after |
+| `docs/design-explore/shots/matrix-projects-before-projects-1440.png` | Projects page, 1440, before |
+| `docs/design-explore/shots/matrix-projects-after-projects-1440.png` | Same, after (three entries in view instead of two) |
+| `docs/design-explore/shots/matrix-projects-before-home-390.png` | Work and writing, 390, before |
+| `docs/design-explore/shots/matrix-projects-after-home-390.png` | Same, after |
+| `docs/design-explore/shots/matrix-projects-before-projects-390.png` | Projects page, 390, before |
+| `docs/design-explore/shots/matrix-projects-after-projects-390.png` | Same, after |
