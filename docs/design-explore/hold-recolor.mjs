@@ -7,6 +7,7 @@
 import { chromium } from 'playwright';
 
 const BASE = process.env.BASE || 'http://127.0.0.1:4321';
+// 人間用 moved to /proto/matrix/human/ when the top became 機械用.
 const CLICK_MS = 5000;
 const FRAME_MS = 1500;
 const MIN_FRAMES = 20;
@@ -37,7 +38,7 @@ for (const c of cases) {
   const page = await ctx.newPage();
   page.on('crash', () => crashes.push(label));
   try {
-    await page.goto(BASE + '/proto/matrix/' + c.sw, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto(BASE + '/proto/matrix/human/' + c.sw, { waitUntil: 'networkidle', timeout: 30000 });
     await page.waitForTimeout(400);
     // Below 720px Hold rain and the two colour buttons are inside the header menu.
     if (c.viewport.width < 720) await page.locator('.menu > summary').click();

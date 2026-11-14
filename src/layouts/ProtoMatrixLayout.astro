@@ -1,42 +1,104 @@
 ---
 /**
- * /proto/matrix/ shell. Each route renders both readings of the same facts: 人間用 (slot "page",
- * the constructed page) and 機械用 (slot "machine", the same facts behind a shell prompt).
- * <html data-view> decides which one is displayed. The static /machine/ routes set it in the
- * markup, so the machine reading exists without JavaScript, as a recorded session.
+ * /proto/matrix/ shell. Home and Projects render both readings of the same facts: 機械用 (slot
+ * "machine", a shell prompt; the short address, and what the site opens as) and 人間用 (slot "page",
+ * the constructed page; the same tree under human/). <html data-view> decides which one is
+ * displayed, and each static route sets it in the markup, so both exist without JavaScript.
+ * Blog pages (page="blog") are documents with one reading: they fill the default slot, bring their
+ * own h1, and their 機械用 side is a link to the shell (`machineUrl`).
  */
-import { person, bio } from '../data/proto-content';
-import { rainColumns, curtainSlabs, glyphs, etch, logo } from '../pages/proto/matrix/_lib';
+import { person, bio, projects } from '../data/proto-content';
+import { rainColumns, curtainSlabs, glyphs, etch, logo, route, ROOT, type View } from '../pages/proto/matrix/_lib';
 import Pill from '../pages/proto/matrix/_Pill.astro';
-interface Props { page: 'home' | 'projects'; view: 'page' | 'machine'; h1: string; boot?: { key: string; text: string }[] }
-const { page, view, h1, boot } = Astro.props;
+interface Props {
+  page: 'home' | 'projects' | 'blog';
+  view: View;
+  /** Home and Projects: the one h1 both readings share. */
+  h1?: string;
+  boot?: { key: string; text: string }[];
+  /** Blog pages: their own title, description, language, canonical address and way into the shell. */
+  title?: string;
+  description?: string;
+  lang?: 'en' | 'ja';
+  canonical?: string;
+  machineUrl?: string;
+  article?: { published?: string; modified?: string; tags: string[] };
+  jsonLd?: object;
+}
+const { page, view, h1, boot, lang = 'en', article, ...own } = Astro.props;
 
-const root = '/proto/matrix/';
-const url = (p: 'home' | 'projects', v: 'page' | 'machine') => root + (p === 'projects' ? 'projects/' : '') + (v === 'machine' ? 'machine/' : '');
-const title = `${page === 'home' ? 'Home' : 'Projects'}${view === 'machine' ? ', machine reading' : ''} | wadakatu`;
+const path = Astro.url.pathname;
+const twin = page !== 'blog';
+const url = (p: 'home' | 'projects', v: View) => route(p, v);
+// Where the two sides of the switch lead from here.
+const to = twin ? { page: url(page, 'page'), machine: url(page, 'machine') } : { page: path, machine: own.machineUrl ?? ROOT };
+// 機械用 is the unmarked reading. Home's title is the one a search result shows.
+const base = page === 'home' ? [person.name, person.role] : ['Projects', person.name];
+const titles = twin
+  ? { machine: base.join(' | '), page: `${base[0]}, human reading | ${base[1]}` }
+  : { page: `${own.title} | ${person.name}`, machine: '' };
+const title = titles[view];
+const description = own.description ?? (page === 'projects' ? `${projects.length} projects by ${person.name}: ${projects.map((p) => p.name).join(', ')}.` : bio.meta);
+// One indexed address per page: a human/ route points at its short twin, an article at wherever it is published.
+const canonical = own.canonical ?? person.site + (twin ? url(page, 'machine') : path);
+const image = person.site + logo.src;
+const jsonLd = own.jsonLd ?? (page === 'home' && {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: person.name,
+  alternateName: person.alternateName,
+  description: bio.meta,
+  url: person.site,
+  image,
+  email: `mailto:${person.email}`,
+  homeLocation: { '@type': 'Country', name: person.location },
+  sameAs: [person.github, person.x],
+});
 const nav = [
   { label: 'Home', p: 'home' as const },
   { label: 'Projects', p: 'projects' as const },
 ];
+const blog = `${ROOT}blog/`;
+// On a Japanese page the chrome is still English, and says so.
+const chrome = lang === 'ja' ? 'en' : undefined;
 const hasJa = (s: string) => /[぀-ヿ㐀-鿿]/.test(s);
 const GSAP = 'https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js';
 const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc';
 ---
 <!doctype html>
-<html lang="en" data-theme="night" data-page={page} data-view={view}
-  data-page-url={url(page, 'page')} data-machine-url={url(page, 'machine')}>
+<html lang={lang} data-theme="night" data-page={page} data-view={view}
+  data-page-url={to.page} data-machine-url={to.machine} data-title-page={titles.page} data-title-machine={titles.machine}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>{title}</title>
-    <meta name="description" content={bio.meta} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={article ? 'article' : page === 'home' ? 'profile' : 'website'} />
+    <meta property="og:url" content={person.site + path} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content={String(logo.size)} />
+    <meta property="og:image:height" content={String(logo.size)} />
+    <meta property="og:image:alt" content={`${person.name} logo`} />
+    <meta property="og:site_name" content={person.name} />
+    <meta property="og:locale" content={lang === 'ja' ? 'ja_JP' : 'en_US'} />
+    {article?.published && <meta property="article:published_time" content={article.published} />}
+    {article?.modified && <meta property="article:modified_time" content={article.modified} />}
+    {article?.tags.map((t) => <meta property="article:tag" content={t} />)}
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content={person.xHandle} />
+    <meta name="twitter:creator" content={person.xHandle} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;700&family=M+PLUS+1+Code:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles/proto/matrix.css" />
+    <slot name="head" />
     <style set:html={`:root{--etch:${etch}}`}></style>
     <!-- Decides theme, palette, view, motion and boot before first paint. The boot layer fails open from here:
          skip, Escape, click and an 8s timeout all work even if the motion script or the CDN never load. -->
@@ -54,15 +116,18 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
         const sw = ['brace', 'bits', 'capsule'].includes(want) && want;
         if (sw) d.dataset.switch = sw;
         if (q.get('motion') === '0' || matchMedia('(prefers-reduced-motion: reduce)').matches) d.dataset.motion = 'off';
-        // ?source=1 is the earlier name of the same switch.
-        if (q.get('mode') === 'machine' || q.get('source') === '1') d.dataset.view = 'machine';
+        // ?source=1 is the earlier name of the same switch. A document with one reading has nothing to switch to.
+        if (d.dataset.page !== 'blog' && (q.get('mode') === 'machine' || q.get('source') === '1')) d.dataset.view = 'machine';
+        // The guide line in 機械用, once a reader has hidden it.
+        if (get('localStorage', 'proto-matrix-guide') === 'off') d.dataset.guide = 'off';
         // 機械用 locks to one viewport as soon as scripts run at all. If the live shell has not
         // arrived shortly after, give the recorded session its ordinary scrolling page back.
         setTimeout(() => d.classList.contains('term') || d.classList.add('term-off'), 4000);
 
         const boot = q.get('boot');
-        const first = !get('sessionStorage', 'proto-matrix-boot') && d.dataset.motion !== 'off';
-        const playable = d.dataset.page === 'home' && d.dataset.view === 'page';
+        // The intro belongs to Home in either reading. A link that runs a command (?run=) meant the shell, not the intro.
+        const first = !get('sessionStorage', 'proto-matrix-boot') && d.dataset.motion !== 'off' && !q.has('run');
+        const playable = d.dataset.page === 'home';
         if (playable && boot === 'frozen') d.dataset.boot = 'frozen';
         else if (playable && d.dataset.motion !== 'off' && (boot === '1' || first)) d.dataset.boot = 'play';
         addEventListener('DOMContentLoaded', () => {
@@ -73,13 +138,14 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
             if (d.dataset.palette === 'operator') flags.set('palette', 'operator');
             if (sw) flags.set('switch', sw);
             if (q.get('motion') === '0') flags.set('motion', '0');
-            const suffix = flags.size ? `?${flags}` : '';
+            // An article's way into the shell already carries a query (?run=).
+            const add = (u) => (flags.size ? u + (u.includes('?') ? '&' : '?') + flags : u);
             const view = d.dataset.view;
             document.querySelectorAll('[data-machine-href]').forEach((a) => {
-              a.href = (view === 'machine' ? a.dataset.machineHref : a.dataset.pageHref) + suffix;
+              a.href = add(view === 'machine' ? a.dataset.machineHref : a.dataset.pageHref);
             });
             document.querySelectorAll('a[data-mode]').forEach((a) => {
-              a.href = (a.dataset.mode === 'machine' ? d.dataset.machineUrl : d.dataset.pageUrl) + suffix;
+              a.href = add(a.dataset.mode === 'machine' ? d.dataset.machineUrl : d.dataset.pageUrl);
               if (a.closest('#boot')) return;
               if (a.dataset.mode === view) a.setAttribute('aria-current', 'true');
               else a.removeAttribute('aria-current');
@@ -94,7 +160,9 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           if (!d.dataset.boot) return;
           delete d.dataset.boot;
           window.dispatchEvent(new Event('mx:bootend'));
-          document.getElementById('main')?.focus({ preventScroll: true });
+          // Into the shell: its command line takes focus, as on any arrival there. Otherwise, the page.
+          if (d.dataset.view === 'machine' && d.classList.contains('term')) dispatchEvent(new CustomEvent('mx:view', { detail: 'machine' }));
+          else document.getElementById('main')?.focus({ preventScroll: true });
         };
         addEventListener('keydown', (e) => e.key === 'Escape' && window.mxEndBoot());
         addEventListener('click', (e) => e.target.closest?.('#boot') && window.mxEndBoot());
@@ -115,13 +183,17 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
           <p class="boot-logo"><span class="k">logo</span><img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" /></p>
         </div>
         <!-- The choice is already here: either side of the switch ends the intro. -->
-        <p class="boot-exit"><button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button><Pill page={page} /></p>
+        <p class="boot-exit">
+          <button class="control" id="boot-skip" type="button">Skip intro <kbd>Esc</kbd></button><Pill to={to} />
+          <!-- Said before the first choice: what comes next, and that there is another way to read it. -->
+          <span class="boot-note">This site opens as a terminal. <span lang="ja">人間用</span> is the same site as an ordinary page.</span>
+        </p>
       </div>
     )}
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main" lang={chrome}>Skip to content</a>
 
     <!-- Ambient rain. Every drop is a piece of a real phrase from the corpus; the same facts are readable below. -->
-    <div class="rain" aria-hidden="true">
+    <div class="rain" aria-hidden="true" lang={chrome}>
       {rainColumns().map((c) => (
         <span class="col" style={`--x:${c.x}%`}>
           {c.drops.map((drop) => (
@@ -132,7 +204,7 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
     </div>
 
     <div id="shell">
-      <header class="top frame">
+      <header class="top frame" lang={chrome}>
         <a class="mark" href={url('home', view)} data-page-href={url('home', 'page')} data-machine-href={url('home', 'machine')}>
           <!-- The wordmark names the link, so the mark beside it is decorative here. -->
           <img class="logo" src={logo.src} width={logo.size} height={logo.size} alt="" />{person.heading}
@@ -146,12 +218,12 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
               <a href={url(n.p, view)} data-page-href={url(n.p, 'page')} data-machine-href={url(n.p, 'machine')}
                 aria-current={n.p === page ? 'page' : undefined}>{n.label}</a>
             ))}
-            <a href="/blog/">Blog</a>
+            <a href={blog} data-here={blog} aria-current={page !== 'blog' ? undefined : path === blog ? 'page' : 'true'}>Blog</a>
             <a href="/about/">About</a>
           </nav>
           <div class="controls">
             <!-- Two links to two real URLs. The script turns the change into an in-place one. -->
-            <Pill page={page} view={view} />
+            <Pill to={to} view={view} />
             <!-- A checkbox, so the rain can be stopped without JavaScript. -->
             <label class="control hold"><input type="checkbox" id="hold" /> Hold rain</label>
             <button class="control needs-js" id="palette-toggle" type="button" aria-pressed="false">Operator colours</button>
@@ -161,12 +233,16 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
       </header>
 
       <main id="main" class="frame" tabindex="-1">
-        <h1 class="name" id="name" data-echo={h1}>{h1}</h1>
-        <div class="view view-page"><slot name="page" /></div>
-        <div class="view view-machine"><slot name="machine" /></div>
+        {twin ? (
+          <Fragment>
+            <h1 class="name" id="name" data-echo={h1}>{h1}</h1>
+            <div class="view view-page"><slot name="page" /></div>
+            <div class="view view-machine"><slot name="machine" /></div>
+          </Fragment>
+        ) : <slot />}
       </main>
 
-      <footer class="foot frame">
+      <footer class="foot frame" lang={chrome}>
         <div class="hint needs-js">
           <label class="control"><input type="checkbox" id="shortcuts" checked /> Enable <kbd>\</kbd> / <kbd>¥</kbd> shortcut</label>
           <p>Switches between the two readings. Turn off to prevent single-key activation.</p>
@@ -179,13 +255,16 @@ const GSAP_SRI = 'sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN
       </footer>
     </div>
 
-    <p class="vh" id="status" role="status"></p>
+    <p class="vh" id="status" role="status" lang={chrome}></p>
 
-    <!-- Covers the page as the boot ends. Decorative corpus text. -->
-    <div class="curtain" id="curtain" aria-hidden="true">
-      {curtainSlabs().map((s) => <span class="slab" lang="ja">{s}</span>)}
-    </div>
+    <!-- Covers the page as the boot ends. Decorative corpus text. Only the page that has a boot carries it. -->
+    {boot && (
+      <div class="curtain" id="curtain" aria-hidden="true">
+        {curtainSlabs().map((s) => <span class="slab" lang="ja">{s}</span>)}
+      </div>
+    )}
 
     <script is:inline src="/scripts/proto-matrix.js"></script>
+    <slot name="scripts" />
   </body>
 </html>

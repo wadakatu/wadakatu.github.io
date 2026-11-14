@@ -1,7 +1,8 @@
 /**
- * /proto/matrix/ enhancement. The page is complete without this file: both readings (人間用, the
- * page, and 機械用, the same facts as a recorded shell session) are in the markup, each has its own
- * URL, and the head script already ends the boot layer on Skip / Escape / click / timeout. This
+ * /proto/matrix/ enhancement. The page is complete without this file: both readings (機械用, a
+ * recorded shell session and what the site opens as, and 人間用, the same facts as a page) are in
+ * the markup, each has its own URL, and the head script already ends the boot layer on Skip /
+ * Escape / click / timeout. A blog page has one reading; there the switch stays two plain links. This
  * adds the in-place change between the two, the theme and palette buttons, the backslash shortcut
  * and (only when motion is allowed and GSAP loads) the boot, the drop between readings and three
  * small glitches. The live shell is its own module (src/pages/proto/matrix/_term.ts); the two only
@@ -41,6 +42,8 @@
 
   // ---------- reading: 人間用 (the page) or 機械用 (the program) ----------
   const main = $('#main'), curtain = $('#curtain'), slabs = $$('.slab'), name = $('#name');
+  // Both readings are in this document, so the change can happen in place. An article has only its own.
+  const twin = !!$('.view-machine');
   const halves = $$('a[data-mode]');
   const stagger = { amount: 0.26, from: 'random' };
   let tl = null;
@@ -58,11 +61,15 @@
     return s ? `?${s}` : '';
   }
   // The static twin is the shareable address of each reading, and it also works without JavaScript.
-  const address = (v) => (v === 'machine' ? root.dataset.machineUrl : root.dataset.pageUrl) + flags();
+  // An article's way into the shell already carries a query (?run=).
+  const withFlags = (u) => (flags() && u.includes('?') ? u + '&' + flags().slice(1) : u + flags());
+  const address = (v) => withFlags(v === 'machine' ? root.dataset.machineUrl : root.dataset.pageUrl);
   function sync(v) {
     root.dataset.view = v;
-    document.title = `${root.dataset.page === 'home' ? 'Home' : 'Projects'}${v === 'machine' ? ', machine reading' : ''} | wadakatu`;
-    $$('[data-machine-href]').forEach((a) => (a.href = (v === 'machine' ? a.dataset.machineHref : a.dataset.pageHref) + flags()));
+    document.title = (v === 'machine' ? root.dataset.titleMachine : root.dataset.titlePage) || document.title;
+    $$('[data-machine-href]').forEach((a) => (a.href = withFlags(v === 'machine' ? a.dataset.machineHref : a.dataset.pageHref)));
+    // Links inside this world that are the same in both readings (the blog) carry the flags too.
+    $$('a[data-here]').forEach((a) => (a.href = withFlags(a.dataset.here)));
     halves.forEach((a) => {
       a.href = address(a.dataset.mode);
       if (a.closest('#boot')) return; // in the boot neither side has been chosen yet
@@ -130,7 +137,8 @@
   function toggle() {
     finish(); // a second press finishes the first change before starting its own
     const v = root.dataset.view === 'machine' ? 'page' : 'machine';
-    if (!motion || !window.gsap || curtain.classList.contains('on')) return swap(v);
+    if (!twin) return void (location.href = address(v));
+    if (!motion || !window.gsap || curtain?.classList.contains('on')) return swap(v);
 
     main.setAttribute('aria-busy', 'true');
     // The tube collapses around the middle of the window, wherever the page is scrolled to.
@@ -228,7 +236,7 @@
   // The switch is two links to the two static routes; here the same choice happens in place.
   addEventListener('click', (e) => {
     const a = e.target.closest?.('a[data-mode]');
-    if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!a || !twin || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     // From the boot either half ends it (the head script has, on this same click): 人間用 is Skip, 機械用 goes straight there.
     if (a.dataset.mode !== root.dataset.view) a.closest('#boot') ? swap(a.dataset.mode) : toggle();
@@ -242,7 +250,7 @@
     if (on) root.dataset.palette = 'operator';
     else delete root.dataset.palette;
     paletteBtn.setAttribute('aria-pressed', on);
-    history.replaceState(null, '', address(root.dataset.view));
+    history.replaceState(null, '', address(root.dataset.view) + location.hash);
     sync(root.dataset.view);
   });
   const shortcuts = $('#shortcuts');
@@ -285,7 +293,7 @@
   addEventListener('mx:bootend', () => {
     if (washing || !bootTl) return; // skipped by the reader: drop the rest of the sequence
     bootTl.kill();
-    curtain.classList.remove('on');
+    curtain?.classList.remove('on');
   });
   function playBoot() {
     if (root.dataset.boot !== 'play') return;
@@ -357,11 +365,12 @@
       finish();
       bootTl?.kill();
       effects.forEach((effect) => effect.progress(1));
-      curtain.classList.remove('on');
+      curtain?.classList.remove('on');
       $$('.double, .deja').forEach((el) => el.classList.remove('double', 'deja'));
     }
   });
-  if (!motion || root.dataset.boot === 'frozen') return;
+  // A blog page has no boot, no change between readings and no glitches: nothing there needs the library.
+  if (!motion || root.dataset.boot === 'frozen' || root.dataset.page === 'blog') return;
   const s = document.createElement('script');
   s.src = body.dataset.gsap;
   s.integrity = body.dataset.gsapSri;

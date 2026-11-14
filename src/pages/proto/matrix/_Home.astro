@@ -4,7 +4,7 @@ import Stream from './_Stream.astro';
 import Terminal from './_Terminal.astro';
 import Pill from './_Pill.astro';
 import { person, bio, projects, recentPosts, skills, activity } from '../../../data/proto-content';
-import { phrases, readableCommits, commitFor, host, splitJa } from './_lib';
+import { phrases, readableCommits, commitFor, host, splitJa, route, postHref, slugOf, ROOT } from './_lib';
 interface Props { view: 'page' | 'machine' }
 const { view } = Astro.props;
 
@@ -40,13 +40,13 @@ const boot = [
           );
         })}
         {recentPosts.map((post, i) => (
-          <Stream name={post.title} href={post.href} ja index={i + projects.length} commit={commitFor(post.title)}
+          <Stream name={post.title} href={postHref(slugOf(post.href))} ja index={i + projects.length} commit={commitFor(post.title)}
             strands={[post.title, post.date, host(person.site + post.href), post.category]}>
             <p class="meta"><time datetime={post.date}>{post.date}</time> {post.category}</p>
           </Stream>
         ))}
       </ul>
-      <p class="after"><a href="/proto/matrix/projects/" data-page-href="/proto/matrix/projects/" data-machine-href="/proto/matrix/projects/machine/">All projects</a> <a href="/blog/">Read the blog</a></p>
+      <p class="after"><a href={route('projects', 'page')} data-page-href={route('projects', 'page')} data-machine-href={route('projects', 'machine')}>All projects</a> <a href={`${ROOT}blog/`}>Read the blog</a></p>
     </section>
 
     <div class="station">

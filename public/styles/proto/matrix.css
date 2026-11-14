@@ -1,8 +1,9 @@
 /* /proto/matrix/: an operator's station at night. Phosphor green on near-black is the default
    world whatever the OS says; "day" is the same screen read in daylight. Reading text sits on
    solid panels, the rain only shows around them. Text is dimmed with colour, never opacity.
-   Two readings share these tokens: 人間用 (the page) and 機械用 (the same facts behind a shell
-   prompt, in one viewport; see "machine" below). */
+   Two readings share these tokens: 機械用 (the facts behind a shell prompt, in one viewport; what
+   the site opens as; see "machine" below) and 人間用 (the page, under human/). Blog pages add
+   matrix-blog.css. */
 :root {
   color-scheme: dark;
   --bg: #020805;
@@ -467,6 +468,25 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .view-machine { font-size: 14px; line-height: 1.6; }
 :root:not(.term) .live { display: none; }
 
+/* The guide line: the first row of 機械用, and the plain way to 人間用 for a reader who did not ask
+   for a shell. It is the page's, not the shell's: `clear` leaves it and it does not scroll. The ×
+   (which needs the live shell) hides it for good. On a phone the sentence is kept for assistive
+   tech only, so the row is one 44px button and the ×. */
+.guide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding-block: 8px; border-bottom: 1px dashed var(--rule); color: var(--muted); font-size: 13px; }
+.guide .say { margin-right: auto; }
+.guide kbd { color: var(--text); }
+.guide .control { font-size: 13px; padding-block: 2px; }
+.guide a.control { border-color: var(--green); color: var(--lead); }
+.guide a.control:hover { background: var(--green); color: var(--bg); }
+.guide button { justify-content: center; min-width: 32px; padding-inline: 0; border-color: var(--rule); color: var(--muted); }
+:root[data-guide='off'] .guide { display: none; }
+@media (max-width: 719px) {
+  .guide { flex-wrap: nowrap; gap: 8px; }
+  .guide .say { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .guide a.control { flex: 1; justify-content: center; min-height: 44px; }
+  .guide button { flex: none; width: 44px; min-height: 44px; }
+}
+
 /* The session. One .ln per line, wrapping the way a terminal wraps. Without the script this is a
    recorded session in an ordinary scrolling page; with it, the live shell prints the same markup. */
 .screen { padding-block: 16px 24px; }
@@ -575,7 +595,12 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
   & #shell { display: grid; grid-template: auto minmax(0, 1fr) / minmax(0, 1fr); height: 100%; padding-bottom: 0; }
   & .frame { margin-inline: 0; } /* an auto margin would shrink a grid item to its content */
   & main, & .view-machine { display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); min-height: 0; padding-inline: 0; }
-  & .term { display: grid; grid-template: minmax(0, 1fr) auto auto / minmax(0, 1fr); min-height: 0; }
+  /* Rows are named by position, so a hidden guide line leaves an empty row and nothing else moves up into it. */
+  & .term { display: grid; grid-template: auto minmax(0, 1fr) auto auto / minmax(0, 1fr); min-height: 0; }
+  & .guide { grid-row: 1; padding-inline: var(--pad); background: var(--panel); }
+  & .screen { grid-row: 2; }
+  & .chips { grid-row: 3; }
+  & .modeline { grid-row: 4; }
   & .screen {
     display: flex; flex-direction: column; min-height: 0; padding: 12px var(--pad) 16px;
     overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--rule) transparent;
@@ -598,6 +623,9 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .hint { width: 100%; }
 .foot .back { margin-left: auto; }
 
+/* An earlier address of 機械用: one line and a link, for the moment before the refresh. */
+.moved { padding-block: 20vh; }
+
 /* ---------- boot: the data file's keys, their values decoding in ---------- */
 .boot { display: none; position: fixed; inset: 0; z-index: 30; background: var(--bg); padding: min(26vh, 160px) var(--pad) var(--pad); overflow-y: auto; align-content: start; gap: 40px; }
 :root[data-boot] .boot { display: grid; }
@@ -613,6 +641,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 .boot .v { color: var(--green); overflow-wrap: anywhere; font-family: var(--dot); }
 .boot .v.done { color: var(--lead); }
 .boot-exit { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.boot-note { flex-basis: 100%; max-width: 62ch; color: var(--muted); font-size: 14px; }
 /* The last record is the mark. A still (?boot=frozen) shows it without the script or the motion library. */
 .boot-lines .boot-logo { align-items: start; margin-top: 1em; }
 .boot-logo .logo { width: clamp(120px, 24vh, 220px); }
@@ -673,7 +702,7 @@ kbd { font: inherit; padding: 0 6px; border: 1px solid currentColor; border-radi
 }
 /* The on-screen keyboard is up: every row counts. The switch in the header is still the way back.
    Below 720px the window list is already folded into the menu and costs no row. */
-:root.kb.js:not(.term-off)[data-view='machine'] .modeline { display: none; }
+:root.kb.js:not(.term-off)[data-view='machine'] :is(.modeline, .guide) { display: none; }
 @media (min-width: 720px) { :root.kb.js:not(.term-off)[data-view='machine'] .top nav { display: none; } }
 /* Fingers: bigger keys, the extra key row, and 16px in the field so iOS does not zoom into it. */
 @media (pointer: coarse) {

@@ -139,7 +139,14 @@ function show(r: Result) {
   if (fx && 'vim' in fx) vimScreen(fx.vim ?? null);
   if (fx?.ping) ping(fx.ping);
   if (fx?.rain) rain();
-  if (fx?.boot) location.href = `${root.dataset.pageUrl}?boot=1${root.dataset.palette === 'operator' ? '&palette=operator' : ''}`;
+  if (fx?.boot) {
+    // The intro belongs to Home, and Home is this shell: reboot comes back here. The address already
+    // carries the flags in effect (palette, switch, motion); only what was spent is dropped.
+    const q = new URLSearchParams(location.search);
+    for (const k of ['run', 'mode', 'source']) q.delete(k);
+    q.set('boot', '1');
+    location.href = `/proto/matrix/?${q}`;
+  }
   // Leaving is the header's own 人間用 link, so the change (and its motion) is the page's, not a second copy.
   if (fx?.exit) document.querySelector<HTMLElement>('.top a[data-mode="page"]')?.click();
   refresh();
@@ -339,6 +346,13 @@ const arrive = () => {
   if (matchMedia('(pointer: fine)').matches) input.focus({ preventScroll: true });
 };
 addEventListener('mx:view', (e) => (e as CustomEvent).detail === 'machine' && arrive());
+
+// The guide line is the page's, not the shell's: hiding it is remembered, and nothing else here knows about it.
+$('guide-hide').addEventListener('click', () => {
+  store('localStorage', 'proto-matrix-guide', 'off');
+  root.dataset.guide = 'off';
+  input.focus({ preventScroll: true });
+});
 
 const last = store('localStorage', 'proto-matrix-login');
 store('localStorage', 'proto-matrix-login', shell.stamp());

@@ -1,0 +1,157 @@
+---
+/**
+ * An article in this world: /proto/matrix/blog/<slug>/. The body, title, date, tags and images are
+ * the published post's own (src/content/blog); nothing is rewritten. It is a document with one
+ * reading, so the header switch's 機械用 side is a link to the shell at this file.
+ * Only the slugs in `protoPosts` get a page; the others still live at the published /blog/.
+ */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Layout from '../../../../layouts/ProtoMatrixLayout.astro';
+import { person } from '../../../../data/proto-content';
+import { blogExcerpts } from '../../../../data/proto-matrix-corpus';
+import { protoPosts, postId as id, ROOT, route, shellAt, chunk, hasJa, rng, bmp } from '../_lib';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog', (p) => p.data.published && protoPosts.includes(id(p))))
+    .sort((a, b) => +a.data.published_at! - +b.data.published_at!);
+  // Older and newer are neighbours among the prototyped posts only: no link leaves this world sideways.
+  return posts.map((post, i) => ({ params: { slug: id(post) }, props: { post, older: posts[i - 1], newer: posts[i + 1] } }));
+}
+interface Props { post: CollectionEntry<'blog'>; older?: CollectionEntry<'blog'>; newer?: CollectionEntry<'blog'> }
+const { post, older, newer } = Astro.props;
+const slug = id(post);
+const { title, topics, type, published_at, updated_at } = post.data;
+const { headings } = await render(post);
+
+/**
+ * The Markdown gives every image an empty alt and no height. These descriptions were written for
+ * the prototype by looking at each file; the sizes are the files' own. An image not listed here is
+ * left exactly as written.
+ */
+const images: Record<string, { alt: string; w: number; h: number }> = {
+  'e2a99182db0d-20251127.png': { alt: 'TPAC 2025、11月10日（月）のスケジュール表。3階から5階の会議室ごとに、9時からのグループ会議が並んでいる。', w: 1400, h: 439 },
+  'f1ad4fffef76-20251128.jpg': { alt: 'TPAC 2025の名札。「10–14 NOVEMBER KOBE, JAPAN」と「Studio Inc.」の表記があり、氏名は塗りつぶされている。', w: 1050, h: 1400 },
+  'b5aee7f18cbb-20251203.jpeg': { alt: '「WELCOME 国際会議場 Int\'l Conference Center」の案内板に貼られた「W3C TPAC 2025」の掲示。', w: 997, h: 1330 },
+  '62a331668f2e-20251209.png': { alt: 'ぼかしをかけた写真。会議室で名札を下げた数人が、机のノートPCを囲んで話している。', w: 1330, h: 997 },
+  'e37bdeb4188d-20250731.png': { alt: 'Claude Codeの「Manage MCP servers」画面。serenaが「connected」と表示されている。', w: 491, h: 77 },
+};
+const html = (post.rendered?.html ?? '')
+  .replace(/<img\b[^>]*>/g, (tag) => {
+    const src = tag.match(/src="([^"]+)"/)?.[1] ?? '';
+    const im = images[src.split('/').pop()!];
+    if (!im) return tag;
+    // The author's width is how large the image is meant to be shown; the height follows the real file.
+    const w = Math.min(+(tag.match(/width="(\d+)"/)?.[1] ?? im.w), im.w);
+    return `<img src="${src}" alt="${im.alt}" width="${w}" height="${Math.round((w * im.h) / im.w)}" loading="lazy" decoding="async">`;
+  })
+  // A URL written alone becomes a reference line: host, then path. The address is the same.
+  .replace(/<a href="(https?:\/\/[^"]+)">https?:\/\/([^/<]+)([^<]*)<\/a>/g, (_, href, host, rest) =>
+    `<a class="ref" href="${href}"><span class="host">${host.replace(/^www\./, '')}</span><span class="path">${rest}</span></a>`);
+
+// Contents: every h2, with its h3s under it.
+type Entry = { slug: string; text: string; sub: { slug: string; text: string }[] };
+const toc = headings.reduce<Entry[]>((list, h) => {
+  if (h.depth === 2) list.push({ slug: h.slug, text: h.text, sub: [] });
+  else if (h.depth === 3) list.at(-1)?.sub.push({ slug: h.slug, text: h.text });
+  return list;
+}, []);
+
+const day = (d?: Date) => d && `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const date = day(published_at)!;
+// The same sum the published page shows: 500 characters a minute, code left out.
+const minutes = Math.max(1, Math.ceil((post.body ?? '').replace(/```[\s\S]*?```/g, '').replace(/`[^`]+`/g, '').length / 500));
+const file = `${slug}.md`;
+const excerpt = blogExcerpts.find((p) => p.slug === slug)!.excerpt;
+// The published address is the one to share and the canonical one: the prototype never competes with it.
+const published = `${person.site}/blog/${slug}/`;
+const shell = shellAt(`cat ~/posts/${file}`);
+const home = route('home', 'page'), index = `${ROOT}blog/`;
+const x = `https://x.com/intent/post?${new URLSearchParams({ text: title, url: published })}`;
+
+// The masthead's strip: the article's own words (title, date, tags, file name), as on Projects.
+const r = rng(parseInt(slug.slice(0, 6), 16));
+const strands = [bmp(title), `${date} ${type}`, topics.join(' '), file].map((s) => {
+  const t = +(6 + r() * 6).toFixed(1), phase = r();
+  return chunk(s, 10).slice(0, 2).map((text, k) => ({ text, style: `--t:${t}s;--d:${(-(phase + k / 2) * t).toFixed(1)}s;--rest:${Math.round(phase * 45)}%` }));
+});
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  mainEntityOfPage: published,
+  headline: title,
+  description: excerpt,
+  inLanguage: 'ja',
+  datePublished: published_at?.toISOString(),
+  dateModified: (updated_at ?? published_at)?.toISOString(),
+  keywords: topics.join(', '),
+  image: `${person.site}/images/logo-400.png`,
+  author: { '@type': 'Person', name: person.name, url: person.site },
+};
+---
+<Layout page="blog" view="page" lang="ja" title={title} description={excerpt} canonical={published} machineUrl={shell}
+  article={{ published: published_at?.toISOString(), modified: updated_at?.toISOString(), tags: topics }} jsonLd={jsonLd}>
+  <link slot="head" rel="stylesheet" href="/styles/proto/matrix-blog.css" />
+
+  <article class="post">
+    <header class="post-head panel">
+      <div class="fall" aria-hidden="true" lang="en">
+        {strands.map((drops, j) => (
+          <span class="strand" style={`--j:${j}`}>
+            {drops.map((d) => <span class="drop" lang={hasJa(d.text) ? 'ja' : undefined} style={d.style}>{d.text}</span>)}
+          </span>
+        ))}
+      </div>
+      <div class="post-id">
+        <nav class="crumb" aria-label="Breadcrumb" lang="en"><a href={home} data-here={home} aria-label="Home">~</a>/<a href={index} data-here={index}>posts</a>/<span aria-current="page">{file}</span></nav>
+        <h1 class="post-title">{title}</h1>
+        <p class="meta" lang="en"><time datetime={published_at?.toISOString()}>{date}</time> <span>{type === 'tech' ? 'Tech' : 'Life'}</span> <span>{minutes} min read</span></p>
+        <ul class="tags" aria-label="Tags" lang="en">{topics.map((t) => <li>#{t}</li>)}</ul>
+      </div>
+    </header>
+
+    <div class="post-grid">
+      <aside class="toc panel" lang="en">
+        <!-- A disclosure below 1100px; from there up it is always open and stays beside the article (see matrix-blog.css). -->
+        <details>
+          <summary>Contents</summary>
+          <nav aria-label="Contents">
+            <ol>
+              {toc.map((h) => (
+                <li>
+                  <a href={`#${h.slug}`} lang="ja">{h.text}</a>
+                  {h.sub.length > 0 && <ol>{h.sub.map((s) => <li><a href={`#${s.slug}`} lang="ja">{s.text}</a></li>)}</ol>}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </details>
+      </aside>
+
+      <div class="prose panel" set:html={html} />
+    </div>
+
+    <footer class="post-foot panel" lang="en">
+      <p class="eof" aria-hidden="true">EOF</p>
+      <div class="share">
+        <span class="k">Share</span>
+        <a class="control" href={x} rel="noopener">Post on X</a>
+        <button class="control needs-js" type="button" id="copy-link" data-url={published}>Copy link</button>
+        <button class="control" type="button" id="share" data-url={published} data-title={title} hidden>Share…</button>
+      </div>
+      {(older || newer) && (
+        <nav class="pager" aria-label="Posts">
+          {older && <a class="older" href={`${index}${id(older)}/`} data-here={`${index}${id(older)}/`} rel="prev"><span class="k">Older</span><span lang="ja">{older.data.title}</span></a>}
+          {newer && <a class="newer" href={`${index}${id(newer)}/`} data-here={`${index}${id(newer)}/`} rel="next"><span class="k">Newer</span><span lang="ja">{newer.data.title}</span></a>}
+        </nav>
+      )}
+      <p class="ways">
+        <a href={index} data-here={index}>All posts</a>
+        <a href={home} data-here={home}><span lang="ja">人間用</span> Home</a>
+        <a href={shell} data-here={shell}><span lang="ja">機械用</span>: <code>cat ~/posts/{file}</code></a>
+      </p>
+    </footer>
+  </article>
+
+  <script slot="scripts" is:inline src="/scripts/proto-matrix-blog.js"></script>
+</Layout>

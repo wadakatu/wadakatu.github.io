@@ -1,0 +1,27 @@
+---
+/**
+ * An earlier address of 機械用 (machine/, source/). The shell now owns the short address, so these
+ * pages only point there. GitHub Pages cannot answer 301: this is a refresh, a canonical link and a
+ * plain link, and with scripts the query string (palette, run, …) is carried across.
+ */
+import { person } from '../../../data/proto-content';
+import { route, type Page } from './_lib';
+interface Props { page: Page }
+const to = route(Astro.props.page, 'machine');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Moved | {person.name}</title>
+    <link rel="canonical" href={person.site + to} />
+    <script is:inline define:vars={{ to }}>location.replace(to + location.search + location.hash);</script>
+    <meta http-equiv="refresh" content={`0; url=${to}`} />
+    <link rel="stylesheet" href="/styles/proto/matrix.css" />
+  </head>
+  <body>
+    <main class="frame moved"><p>This page moved. <a href={to}>{to}</a></p></main>
+  </body>
+</html>

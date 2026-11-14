@@ -1,0 +1,37 @@
+---
+/**
+ * /proto/matrix/blog/: the published posts as one list, so an article has a door in this world.
+ * Titles, dates and openings are the corpus's (read off the published posts). Two posts have a
+ * page here; the rest open the published /blog/ and say so.
+ */
+import Layout from '../../../../layouts/ProtoMatrixLayout.astro';
+import { person } from '../../../../data/proto-content';
+import { blogExcerpts } from '../../../../data/proto-matrix-corpus';
+import { protoPosts, postHref, shellAt } from '../_lib';
+const posts = [...blogExcerpts].sort((a, b) => b.date.localeCompare(a.date));
+const here = posts.filter((p) => protoPosts.includes(p.slug)).length;
+---
+<Layout page="blog" view="page" title="Blog" description={`${blogExcerpts.length} posts by ${person.name}, newest first.`} machineUrl={shellAt('ls -l ~/posts')}>
+  <link slot="head" rel="stylesheet" href="/styles/proto/matrix-blog.css" />
+
+  <div class="post">
+    <header class="post-head panel">
+      <div class="post-id">
+        <h1 class="post-title">Blog</h1>
+        <p class="meta">{blogExcerpts.length} posts, newest first. {here} have a page in this prototype; the others open the published site.</p>
+      </div>
+    </header>
+    <ol class="index panel" reversed>
+      {posts.map((p) => {
+        const inWorld = protoPosts.includes(p.slug);
+        return (
+          <li>
+            <time datetime={p.date}>{p.date}</time>
+            <a href={postHref(p.slug)} data-here={inWorld ? postHref(p.slug) : undefined} lang="ja">{p.title}</a>
+            {!inWorld && <span class="out">published site</span>}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</Layout>

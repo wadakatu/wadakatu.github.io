@@ -2,7 +2,9 @@
 
 Built with Claude Code on 13 November 2026, on `design/explore`, in this worktree only. Reviewed and tightened with Codex on the same date; see `MATRIX-CRITIQUE.md`. A palette and logo pass followed, also with Claude Code; see the last section, which is current where it differs from the ones above. Nothing is committed.
 
-**Current state: the last section, "機械用 as a shell".** The "人間用 / 機械用" section before it introduced the two
+**Current state: the last section, "Machine first, and blog posts in this world".** It moved the shell to
+`/proto/matrix/`, moved 人間用 under `human/`, and added blog pages; addresses in every section above it are the
+ones from before that pass. The terminal itself is as "機械用 as a shell" describes. The "人間用 / 機械用" section before that introduced the two
 readings and is still right about 人間用, the capsule and the change between readings; its machine reading (the
 byte listing, the bit grid, the downloadable executables) was replaced by a terminal in the last section. Older
 sections describe the source view that came before both. Where sections disagree, the later one is right.
@@ -1372,3 +1374,242 @@ Playwright, Chrome, 390 × 844, against `http://127.0.0.1:4321`. Also copied to 
 - **Checked in Chrome only.** An iPhone, and the on-screen keyboard with the accordion open, were not opened. `fit()` itself was not changed.
 - **`display: flex` on the summary** means the marker is a CSS `▸` / `▾`, not the native triangle.
 - **The shell `boot` command still drops the `switch` flag** (pre-existing; this pass only added a wrap around the login `neofetch`).
+
+## Machine first, and blog posts in this world (Fable machine-first pass)
+
+Built with Fable (Claude Code `--model fable`) on 15 November 2026, in this worktree only, on `design/explore`
+(do not merge). Nothing is committed. The design is in `MACHINE-FIRST-AND-BLOG.md`; this section is what was built
+and measured. It is current where it differs from everything above: every earlier section that says
+`/proto/matrix/` is 人間用, or names `/machine/` and `/source/` as addresses of the shell, is describing the tree
+before this pass.
+
+wadakatu: 「トップを機械用にして、人間用は裏ルートで残そう」. The top is now the shell. 人間用 is the same tree under
+`human/`. Blog posts have a page here.
+
+The terminal itself is unchanged: commands, output, the login `who am I?` card, `visualViewport` / `fit()`, the
+prompt and the jokes are as approved.
+
+### URL tree
+
+| Address | What |
+| --- | --- |
+| `/proto/matrix/` | **機械用 Home**, the landing: the shell in `~` |
+| `/proto/matrix/projects/` | 機械用 Projects: the same shell in `~/projects` |
+| `/proto/matrix/human/` | 人間用 Home |
+| `/proto/matrix/human/projects/` | 人間用 Projects |
+| `/proto/matrix/blog/` | Blog index: the 17 published posts, newest first |
+| `/proto/matrix/blog/431afa748fbed1/` | Article: 「🚀 Claude Code × Serena MCP：…」 |
+| `/proto/matrix/blog/da5be52d57e9a1/` | Article: 「W3C TPAC 2025参加レポ…」 |
+| `/proto/matrix/machine/`, `/proto/matrix/source/` | Moved to `/proto/matrix/` |
+| `/proto/matrix/projects/machine/`, `/proto/matrix/projects/source/` | Moved to `/proto/matrix/projects/` |
+
+- Every address is built by `route(page, view)` in `_lib.ts`. The layout, the switch, the status line's link and
+  人間用 Home's links all call it.
+- A moved address is `_Moved.astro`: `<meta http-equiv="refresh">`, a canonical link, a visible link, and a script
+  that does `location.replace` with the query string and hash. With scripts `machine/?palette=operator` arrives as
+  `/proto/matrix/?palette=operator`; without, the refresh arrives without the query.
+- The blog index was not asked for. It is there so the header's Blog link and an article's path line have somewhere
+  to go inside this world. 15 of its 17 entries open the published `/blog/` and are marked `published site`.
+- An article has one reading. On it the switch shows 人間用 as taken and its 機械用 side is a plain link to
+  `/proto/matrix/?run=cat ~/posts/<slug>.md` (URL-encoded). On the index it is `?run=ls -l ~/posts`.
+
+### Flags
+
+| Flag | Now |
+| --- | --- |
+| `?mode=machine`, `?source=1` | Kept. They land in the shell from a `human/` route. On the short routes they change nothing. Ignored on blog pages |
+| `?run=COMMAND` | Kept. It now also skips the first-visit intro |
+| `?boot=1`, `?boot=frozen` | Kept. The intro plays on Home in either reading |
+| `?palette=operator`, `?theme=day\|night`, `?motion=0`, `?switch=` | Unchanged, and they work on blog pages. Links inside the world carry palette, switch and motion (`data-here` in the markup; `sync()` in `proto-matrix.js` writes them) |
+
+The shell's `reboot` now goes to `/proto/matrix/?boot=1` and keeps the flags that are in the address. It used to go
+to 人間用, and it dropped `switch` (listed as weak in the section above; that is fixed).
+
+### The landing, for someone who did not ask for a shell
+
+- **The intro** plays on the landing on the first visit in a tab. One line was added beside Skip and the switch:
+  "This site opens as a terminal. 人間用 is the same site as an ordinary page." Skip, Escape, a click and the
+  timeout end in the shell with the command line focused. The 人間用 side ends in the page at `human/`.
+- **The guide line** is new: the first row of the terminal (`#guide` in `_Terminal.astro`). "This site opens as a
+  terminal. Type `help`, or tap a command below." and a button, "Read it as an ordinary page: 人間用". The button is
+  an `a[data-mode="page"]`, so it is the same in-place change as the header switch, and a plain link to `human/`
+  without scripts. `×` hides the line; `localStorage['proto-matrix-guide'] = 'off'` keeps it hidden. It is outside
+  the session, so `clear` leaves it and it does not scroll. Below 720px the sentence is kept for assistive tech
+  only and the row is the button and the `×`. A rule hides it while a phone's keyboard is up (`.kb`); that was
+  not exercised.
+- The header switch, the status line's `人間用`, `exit`, the `exit` chip, Ctrl+D and `\` are as before; they now
+  lead to `human/`.
+
+Heights, Playwright, Chrome, live shell, `?motion=0`:
+
+| Width × height | Header | Guide line | `.screen` with the guide | `.screen` with it hidden |
+| --- | --- | --- | --- | --- |
+| 1440 × 900 | 69px | 45.1px | 712.3px | 757.4px, as before this pass |
+| 390 × 844 | 53px | 61px | 656.4px | not re-measured; 717.4px before this pass |
+| 360 × 844 | 53px | 67.2px (the button's label takes two lines) | 650.2px | not re-measured |
+
+### No JavaScript, search engines, screen readers
+
+- **No JavaScript**: the landing is the recorded session as a scrolling document, with `h1` `wadakatu`, the guide
+  line (its `×` is not drawn) and the switch as real links. Checked at 1440: the visible links include `human/`,
+  the blog index, both proto articles, the email address and GitHub. A moved address still arrives.
+- **Search**: both readings are in every Home and Projects document, so the landing's HTML holds the recorded
+  session and the whole of 人間用 (one of them `display: none`). Each route has `<title>`, description, canonical,
+  Open Graph (`og:image` is `https://www.wadakatu.dev/images/logo-400.png`, 400 × 400), `twitter:card = summary` and
+  JSON-LD: `Person` on Home (name, alternate name, the meta description, site, logo, email, `homeLocation` Japan,
+  GitHub and X) and `BlogPosting` on an article. Titles: `wadakatu | Backend Developer @ Studio Inc.` on the
+  landing, `wadakatu, human reading | …` on `human/`, `Projects | wadakatu`, `<post title> | wadakatu`.
+- **Canonical**: a `human/` route points at its short twin. An article points at the published
+  `https://www.wadakatu.dev/blog/<slug>/`, and that is also the address Share and Copy link use.
+- **`robots: noindex, nofollow` is still on every page.** It is a prototype. The canonical and share addresses
+  above are the prototype's answer and have to move at launch.
+- **Screen readers**: skip link, header, `h1`, the guide line, then the terminal as approved. Not run through a
+  screen reader; the order was read from the markup and the tab order.
+- **Reduced motion** (`?motion=0` or the OS setting): no intro, so the landing starts at the guide line.
+
+### Blog post pages
+
+`src/pages/proto/matrix/blog/[slug].astro` renders the published entries in `protoPosts` (`_lib.ts`). The body is
+the collection's own rendered HTML (`post.rendered.html`), the contents come from the entry's headings, and the
+description is the opening already in `proto-matrix-corpus.ts`. Two things are done to the HTML at build time:
+
+1. A link whose text is its own URL becomes a reference line: host, then path. The address is unchanged.
+2. Each of the five known images gets an `alt`, its real proportions, `loading="lazy"` and `decoding="async"`. The
+   width the author wrote is kept as the display width.
+
+Nothing else in the writing is touched, including the stray fence in the Serena post's SSE block, which renders the
+way the published page renders it.
+
+Measured in Chrome on the Serena article:
+
+| Width | Body | Characters per line | Title | Contents | Masthead strip |
+| --- | --- | --- | --- | --- | --- |
+| 390 | 16px / 32px, M PLUS 1 Code | 20.6 | 24px | Disclosure, closed | Not drawn |
+| 768 | 17px / 34px | 38.4 | 26.1px | Disclosure, closed | Drawn |
+| 1100 | 17px / 34px | 38.1 | 37.4px | Sticky rail, 264px | Drawn |
+| 1440 | 17px / 34px | 39.9 | 38px | Sticky rail, 264px | Drawn |
+
+Contrast on the article panel, computed from the tokens (WCAG ratio):
+
+| Palette | Body text | Muted (meta, markers) | Green (links, `h2`) | Code: lead on ground | Code comment |
+| --- | --- | --- | --- | --- | --- |
+| Phosphor night | 15.43 | 8.68 | 12.60 | 19.30 | 9.18 |
+| Phosphor day | 13.31 | 8.07 | 6.57 | 12.83 | 6.89 |
+| Operator night | 14.53 | 8.98 | 9.42 | 14.71 | 9.42 |
+| Operator day | 13.34 | 8.14 | 7.32 | 10.61 | 7.21 |
+
+- **Rain**: on blog pages `.rain` is `position: absolute`, one viewport tall, masked to fade out from half way. It
+  stands around the masthead and is off screen once the first screen is scrolled past (checked: its bottom edge is
+  above the window at the third `h2`). The masthead, contents and body are solid panels.
+- **Contents**: one `<details>` in an `<aside>`. From 1100px `::details-content` is kept visible and the summary is
+  replaced by a label; an engine without it gets the disclosure, which the script opens. Below 1100px choosing a
+  section closes it. The script marks the section being read with `aria-current="location"`.
+- **Code**: Shiki's `css-variables` tokens are mapped onto the palette in `matrix-blog.css`. The language is a tab
+  drawn from `data-language`. The script adds a Copy button to each block.
+- **Foot**: `EOF`, Share (Post on X, Copy link, and the system share sheet where `navigator.share` exists), the one
+  neighbour among the proto posts (Older on the TPAC post, Newer on the Serena post), then All posts, 人間用 Home,
+  and `機械用: cat ~/posts/<slug>.md`.
+- **From the shell**: `ls -l posts` links 2 titles to proto pages and 15 to `/blog/`; `cat` and `open` of the two
+  slugs lead to the proto page. In `_world.ts` only `postFile`'s `href` and `url:` line and `links.blog` changed. In
+  `_shell.ts` one line changed: the rule that keeps a same-site link relative now also covers `/proto/`.
+  人間用 Home's entry for `da5be52d57e9a1` and its "Read the blog" link follow.
+- The article loads no GSAP, no shell module and no world JSON. Built HTML: 61,947 and 53,373 bytes.
+
+#### Alt text added by the prototype
+
+The Markdown gives all five images an empty `alt`. These were written from the image files and are the only text
+this pass adds to an article. They need wadakatu's eye.
+
+| File | `alt` |
+| --- | --- |
+| `e2a99182db0d-20251127.png` | TPAC 2025、11月10日（月）のスケジュール表。3階から5階の会議室ごとに、9時からのグループ会議が並んでいる。 |
+| `f1ad4fffef76-20251128.jpg` | TPAC 2025の名札。「10–14 NOVEMBER KOBE, JAPAN」と「Studio Inc.」の表記があり、氏名は塗りつぶされている。 |
+| `b5aee7f18cbb-20251203.jpeg` | 「WELCOME 国際会議場 Int'l Conference Center」の案内板に貼られた「W3C TPAC 2025」の掲示。 |
+| `62a331668f2e-20251209.png` | ぼかしをかけた写真。会議室で名札を下げた数人が、机のノートPCを囲んで話している。 |
+| `e37bdeb4188d-20250731.png` | Claude Codeの「Manage MCP servers」画面。serenaが「connected」と表示されている。 |
+
+### Files
+
+Created:
+
+| File | What |
+| --- | --- |
+| `src/pages/proto/matrix/human/index.astro`, `human/projects/index.astro` | The 人間用 routes |
+| `src/pages/proto/matrix/_Moved.astro` | The stub the four earlier addresses render |
+| `src/pages/proto/matrix/blog/[slug].astro`, `blog/index.astro` | Articles and the index |
+| `public/styles/proto/matrix-blog.css` | Blog styles; loaded only on blog pages |
+| `public/scripts/proto-matrix-blog.js` | Copy buttons, copy link, share, the contents mark |
+| `docs/design-explore/MACHINE-FIRST-AND-BLOG.md` | The design |
+
+Changed: `ProtoMatrixLayout.astro` (routes, head metadata, a `blog` page type with a default slot, the intro's
+note, the curtain only where there is an intro), `_lib.ts` (`route`, `shellAt`, `protoPosts`, `postHref`),
+`_Pill.astro`, `_Terminal.astro` (the guide line, the way back), `_Home.astro` (links), `_term.ts` (`reboot`'s
+address, the guide's `×`), `_world.ts` and `_shell.ts` (post addresses only, as above), the four route files that
+became stubs, `index.astro` and `projects/index.astro` (now `view="machine"`), `matrix.css` (the guide line, the
+intro's note, the terminal's rows named by position), `proto-matrix.js` (titles from the markup, a document with
+one reading, `data-here`, no library on blog pages).
+
+Not touched: production routes, `BaseLayout.astro`, `tombo.css`, `site.css`, FooterLogo, the other `/proto/*`
+concepts, `src/data/*`, `package.json`, `astro.config.mjs`.
+
+### Checks
+
+- `npm run build`: 49 pages, complete (44 before: two `human/` routes, the index, two articles).
+- A Playwright script of 90 checks against `http://127.0.0.1:4321` (kept outside the repository): all pass. At
+  768px the header is 125px, two rows, on all seven routes. The header's markup and CSS were not changed by this
+  pass, but I have no measure from before it at 768px, so that is a reading, not a comparison. What the script
+  covers: the intro on the landing and both of
+  its exits; `exit`, `\`, the header switch and the guide's link all arriving at `human/`; the guide's `×` across a
+  reload; the four moved addresses with and without scripts; `?mode=machine`, `?run=`, `reboot`; reduced motion; the
+  no-JS landing's links; `cat`, `open` and `ls -l posts`; the article's language, single `h1`, heading order,
+  canonical, Open Graph image, description, switch, Copy buttons, pager, contents mark, rain, palette on links, and
+  `\`; the article without scripts at 390; the TPAC article's four images; and no horizontal overflow with a 53px
+  header at 320 and 390 and a 69px header at 1440 on all seven routes.
+- `docs/design-explore/hold-recolor.mjs` now opens `/proto/matrix/human/` (executor, after this pass).
+  A copy with the address changed to `/proto/matrix/human/` passed all cases.
+- Looked at in stills: the landing at 1440 and 390 (phosphor night, Operator day), the intro still on the landing
+  at both widths, 人間用 Home, the index, both articles at 1440 and 390, the code blocks, the foot, day, Operator,
+  reduced motion, the no-JS landing, and the shell opened from an article.
+
+### Still weak
+
+- **`src/pages/proto/matrix/blog/` was ignored by git.** The rule was a bare `blog/` under "Astro build output".
+  After this pass the executor anchored it as `/blog/` (the leftover of the hand-written blog HTML). The proto
+  article routes are now ordinary tracked files. `hold-recolor.mjs` now opens `/proto/matrix/human/`; all cases
+  passed after that change.
+- **Checked in Chrome only.** No Safari, no Firefox, no real phone. The contents rail leans on `::details-content`
+  the way the header menu and the login card do.
+- **Not run through a screen reader.**
+- **The guide line costs a row** until it is hidden: 45px at 1440, 61px at 390, 67px at 360. It does not hide
+  itself when a command is run; only `×` hides it.
+- **The body is set in M PLUS 1 Code**, the face 人間用 already uses for Japanese, so Latin words inside Japanese
+  sentences are monospaced. I think it reads well and looks like this world. A proportional body (M PLUS 1) is the
+  alternative if it does not; that would add a font.
+- **Emoji in headings and the title are in colour.** They are the author's and were left alone.
+- **The masthead strip and the ambient rain are not drawn usefully below 720px.** A phone article is almost
+  entirely still.
+- **Nothing styles a table, and the reference line is only for a link whose text is its URL.** Neither prototyped
+  post has a table.
+- **The shell's `url:` line for a proto post prints `https://www.wadakatu.dev/proto/matrix/blog/<slug>/`**, which is
+  not deployed. The link under it is relative and works here.
+- **`open` and the links in live shell output still open a new tab**, including the two proto articles. That is the
+  approved behaviour of the terminal; I did not change it.
+- **`@astrojs/sitemap` lists every `/proto/` route**, now including the four stubs. `astro.config.mjs` was out of
+  bounds, and this branch is not deployed.
+- **`/proto/index.astro` still describes `/proto/matrix/` in its own words.** It was out of bounds.
+- **The intro's 人間用 side changes reading without the drop**, as it did before.
+Official stills (executor, Playwright, Chrome, against `http://127.0.0.1:4321`). Also copied to `/workspace/wadakatu-dev/design-protos/`.
+
+| File | What |
+| --- | --- |
+| `docs/design-explore/shots/mf-landing-1440.png` | New landing, 機械用 Home, 1440, with the guide line |
+| `docs/design-explore/shots/mf-landing-390.png` | Same, 390, guide line and `who am I?` closed |
+| `docs/design-explore/shots/mf-human-1440.png` | 人間用 Home at `/proto/matrix/human/`, 1440 |
+| `docs/design-explore/shots/mf-post-serena-1440.png` | Claude Code × Serena MCP, article top, 1440 |
+| `docs/design-explore/shots/mf-post-serena-code-1440.png` | Same article, a code block |
+| `docs/design-explore/shots/mf-post-tpac-1440.png` | W3C TPAC 2025参加レポ, article top, 1440 |
+| `docs/design-explore/shots/mf-landing-operator-1440.png` | Landing, `?palette=operator`, 1440 |
+| `docs/design-explore/shots/mf-post-serena-390.png` | Serena article, 390 |
+| `docs/design-explore/shots/mf-post-tpac-390.png` | TPAC article, 390 |
+
+`npm run build` completed (49 pages). `hold-recolor.mjs` all cases passed against `/proto/matrix/human/`.

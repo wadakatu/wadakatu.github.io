@@ -143,8 +143,8 @@ export function createShell(w: World, env: Env) {
   const walk = (d: DirNode, base: string): [string, FileNode][] =>
     Object.entries(d.dir).flatMap(([k, n]) => (isDir(n) ? walk(n, `${base}${k}/`) : [[base + k, n] as [string, FileNode]]));
 
-  /** Addresses and URLs in file text become real links. Posts on this site stay relative, so they work on any host. */
-  const href = (s: string) => (s.includes('@') && !s.includes('/') ? `mailto:${s}` : s.startsWith(`${w.site}/blog/`) ? s.slice(w.site.length) : s);
+  /** Addresses and URLs in file text become real links. Posts on this site (and their pages in this prototype) stay relative, so they work on any host. */
+  const href = (s: string) => (s.includes('@') && !s.includes('/') ? `mailto:${s}` : /^\/(blog|proto)\//.test(s.slice(w.site.length)) && s.startsWith(w.site) ? s.slice(w.site.length) : s);
   const linkify = (s: string): Line => {
     const parts = s.split(/(https?:\/\/[^\s)"]*[^\s)".,]|[\w.+-]+@[\w-]+(?:\.[\w-]+)+)/);
     return parts.length === 1 ? s : parts.map((p, i): Seg => (i % 2 ? { t: p, href: href(p) } : p)).filter((p) => p !== '');

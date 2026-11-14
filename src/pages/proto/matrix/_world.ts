@@ -10,7 +10,7 @@ import { person, bio, projects, skills, activity } from '../../../data/proto-con
 import { commits, blogExcerpts } from '../../../data/proto-matrix-corpus';
 import pkg from '../../../../package.json';
 import { home as elf } from './_machine';
-import { logo, splitJa } from './_lib';
+import { logo, splitJa, postHref, ROOT } from './_lib';
 import { createShell, plain, isLogo, zshrc, type World, type FileNode, type Env, type Item } from './_shell';
 
 /** Hash and date for each commit subject in the corpus, when this checkout has the history. The author's address is never read. */
@@ -47,8 +47,8 @@ const projectFile = (p: Project): FileNode => {
   };
 };
 const postFile = (p: (typeof blogExcerpts)[number]): FileNode => ({
-  text: `---\ntitle: ${p.title}\ndate: ${p.date}\nurl: ${person.site}/blog/${p.slug}/\n---\n\n${p.excerpt}\n\n(An excerpt. The rest is at the url above: open ~/posts/${p.slug}.md)\n`,
-  href: `/blog/${p.slug}/`,
+  text: `---\ntitle: ${p.title}\ndate: ${p.date}\nurl: ${person.site}${postHref(p.slug)}\n---\n\n${p.excerpt}\n\n(An excerpt. The rest is at the url above: open ~/posts/${p.slug}.md)\n`,
+  href: postHref(p.slug),
   date: p.date,
   note: p.title,
 });
@@ -111,7 +111,7 @@ export const world: World = {
     x: person.x,
     email: `mailto:${person.email}`,
     site: person.site,
-    blog: '/blog/',
+    blog: `${ROOT}blog/`,
     about: '/about/',
     ...Object.fromEntries(projects.map((p) => [slug(p), p.href])),
     docs: projects.flatMap((p) => ('docs' in p ? [p.docs] : []))[0],

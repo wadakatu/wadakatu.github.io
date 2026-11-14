@@ -4,6 +4,23 @@
  */
 import { rainPhrases, commits, blogExcerpts, repoPaths } from '../../../data/proto-matrix-corpus';
 
+/**
+ * Machine first: 機械用 owns the short address of every page that has two readings, and 人間用 is
+ * the same tree under human/. Every link between the two is built here.
+ */
+export const ROOT = '/proto/matrix/';
+export type Page = 'home' | 'projects';
+export type View = 'page' | 'machine';
+export const route = (page: Page, view: View) => ROOT + (view === 'page' ? 'human/' : '') + (page === 'projects' ? 'projects/' : '');
+/** The shell, started by running one command: where an article's 機械用 side goes. */
+export const shellAt = (cmd: string) => `${ROOT}?run=${encodeURIComponent(cmd)}`;
+/** Posts that have a page in this world. Every other post still lives at the published /blog/. */
+export const protoPosts = ['431afa748fbed1', 'da5be52d57e9a1'];
+export const postHref = (slug: string) => (protoPosts.includes(slug) ? `${ROOT}blog/${slug}/` : `/blog/${slug}/`);
+/** A content entry's slug. Imported, because getStaticPaths cannot see a page's own constants. */
+export const postId = (p: { id: string }) => p.id.replace(/\.md$/, '');
+export const slugOf = (href: string) => href.replace(/\/$/, '').split('/').pop()!;
+
 export const hasJa = (s: string) => /[぀-ヿ㐀-鿿]/.test(s);
 export const host = (href: string) => href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
 /** tombo's blurb ends in Japanese; split it so that part can carry lang="ja". */
@@ -14,7 +31,7 @@ export const splitJa = (s: string) => {
 
 /** Phrases that name the film are left out of everything, and emoji are dropped (no dot-matrix glyph). */
 const usable = (s: string) => !/matrix/i.test(s);
-const bmp = (s: string) => Array.from(s).filter((c) => c.codePointAt(0)! < 0x10000).join('').trim();
+export const bmp = (s: string) => Array.from(s).filter((c) => c.codePointAt(0)! < 0x10000).join('').trim();
 export const phrases = rainPhrases.filter(usable).map(bmp);
 
 /** Commit subjects that may be set as readable text: no merges, nothing naming the film. */
